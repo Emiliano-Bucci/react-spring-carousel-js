@@ -18,7 +18,11 @@ const App = () => {
         }}
       >
         <ReactSpringCarousel
-          items={[{ id: 'item-1', renderItem: <div>asdsa</div> }]}
+          items={[
+            { id: 'item-1', renderItem: <div>Item 1</div> },
+            { id: 'item-2', renderItem: <div>Item 2</div> },
+            { id: 'item-3', renderItem: <div>Item 3</div> }
+          ]}
         />
       </div>
     </div>

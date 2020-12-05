@@ -17,20 +17,36 @@ export function ReactSpringCarousel<T extends Item>({ items }: Props<T>) {
     x: 0
   }))
 
-  console.log({
-    activeItem,
-    setActiveItem
-  })
+  function getPrevItem() {
+    return activeItem - 1
+  }
+
+  function getNextItem() {
+    return activeItem + 1
+  }
+
+  function handleSlideToPrevItem() {
+    const prevItem = getPrevItem()
+
+    setActiveItem(prevItem)
+    setCarouselStyles({
+      x: prevItem
+    })
+  }
 
   function handleSlideToNextItem() {
+    const nextItem = getNextItem()
+
+    setActiveItem(nextItem)
     setCarouselStyles({
-      x: 1
+      x: nextItem
     })
   }
 
   return (
     <Wrapper>
       <div
+        onClick={handleSlideToPrevItem}
         style={{
           position: 'relative',
           background: 'blue',

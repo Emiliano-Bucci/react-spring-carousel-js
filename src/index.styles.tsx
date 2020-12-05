@@ -18,6 +18,6 @@ export const CarouselWrapper = styled(animated.div)`
 `
 
 export const CarouselItemWrapper = styled.div`
-  flex: 1;
+  flex: 1 0 100%;
   background-color: red;
 `
