@@ -9,22 +9,24 @@ interface Item {
 }
 
 interface Props<T extends Item> {
+  withLoop?: boolean
   items: T[]
 }
 
-export function ReactSpringCarousel<T extends Item>({ items }: Props<T>) {
+export function ReactSpringCarousel<T extends Item>({
+  items,
+  withLoop = false
+}: Props<T>) {
+  const internalItems = withLoop
+    ? [items[items.length - 1], ...items, items[0]]
+    : items
   const [activeItem, setActiveItem] = useState(0)
   const carouselWrapperRef = useRef<HTMLDivElement | null>(null)
-  const carouselIsSliding = useRef(false)
+
   const [carouselStyles, setCarouselStyles] = useSpring(() => ({
     x: 0
   }))
-  const bindDrag = useDrag(({ dragging, last, movement: [mx], cancel }) => {
-    if (carouselIsSliding.current) {
-      cancel()
-      return
-    }
-
+  const bindDrag = useDrag(({ dragging, last, movement: [mx] }) => {
     const currentSlidedValue = getCarouselWrapperWidth() * activeItem
 
     if (dragging) {
@@ -32,15 +34,29 @@ export function ReactSpringCarousel<T extends Item>({ items }: Props<T>) {
     }
 
     if (last) {
-      console.log(mx)
       const prevItemTreshold = mx > 50
       const nextItemTreshold = mx < -50
 
       if (nextItemTreshold) {
-        handleSlideToNextItem()
-        console.log('here')
+        if (!withLoop) {
+          const isLastItem = +activeItem === -(internalItems.length - 1)
+
+          if (isLastItem) {
+            setCarouselStyles({ x: currentSlidedValue })
+          } else {
+            handleSlideToNextItem()
+          }
+        }
       } else if (prevItemTreshold) {
-        handleSlideToPrevItem()
+        if (!withLoop) {
+          const isFirstItem = activeItem === 0
+
+          if (isFirstItem) {
+            setCarouselStyles({ x: currentSlidedValue })
+          } else {
+            handleSlideToPrevItem()
+          }
+        }
       } else {
         setCarouselStyles({ x: currentSlidedValue })
       }
@@ -60,22 +76,36 @@ export function ReactSpringCarousel<T extends Item>({ items }: Props<T>) {
   }
 
   function handleSlideToPrevItem() {
+    if (!withLoop && activeItem === 0) {
+      return false
+    }
+
     const prevItem = getPrevItem()
 
     setActiveItem(prevItem)
     setCarouselStyles({
       x: getCarouselWrapperWidth() * prevItem
     })
+
+    return true
   }
 
   function handleSlideToNextItem() {
+    if (!withLoop && activeItem === -(internalItems.length - 1)) {
+      return false
+    }
+
     const nextItem = getNextItem()
 
     setActiveItem(nextItem)
     setCarouselStyles({
       x: getCarouselWrapperWidth() * nextItem
     })
+
+    return true
   }
+
+  console.log({ carouselItems: internalItems })
 
   return (
     <Wrapper>
@@ -94,7 +124,7 @@ export function ReactSpringCarousel<T extends Item>({ items }: Props<T>) {
         ref={carouselWrapperRef}
         style={carouselStyles}
       >
-        {items.map(({ id, renderItem }) => (
+        {internalItems.map(({ id, renderItem }) => (
           <CarouselItemWrapper key={id}>{renderItem}</CarouselItemWrapper>
         ))}
       </CarouselWrapper>
