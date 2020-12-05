@@ -1,4 +1,5 @@
 import React from 'react'
+import { Wrapper } from './index.styles'
 
 interface Item {
   id: string
@@ -11,5 +12,5 @@ interface Props<T extends Item> {
 
 export function ReactSpringCarousel<T extends Item>({ items }: Props<T>) {
   console.log(items)
-  return <div>asdasda</div>
+  return <Wrapper>asdasda</Wrapper>
 }
