@@ -12,6 +12,7 @@ export const Wrapper = styled.div`
 
 export const CarouselWrapper = styled(animated.div)`
   display: flex;
+  position: relative;
   width: 100%;
   height: 100%;
   background-color: green;
