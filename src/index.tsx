@@ -19,23 +19,40 @@ export function ReactSpringCarousel<T extends Item>({ items }: Props<T>) {
   const [carouselStyles, setCarouselStyles] = useSpring(() => ({
     x: 0
   }))
-  const bindDrag = useDrag(({ dragging, movement: [mx], cancel }) => {
+  const bindDrag = useDrag(({ dragging, last, movement: [mx], cancel }) => {
     if (carouselIsSliding.current) {
       cancel()
       return
     }
 
+    const currentSlidedValue = getCarouselWrapperWidth() * activeItem
+
     if (dragging) {
-      setCarouselStyles({ x: mx })
+      setCarouselStyles({ x: currentSlidedValue + mx })
+    }
+
+    if (last) {
+      console.log(mx)
+      const prevItemTreshold = mx > 50
+      const nextItemTreshold = mx < -50
+
+      if (nextItemTreshold) {
+        handleSlideToNextItem()
+        console.log('here')
+      } else if (prevItemTreshold) {
+        handleSlideToPrevItem()
+      } else {
+        setCarouselStyles({ x: currentSlidedValue })
+      }
     }
   })
 
   function getPrevItem() {
-    return activeItem - 1
+    return activeItem + 1
   }
 
   function getNextItem() {
-    return activeItem + 1
+    return activeItem - 1
   }
 
   function getCarouselWrapperWidth() {
@@ -63,7 +80,7 @@ export function ReactSpringCarousel<T extends Item>({ items }: Props<T>) {
   return (
     <Wrapper>
       <div
-        onClick={handleSlideToNextItem}
+        onClick={handleSlideToPrevItem}
         style={{
           position: 'relative',
           background: 'blue',
@@ -87,7 +104,7 @@ export function ReactSpringCarousel<T extends Item>({ items }: Props<T>) {
           background: 'blue',
           zIndex: 100
         }}
-        onClick={handleSlideToPrevItem}
+        onClick={handleSlideToNextItem}
       >
         next item
       </div>
