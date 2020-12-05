@@ -1,10 +1,15 @@
-import * as React from 'react'
-import styles from './styles.module.css'
+import React from 'react'
 
-interface Props {
-  text: string
+interface Item {
+  id: string
+  renderItem: React.ReactNode
 }
 
-export const ExampleComponent = ({ text }: Props) => {
-  return <div className={styles.test}>Example Component: {text}</div>
+interface Props<T extends Item> {
+  items: T[]
+}
+
+export function ReactSpringCarousel<T extends Item>({ items }: Props<T>) {
+  console.log(items)
+  return <div>asdasda</div>
 }

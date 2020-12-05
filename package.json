@@ -59,5 +59,8 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "react-spring": "9.0.0-rc.3"
+  }
 }

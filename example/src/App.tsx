@@ -1,10 +1,12 @@
 import React from 'react'
-
-import { ExampleComponent } from 'react-spring-carousel'
-import 'react-spring-carousel/dist/index.css'
+import { ReactSpringCarousel } from 'react-spring-carousel'
 
 const App = () => {
-  return <ExampleComponent text="Create React Library Example 😄" />
+  return (
+    <ReactSpringCarousel
+      items={[{ id: 'item-1', renderItem: <div>asdsa</div> }]}
+    />
+  )
 }
 
 export default App
