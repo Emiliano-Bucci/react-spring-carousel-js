@@ -1,19 +1,16 @@
-import React, { useState, useRef } from 'react'
-import { useSpring, config, SpringConfig } from 'react-spring'
+import React, { useState, useRef, createContext } from 'react'
+import { useSpring, config } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
 import { Wrapper, CarouselWrapper, CarouselItemWrapper } from './index.styles'
+import {
+  Item,
+  Props,
+  ReactSpringCarouselContextProps as ContextProps
+} from './typings'
 
-interface Item {
-  id: string
-  renderItem: React.ReactNode
-}
-
-interface Props<T extends Item> {
-  withLoop?: boolean
-  items: T[]
-  draggingSlideTreshold?: number
-  springConfig?: SpringConfig
-}
+export const ReactSpringCarouselContext = createContext<ContextProps>({
+  activeItem: 0
+})
 
 export function ReactSpringCarousel<T extends Item>({
   items,
@@ -191,46 +188,68 @@ export function ReactSpringCarousel<T extends Item>({
   }
 
   return (
-    <Wrapper>
-      <div
-        onClick={handleSlideToPrevItem}
-        style={{
-          position: 'relative',
-          background: 'blue',
-          zIndex: 100
-        }}
-      >
-        prev item
-      </div>
-      <CarouselWrapper
-        {...bindDrag()}
-        style={carouselStyles}
-        ref={(ref) => {
-          if (ref) {
-            carouselWrapperRef.current = ref
+    <ReactSpringCarouselContext.Provider
+      value={{
+        activeItem,
+        getIsAnimating: () => isAnimating.current,
+        getIsDragging: () => isDragging.current,
+        getIsNextItem: (id) => {
+          const itemIndex = items.findIndex((item) => item.id === id)
+          return itemIndex - 1 === activeItem
+        },
+        getIsPrevItem: (id) => {
+          const itemIndex = items.findIndex((item) => item.id === id)
+          return itemIndex - 1 === activeItem - 2
+        },
+        slideToItem: (item, callback) => {
+          handleGoToItem({
+            item,
+            onRest: callback
+          })
+        }
+      }}
+    >
+      <Wrapper>
+        <div
+          onClick={handleSlideToPrevItem}
+          style={{
+            position: 'relative',
+            background: 'blue',
+            zIndex: 100
+          }}
+        >
+          prev item
+        </div>
+        <CarouselWrapper
+          {...bindDrag()}
+          style={carouselStyles}
+          ref={(ref) => {
+            if (ref) {
+              carouselWrapperRef.current = ref
 
-            if (withLoop) {
-              ref.style.left = `-${ref.getBoundingClientRect().width}px`
+              if (withLoop) {
+                ref.style.left = `-${ref.getBoundingClientRect().width}px`
+              }
             }
-          }
-        }}
-      >
-        {internalItems.map(({ id, renderItem }, index) => (
-          <CarouselItemWrapper key={`${id}-${index}`}>
-            {renderItem}
-          </CarouselItemWrapper>
-        ))}
-      </CarouselWrapper>
-      <div
-        style={{
-          position: 'relative',
-          background: 'blue',
-          zIndex: 100
-        }}
-        onClick={handleSlideToNextItem}
-      >
-        next item
-      </div>
-    </Wrapper>
+          }}
+        >
+          {internalItems.map(({ id, renderItem }, index) => (
+            <CarouselItemWrapper key={`${id}-${index}`}>
+              {renderItem}
+            </CarouselItemWrapper>
+          ))}
+        </CarouselWrapper>
+        <div
+          style={{
+            position: 'relative',
+            background: 'blue',
+            zIndex: 100
+          }}
+          onClick={handleSlideToNextItem}
+        >
+          next item
+        </div>
+      </Wrapper>
+    </ReactSpringCarouselContext.Provider>
   )
 }

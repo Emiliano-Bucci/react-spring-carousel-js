@@ -1,5 +1,20 @@
-import React from 'react'
-import { ReactSpringCarousel } from 'react-spring-carousel'
+import React, { useContext } from 'react'
+import {
+  ReactSpringCarousel,
+  ReactSpringCarouselContext
+} from 'react-spring-carousel'
+
+function Comp() {
+  const { getIsPrevItem, getIsNextItem } = useContext(
+    ReactSpringCarouselContext
+  )
+  console.log({
+    isNextItem: getIsNextItem('item-2'),
+    isPrevItem: getIsPrevItem('item-2')
+  })
+
+  return <div>YOYOOO</div>
+}
 
 const App = () => {
   return (
@@ -34,15 +49,7 @@ const App = () => {
             },
             {
               id: 'item-2',
-              renderItem: (
-                <div
-                  style={{
-                    background: 'yellow'
-                  }}
-                >
-                  Item 2
-                </div>
-              )
+              renderItem: <Comp />
             },
             { id: 'item-3', renderItem: <div>LAST</div> }
           ]}

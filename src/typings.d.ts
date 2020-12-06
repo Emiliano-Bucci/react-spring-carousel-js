@@ -1,17 +1,22 @@
-/**
- * Default CSS definition for typescript,
- * will be overridden with file-specific definitions by rollup
- */
-declare module '*.css' {
-  const content: { [className: string]: string }
-  export default content
+import { SpringConfig } from 'react-spring'
+
+export interface Item {
+  id: string
+  renderItem: React.ReactNode
 }
 
-type SvgrComponent = React.StatelessComponent<React.SVGAttributes<SVGElement>>
+export interface Props<T extends Item> {
+  withLoop?: boolean
+  items: T[]
+  draggingSlideTreshold?: number
+  springConfig?: SpringConfig
+}
 
-declare module '*.svg' {
-  const svgUrl: string
-  const svgComponent: SvgrComponent
-  export default svgUrl
-  export { svgComponent as ReactComponent }
+export interface ReactSpringCarouselContextProps {
+  activeItem: number
+  getIsPrevItem?(id: string): boolean
+  getIsNextItem?(id: string): boolean
+  slideToItem?(item: number, callback?: VoidFunction): void
+  getIsAnimating?(): boolean
+  getIsDragging?(): boolean
 }
