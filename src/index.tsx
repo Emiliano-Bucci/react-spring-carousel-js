@@ -68,26 +68,37 @@ export function ReactSpringCarousel<T extends Item>({
   })
 
   useEffect(() => {
-    mainCarouselWrapperRef.current!.addEventListener(
-      'fullscreenchange',
-      (event) => {
-        if (
-          document.fullscreenElement &&
-          event.target === mainCarouselWrapperRef.current &&
-          !isFullscreen
-        ) {
-          setIsFullscreen(true)
-        }
+    const _carouselwrapperRef = mainCarouselWrapperRef.current
 
-        if (
-          !document.fullscreenElement &&
-          event.target === mainCarouselWrapperRef.current &&
-          isFullscreen
-        ) {
-          setIsFullscreen(false)
-        }
+    function handleFullscreenChange(event: Event) {
+      if (
+        document.fullscreenElement &&
+        event.target === mainCarouselWrapperRef.current &&
+        !isFullscreen
+      ) {
+        setIsFullscreen(true)
       }
+
+      if (
+        !document.fullscreenElement &&
+        event.target === mainCarouselWrapperRef.current &&
+        isFullscreen
+      ) {
+        setIsFullscreen(false)
+      }
+    }
+
+    _carouselwrapperRef!.addEventListener(
+      'fullscreenchange',
+      handleFullscreenChange
     )
+
+    return () => {
+      _carouselwrapperRef!.removeEventListener(
+        'fullscreenchange',
+        handleFullscreenChange
+      )
+    }
   }, [isFullscreen])
 
   // @ts-ignore
