@@ -1,4 +1,4 @@
-import React, { useState, useRef, createContext } from 'react'
+import React, { useState, useRef, createContext, useEffect } from 'react'
 import { useSpring, config } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
 import { Wrapper, CarouselWrapper, CarouselItemWrapper } from './index.styles'
@@ -16,7 +16,8 @@ export function ReactSpringCarousel<T extends Item>({
   items,
   withLoop = false,
   draggingSlideTreshold = 50,
-  springConfig = config.default
+  springConfig = config.default,
+  shouldResizeOnWindowResize = true
 }: Props<T>) {
   const internalItems = withLoop
     ? [items[items.length - 1], ...items, items[0]]
@@ -62,6 +63,22 @@ export function ReactSpringCarousel<T extends Item>({
       }
     }
   })
+
+  useEffect(() => {
+    function handleResize() {
+      setCarouselStyles({
+        x: -(getCarouselWrapperWidth() * activeItem),
+        immediate: true
+      })
+      carouselWrapperRef.current!.style.left = `-${getCarouselWrapperWidth()}px`
+    }
+
+    if (shouldResizeOnWindowResize) {
+      window.addEventListener('resize', handleResize)
+
+      return () => window.removeEventListener('resize', handleResize)
+    }
+  }, [activeItem, setCarouselStyles, shouldResizeOnWindowResize])
 
   function getPrevItem() {
     return activeItem - 1

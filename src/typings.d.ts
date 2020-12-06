@@ -10,6 +10,7 @@ export interface Props<T extends Item> {
   items: T[]
   draggingSlideTreshold?: number
   springConfig?: SpringConfig
+  shouldResizeOnWindowResize?: boolean
 }
 
 export interface ReactSpringCarouselContextProps {
