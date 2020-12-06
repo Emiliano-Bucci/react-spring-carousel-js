@@ -22,7 +22,6 @@ export function ReactSpringCarousel<T extends Item>({
     : items
   const [activeItem, setActiveItem] = useState(0)
   const carouselWrapperRef = useRef<HTMLDivElement | null>(null)
-
   const [carouselStyles, setCarouselStyles] = useSpring(() => ({
     x: 0
   }))
@@ -75,88 +74,86 @@ export function ReactSpringCarousel<T extends Item>({
     return carouselWrapperRef.current.getBoundingClientRect().width
   }
 
-  function handleSlideToPrevItem() {
-    const isFirstItem = activeItem === 0
-
-    function slideToPrevItem() {
-      const prevItem = getPrevItem()
-
-      setActiveItem(prevItem)
-      setCarouselStyles({
-        x: -(getCarouselWrapperWidth() * prevItem)
-      })
+  function handleGoToItem({
+    item,
+    immediate = false,
+    onRest
+  }: {
+    item: number
+    immediate?: boolean
+    onRest?(): void
+  }) {
+    if (!immediate) {
+      setActiveItem(item)
     }
 
-    if (!withLoop) {
-      if (isFirstItem) {
-        return false
-      }
+    setCarouselStyles({
+      x: -(getCarouselWrapperWidth() * item),
+      config: {
+        duration: immediate ? 0 : undefined
+      },
+      onRest
+    })
+  }
 
-      slideToPrevItem()
-
+  function handleSlideToPrevItem() {
+    if (!withLoop && activeItem === 0) {
       return
     }
 
-    if (isFirstItem) {
-      const oppositeLastItemIndex = internalItems.length - 2
-
-      setCarouselStyles({
-        x: -(getCarouselWrapperWidth() * oppositeLastItemIndex),
+    if (withLoop && activeItem === 0) {
+      handleGoToItem({
+        item: internalItems.length - 2,
         immediate: true,
         onRest: () => {
-          const prevItem = internalItems.length - 3
-
-          setActiveItem(prevItem)
-          setCarouselStyles({ x: -(getCarouselWrapperWidth() * prevItem) })
+          handleGoToItem({
+            item: internalItems.length - 3
+          })
         }
       })
     } else {
-      slideToPrevItem()
+      handleGoToItem({
+        item: getPrevItem(),
+        onRest: () => {
+          if (withLoop && activeItem === 0) {
+            handleGoToItem({
+              item: internalItems.length - 2,
+              immediate: true
+            })
+          }
+        }
+      })
     }
-
-    return true
   }
 
   function handleSlideToNextItem() {
-    function slideToNextItem() {
-      const nextItem = getNextItem()
-
-      setActiveItem(nextItem)
-      setCarouselStyles({
-        x: -(getCarouselWrapperWidth() * nextItem)
-      })
-    }
-
-    if (!withLoop) {
-      const isLastItem = activeItem === internalItems.length - 1
-
-      if (isLastItem) {
-        return false
-      }
-
-      slideToNextItem()
-
+    if (!withLoop && activeItem === internalItems.length - 1) {
       return
     }
 
-    const isLastItem = activeItem === internalItems.length - 2
-
-    if (isLastItem) {
-      setCarouselStyles({
-        x: -(getCarouselWrapperWidth() * 0),
+    if (withLoop && activeItem === internalItems.length - 3) {
+      handleGoToItem({
+        item: -1,
         immediate: true,
         onRest: () => {
-          const nextItem = 1
-
-          setActiveItem(nextItem)
-          setCarouselStyles({ x: -(getCarouselWrapperWidth() * nextItem) })
+          handleGoToItem({
+            item: 0
+          })
         }
       })
     } else {
-      slideToNextItem()
+      handleGoToItem({
+        item: getNextItem(),
+        onRest: () => {
+          if (withLoop && activeItem === internalItems.length - 3) {
+            handleGoToItem({
+              item: 0,
+              immediate: true
+            })
+          }
+        }
+      })
     }
-
-    return true
   }
 
   return (
