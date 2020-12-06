@@ -7,6 +7,7 @@ import {
   Props,
   ReactSpringCarouselContextProps as ContextProps
 } from './typings'
+import screenfull from 'screenfull'
 
 export const ReactSpringCarouselContext = createContext<ContextProps>({
   activeItem: 0
@@ -23,9 +24,11 @@ export function ReactSpringCarousel<T extends Item>({
     ? [items[items.length - 1], ...items, items[0]]
     : items
   const [activeItem, setActiveItem] = useState(0)
+  const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
   const carouselWrapperRef = useRef<HTMLDivElement | null>(null)
   const isDragging = useRef(false)
   const isAnimating = useRef(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
   const [carouselStyles, setCarouselStyles] = useSpring(() => ({
     x: 0,
     config: springConfig
@@ -65,6 +68,30 @@ export function ReactSpringCarousel<T extends Item>({
   })
 
   useEffect(() => {
+    mainCarouselWrapperRef.current!.addEventListener(
+      'fullscreenchange',
+      (event) => {
+        if (
+          document.fullscreenElement &&
+          event.target === mainCarouselWrapperRef.current &&
+          !isFullscreen
+        ) {
+          setIsFullscreen(true)
+        }
+
+        if (
+          !document.fullscreenElement &&
+          event.target === mainCarouselWrapperRef.current &&
+          isFullscreen
+        ) {
+          setIsFullscreen(false)
+        }
+      }
+    )
+  }, [isFullscreen])
+
+  // @ts-ignore
+  useEffect(() => {
     function handleResize() {
       setCarouselStyles({
         x: -(getCarouselWrapperWidth() * activeItem),
@@ -79,6 +106,18 @@ export function ReactSpringCarousel<T extends Item>({
       return () => window.removeEventListener('resize', handleResize)
     }
   }, [activeItem, setCarouselStyles, shouldResizeOnWindowResize])
+
+  function handleEnterFullscreen(element: HTMLDivElement) {
+    if (screenfull.isEnabled) {
+      screenfull.request(element)
+    }
+  }
+
+  function handleExitFullscreen() {
+    if (screenfull.isEnabled) {
+      screenfull.exit()
+    }
+  }
 
   function getPrevItem() {
     return activeItem - 1
@@ -230,7 +269,16 @@ export function ReactSpringCarousel<T extends Item>({
         }
       }}
     >
-      <Wrapper>
+      <Wrapper ref={mainCarouselWrapperRef}>
+        <div
+          style={{
+            color: 'yellow',
+            zIndex: 12321312
+          }}
+          onClick={() => handleEnterFullscreen(mainCarouselWrapperRef.current!)}
+        >
+          Enter FULLSCREEN
+        </div>
         <div
           onClick={handleSlideToPrevItem}
           style={{
@@ -269,6 +317,15 @@ export function ReactSpringCarousel<T extends Item>({
           onClick={handleSlideToNextItem}
         >
           next item
+        </div>
+        <div
+          style={{
+            color: 'yellow',
+            zIndex: 12321312
+          }}
+          onClick={handleExitFullscreen}
+        >
+          EXIT FULLSCREEN
         </div>
       </Wrapper>
     </ReactSpringCarouselContext.Provider>
