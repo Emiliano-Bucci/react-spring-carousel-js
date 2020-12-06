@@ -22,14 +22,21 @@ export function ReactSpringCarousel<T extends Item>({
     : items
   const [activeItem, setActiveItem] = useState(0)
   const carouselWrapperRef = useRef<HTMLDivElement | null>(null)
+  const isDragging = useRef(false)
+  const isAnimating = useRef(false)
   const [carouselStyles, setCarouselStyles] = useSpring(() => ({
     x: 0
   }))
   const bindDrag = useDrag(({ dragging, last, movement: [mx] }) => {
     const currentSlidedValue = -(getCarouselWrapperWidth() * activeItem)
 
+    if (isAnimating.current) {
+      return
+    }
+
     if (dragging) {
       setCarouselStyles({ x: currentSlidedValue + mx })
+      isDragging.current = true
     }
 
     if (last) {
@@ -37,17 +44,13 @@ export function ReactSpringCarousel<T extends Item>({
       const nextItemTreshold = mx < -50
 
       if (nextItemTreshold) {
-        const isLastItem = activeItem === internalItems.length - 1
-
-        if (!withLoop && isLastItem) {
+        if (!withLoop && activeItem === internalItems.length - 1) {
           setCarouselStyles({ x: currentSlidedValue })
         } else {
           handleSlideToNextItem()
         }
       } else if (prevItemTreshold) {
-        const isFirstItem = activeItem === 0
-
-        if (!withLoop && isFirstItem) {
+        if (!withLoop && activeItem === 0) {
           setCarouselStyles({ x: currentSlidedValue })
         } else {
           handleSlideToPrevItem()
@@ -77,7 +80,7 @@ export function ReactSpringCarousel<T extends Item>({
   function handleGoToItem({
     item,
     immediate = false,
-    onRest
+    onRest = () => {}
   }: {
     item: number
     immediate?: boolean
@@ -87,73 +90,98 @@ export function ReactSpringCarousel<T extends Item>({
       setActiveItem(item)
     }
 
+    isAnimating.current = true
+
     setCarouselStyles({
       x: -(getCarouselWrapperWidth() * item),
       config: {
         duration: immediate ? 0 : undefined
       },
-      onRest
+      onRest: () => {
+        isDragging.current = false
+        isAnimating.current = false
+        onRest()
+      }
     })
   }
 
   function handleSlideToPrevItem() {
-    if (!withLoop && activeItem === 0) {
+    if (
+      (!withLoop && activeItem === 0) ||
+      (isDragging.current && isAnimating.current)
+    ) {
       return
     }
 
     if (withLoop && activeItem === 0) {
-      handleGoToItem({
-        item: internalItems.length - 2,
-        immediate: true,
-        onRest: () => {
-          handleGoToItem({
-            item: internalItems.length - 3
-          })
-        }
-      })
-    } else {
-      handleGoToItem({
-        item: getPrevItem(),
-        onRest: () => {
-          if (withLoop && activeItem === 0) {
+      if (isDragging.current) {
+        handleGoToItem({
+          item: getPrevItem(),
+          onRest: () => {
             handleGoToItem({
-              item: internalItems.length - 2,
+              item: internalItems.length - 3,
               immediate: true
             })
+            setActiveItem(internalItems.length - 3)
           }
-        }
-      })
+        })
+      } else {
+        handleGoToItem({
+          item: internalItems.length - 2,
+          immediate: true,
+          onRest: () => {
+            handleGoToItem({
+              item: internalItems.length - 3
+            })
+          }
+        })
+      }
+      return
     }
+
+    handleGoToItem({
+      item: getPrevItem()
+    })
   }
 
   function handleSlideToNextItem() {
-    if (!withLoop && activeItem === internalItems.length - 1) {
+    if (
+      (!withLoop && activeItem === internalItems.length - 1) ||
+      (isDragging.current && isAnimating.current)
+    ) {
       return
     }
 
     if (withLoop && activeItem === internalItems.length - 3) {
-      handleGoToItem({
-        item: -1,
-        immediate: true,
-        onRest: () => {
-          handleGoToItem({
-            item: 0
-          })
-        }
-      })
-    } else {
-      handleGoToItem({
-        item: getNextItem(),
-        onRest: () => {
-          if (withLoop && activeItem === internalItems.length - 3) {
+      if (!isDragging.current) {
+        handleGoToItem({
+          item: -1,
+          immediate: true,
+          onRest: () => {
+            handleGoToItem({
+              item: 0
+            })
+          }
+        })
+      } else {
+        handleGoToItem({
+          item: getNextItem(),
+          onRest: () => {
             handleGoToItem({
               item: 0,
               immediate: true
             })
+            setActiveItem(0)
           }
-        }
-      })
+        })
+      }
+
+      return
     }
+
+    handleGoToItem({
+      item: getNextItem()
+    })
   }
 
   return (
