@@ -247,6 +247,11 @@ export function ReactSpringCarousel<T extends Item>({
     <ReactSpringCarouselContext.Provider
       value={{
         activeItem,
+        isFullscreen,
+        enableFullscreen: () => {
+          handleEnterFullscreen(mainCarouselWrapperRef.current!)
+        },
+        disableFullscreen: handleExitFullscreen,
         getIsAnimating: () => isAnimating.current,
         getIsDragging: () => isDragging.current,
         getIsNextItem: (id) => {
