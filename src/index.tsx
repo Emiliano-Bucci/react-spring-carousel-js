@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { useSpring } from 'react-spring'
+import { useSpring, config, SpringConfig } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
 import { Wrapper, CarouselWrapper, CarouselItemWrapper } from './index.styles'
 
@@ -12,12 +12,14 @@ interface Props<T extends Item> {
   withLoop?: boolean
   items: T[]
   draggingSlideTreshold?: number
+  springConfig?: SpringConfig
 }
 
 export function ReactSpringCarousel<T extends Item>({
   items,
   withLoop = false,
-  draggingSlideTreshold = 50
+  draggingSlideTreshold = 50,
+  springConfig = config.default
 }: Props<T>) {
   const internalItems = withLoop
     ? [items[items.length - 1], ...items, items[0]]
@@ -27,7 +29,8 @@ export function ReactSpringCarousel<T extends Item>({
   const isDragging = useRef(false)
   const isAnimating = useRef(false)
   const [carouselStyles, setCarouselStyles] = useSpring(() => ({
-    x: 0
+    x: 0,
+    config: springConfig
   }))
   const bindDrag = useDrag(({ dragging, last, movement: [mx] }) => {
     const currentSlidedValue = -(getCarouselWrapperWidth() * activeItem)
@@ -97,6 +100,7 @@ export function ReactSpringCarousel<T extends Item>({
     setCarouselStyles({
       x: -(getCarouselWrapperWidth() * item),
       config: {
+        ...springConfig,
         duration: immediate ? 0 : undefined
       },
       onRest: () => {
