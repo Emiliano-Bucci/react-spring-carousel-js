@@ -11,11 +11,13 @@ interface Item {
 interface Props<T extends Item> {
   withLoop?: boolean
   items: T[]
+  draggingSlideTreshold?: number
 }
 
 export function ReactSpringCarousel<T extends Item>({
   items,
-  withLoop = false
+  withLoop = false,
+  draggingSlideTreshold = 50
 }: Props<T>) {
   const internalItems = withLoop
     ? [items[items.length - 1], ...items, items[0]]
@@ -40,8 +42,8 @@ export function ReactSpringCarousel<T extends Item>({
     }
 
     if (last) {
-      const prevItemTreshold = mx > 50
-      const nextItemTreshold = mx < -50
+      const prevItemTreshold = mx > draggingSlideTreshold
+      const nextItemTreshold = mx < -draggingSlideTreshold
 
       if (nextItemTreshold) {
         if (!withLoop && activeItem === internalItems.length - 1) {
@@ -118,11 +120,11 @@ export function ReactSpringCarousel<T extends Item>({
         handleGoToItem({
           item: getPrevItem(),
           onRest: () => {
+            setActiveItem(internalItems.length - 3)
             handleGoToItem({
               item: internalItems.length - 3,
               immediate: true
             })
-            setActiveItem(internalItems.length - 3)
           }
         })
       } else {
@@ -167,11 +169,11 @@ export function ReactSpringCarousel<T extends Item>({
         handleGoToItem({
           item: getNextItem(),
           onRest: () => {
+            setActiveItem(0)
             handleGoToItem({
               item: 0,
               immediate: true
             })
-            setActiveItem(0)
           }
         })
       }
