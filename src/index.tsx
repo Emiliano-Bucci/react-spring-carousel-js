@@ -201,6 +201,10 @@ export function ReactSpringCarousel<T extends Item>({
           const itemIndex = items.findIndex((item) => item.id === id)
           return itemIndex - 1 === activeItem - 2
         },
+        getIsActiveItem: (id) => {
+          const itemIndex = items.findIndex((item) => item.id === id)
+          return itemIndex === activeItem
+        },
         slideToItem: (item, callback) => {
           handleGoToItem({
             item,

@@ -19,4 +19,5 @@ export interface ReactSpringCarouselContextProps {
   slideToItem?(item: number, callback?: VoidFunction): void
   getIsAnimating?(): boolean
   getIsDragging?(): boolean
+  getIsActiveItem?(id: string): boolean
 }

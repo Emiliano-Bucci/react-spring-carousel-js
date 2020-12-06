@@ -5,12 +5,9 @@ import {
 } from 'react-spring-carousel'
 
 function Comp() {
-  const { getIsPrevItem, getIsNextItem } = useContext(
-    ReactSpringCarouselContext
-  )
+  const { getIsActiveItem } = useContext(ReactSpringCarouselContext)
   console.log({
-    isNextItem: getIsNextItem('item-2'),
-    isPrevItem: getIsPrevItem('item-2')
+    isActiveItem: getIsActiveItem('item-2')
   })
 
   return <div>YOYOOO</div>
