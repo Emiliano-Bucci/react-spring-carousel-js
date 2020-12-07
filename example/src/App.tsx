@@ -1,19 +1,32 @@
-import React, { useContext } from 'react'
-import {
-  ReactSpringCarousel,
-  ReactSpringCarouselContext
-} from 'react-spring-carousel'
+import React from 'react'
+import { useReactSpringCarousel } from 'react-spring-carousel'
 
-function Comp() {
-  const { getIsActiveItem } = useContext(ReactSpringCarouselContext)
-  console.log({
-    isActiveItem: getIsActiveItem('item-2')
-  })
-
-  return <div>YOYOOO</div>
-}
+const items = [
+  {
+    id: 'item-1',
+    renderItem: (
+      <div
+        style={{
+          background: 'orange'
+        }}
+      >
+        FIRST
+      </div>
+    )
+  },
+  {
+    id: 'item-2',
+    renderItem: <div>YOYOYO</div>
+  },
+  { id: 'item-3', renderItem: <div>LAST</div> }
+]
 
 const App = () => {
+  const { reactSpringCarouselFragment } = useReactSpringCarousel({
+    items,
+    withLoop: false
+  })
+
   return (
     <div
       style={{
@@ -29,28 +42,7 @@ const App = () => {
           flex: 1
         }}
       >
-        <ReactSpringCarousel
-          withLoop
-          items={[
-            {
-              id: 'item-1',
-              renderItem: (
-                <div
-                  style={{
-                    background: 'orange'
-                  }}
-                >
-                  FIRST
-                </div>
-              )
-            },
-            {
-              id: 'item-2',
-              renderItem: <Comp />
-            },
-            { id: 'item-3', renderItem: <div>LAST</div> }
-          ]}
-        />
+        {reactSpringCarouselFragment}
       </div>
     </div>
   )

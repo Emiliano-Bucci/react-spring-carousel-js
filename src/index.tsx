@@ -1,25 +1,48 @@
 import React, { useState, useRef, createContext, useEffect } from 'react'
-import { useSpring, config } from 'react-spring'
+import { useSpring, config, SpringConfig } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
 import { Wrapper, CarouselWrapper, CarouselItemWrapper } from './index.styles'
-import {
-  Item,
-  Props,
-  ReactSpringCarouselContextProps as ContextProps
-} from './typings'
 import screenfull from 'screenfull'
 
-export const ReactSpringCarouselContext = createContext<ContextProps>({
-  activeItem: 0
-})
+type Item = {
+  id: string
+  renderItem: React.ReactNode
+}
 
-export function ReactSpringCarousel<T extends Item>({
+type Props = {
+  withLoop?: boolean
+  items: Item[]
+  draggingSlideTreshold?: number
+  springConfig?: SpringConfig
+  shouldResizeOnWindowResize?: boolean
+}
+
+type ReactSpringCarouselContextProps = {
+  activeItem: number
+  isFullscreen?: boolean
+  getIsPrevItem?(id: string): boolean
+  getIsNextItem?(id: string): boolean
+  slideToItem?(item: number, callback?: VoidFunction): void
+  getIsAnimating?(): boolean
+  getIsDragging?(): boolean
+  getIsActiveItem?(id: string): boolean
+  enableFullscreen?(): void
+  disableFullscreen?(): void
+}
+
+export const ReactSpringCarouselContext = createContext<ReactSpringCarouselContextProps>(
+  {
+    activeItem: 0
+  }
+)
+
+export function useReactSpringCarousel({
   items,
   withLoop = false,
   draggingSlideTreshold = 50,
   springConfig = config.default,
   shouldResizeOnWindowResize = true
-}: Props<T>) {
+}: Props) {
   const internalItems = withLoop
     ? [items[items.length - 1], ...items, items[0]]
     : items
@@ -254,7 +277,7 @@ export function ReactSpringCarousel<T extends Item>({
     })
   }
 
-  return (
+  const reactSpringCarouselFragment = (
     <ReactSpringCarouselContext.Provider
       value={{
         activeItem,
@@ -348,4 +371,8 @@ export function ReactSpringCarousel<T extends Item>({
       </Wrapper>
     </ReactSpringCarouselContext.Provider>
   )
+
+  return {
+    reactSpringCarouselFragment
+  }
 }
