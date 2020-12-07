@@ -1,10 +1,10 @@
 {
-  "name": "react-carousel-spring",
+  "name": "react-spring-carousel-js",
   "version": "0.0.1",
   "description": "A performant react-carousel powered by react-spring",
   "author": "Emiliano-Bucci",
   "license": "MIT",
-  "repository": "Emiliano-Bucci/react-carousel-spring",
+  "repository": "Emiliano-Bucci/react-spring-carousel-js",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/index.tsx",
