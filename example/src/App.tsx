@@ -80,8 +80,14 @@ const App = () => {
           flex: 1
         }}
       >
-        {carouselFragment}
-        {thumbs}
+        <div
+          style={{
+            maxWidth: 600
+          }}
+        >
+          {carouselFragment}
+          {thumbs}
+        </div>
       </div>
     </div>
   )

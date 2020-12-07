@@ -3,7 +3,6 @@ import React, {
   useRef,
   createContext,
   useEffect,
-  Fragment,
   forwardRef
 } from 'react'
 import { useSpring, config, SpringConfig, animated } from 'react-spring'
@@ -37,10 +36,17 @@ function InternalThumbsWrapper({ children }: { children: React.ReactNode }) {
     <div
       style={{
         display: 'flex',
-        width: '100%'
+        padding: 32
       }}
     >
-      {children}
+      <div
+        style={{
+          display: 'flex',
+          background: 'red'
+        }}
+      >
+        {children}
+      </div>
     </div>
   )
 }
@@ -51,7 +57,11 @@ type Item = {
   renderThumb: React.ReactNode
 }
 
-type CustomElement = React.FC<{ children: React.ReactNode }>
+type CustomElement = React.ForwardRefExoticComponent<
+  {
+    children: React.ReactNode
+  } & React.RefAttributes<HTMLDivElement>
+>
 
 type Props = {
   withLoop?: boolean
@@ -60,13 +70,8 @@ type Props = {
   springConfig?: SpringConfig
   shouldResizeOnWindowResize?: boolean
   withTumbs?: boolean
-  removeSingleThumbWrapper?: boolean
-  CustomWrapper?: React.ForwardRefExoticComponent<
-    {
-      children: React.ReactNode
-    } & React.RefAttributes<HTMLDivElement>
-  >
-  CustomThumbsWrapper?: CustomElement
+  CustomWrapper?: CustomElement
+  CustomThumbsWrapper?: React.FC<{ children: React.ReactNode }>
   onItemStartToChange?(): void
   onItemChange?(): void
 }
@@ -109,7 +114,6 @@ export function useReactSpringCarousel({
   draggingSlideTreshold = 50,
   springConfig = config.default,
   shouldResizeOnWindowResize = true,
-  removeSingleThumbWrapper = false,
   CustomThumbsWrapper,
   CustomWrapper,
   onItemStartToChange = () => {},
@@ -121,6 +125,7 @@ export function useReactSpringCarousel({
   const [activeItem, setActiveItem] = useState(0)
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
   const carouselWrapperRef = useRef<HTMLDivElement | null>(null)
+  const thumbsWrapperRef = useRef<HTMLDivElement | null>(null)
   const isDragging = useRef(false)
   const isAnimating = useRef(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -128,6 +133,12 @@ export function useReactSpringCarousel({
     x: 0,
     config: springConfig
   }))
+  const [thumbWrapperScrollStyles, setThumbWrapperScrollStyles] = useSpring(
+    () => ({
+      x: 0,
+      config: springConfig
+    })
+  )
   const bindDrag = useDrag(({ dragging, last, movement: [mx] }) => {
     const currentSlidedValue = -(getCarouselWrapperWidth() * activeItem)
 
@@ -161,6 +172,28 @@ export function useReactSpringCarousel({
       }
     }
   })
+
+  useEffect(() => {
+    const currentThumbItemNode = document.getElementById(
+      `thumb-${items[activeItem].id}`
+    )
+
+    if (currentThumbItemNode) {
+      const thumbLeftPosition =
+        currentThumbItemNode.offsetLeft + currentThumbItemNode.offsetWidth / 2
+      const tumbScrollWidth =
+        thumbsWrapperRef.current!.getBoundingClientRect().width / 2
+
+      setThumbWrapperScrollStyles({
+        from: {
+          x: thumbsWrapperRef.current!.scrollLeft
+        },
+        to: {
+          x: thumbLeftPosition - tumbScrollWidth
+        }
+      })
+    }
+  }, [activeItem, items, setThumbWrapperScrollStyles])
 
   useEffect(() => {
     const _carouselwrapperRef = mainCarouselWrapperRef.current
@@ -394,24 +427,29 @@ export function useReactSpringCarousel({
   const CarouselWrapper = CustomWrapper || InternalCarouselWrapper
 
   const thumbs = (
-    <ThumbsWrapper>
-      {items.map((item, index) => {
-        if (removeSingleThumbWrapper) {
-          return (
-            <Fragment key={`thumb-${item.id}`}>{item.renderThumb}</Fragment>
-          )
-        }
+    <animated.div
+      scrollLeft={thumbWrapperScrollStyles.x}
+      ref={thumbsWrapperRef}
+      style={{
+        overflowX: 'auto'
+      }}
+    >
+      <ThumbsWrapper>
+        {items.map((item, index) => {
+          const thumbId = `thumb-${item.id}`
 
-        return (
-          <div
-            key={`thumb-${item.id}`}
-            onClick={() => slideToItem({ item: index })}
-          >
-            {item.renderThumb}
-          </div>
-        )
-      })}
-    </ThumbsWrapper>
+          return (
+            <div
+              key={thumbId}
+              id={thumbId}
+              onClick={() => slideToItem({ item: index })}
+            >
+              {item.renderThumb}
+            </div>
+          )
+        })}
+      </ThumbsWrapper>
+    </animated.div>
   )
 
   const contextProps: ReactSpringCarouselContextProps = {
