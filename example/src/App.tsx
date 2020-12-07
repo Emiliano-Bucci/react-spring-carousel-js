@@ -1,18 +1,14 @@
 import React from 'react'
 import { useReactSpringCarousel } from 'react-spring-carousel'
 
+function Comp() {
+  return <div>asdsadasd</div>
+}
+
 const items = [
   {
     id: 'item-1',
-    renderItem: (
-      <div
-        style={{
-          background: 'orange'
-        }}
-      >
-        FIRST
-      </div>
-    ),
+    renderItem: <Comp />,
     renderThumb: <div>Thumb FIRST</div>
   },
   {
