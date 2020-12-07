@@ -329,6 +329,21 @@ export function useReactSpringCarousel({
     return isDragging.current
   }
 
+  function getIsNextItem(id: string) {
+    const itemIndex = items.findIndex((item) => item.id === id)
+    return itemIndex - 1 === activeItem
+  }
+
+  function getIsPrevItem(id: string) {
+    const itemIndex = items.findIndex((item) => item.id === id)
+    return itemIndex - 1 === activeItem - 2
+  }
+
+  function getIsActiveItem(id: string) {
+    const itemIndex = items.findIndex((item) => item.id === id)
+    return itemIndex === activeItem
+  }
+
   const ThumbsWrapper = CustomThumbsWrapper || InternalThumbsWrapper
 
   const thumbs = (
@@ -352,46 +367,27 @@ export function useReactSpringCarousel({
     </ThumbsWrapper>
   )
 
+  const contextProps: ReactSpringCarouselContextProps = {
+    activeItem,
+    isFullscreen,
+    enterFullscreen,
+    exitFullscreen,
+    getIsAnimating,
+    getIsDragging,
+    getIsNextItem,
+    getIsPrevItem,
+    getIsActiveItem,
+    slideToItem: (item, callback) => {
+      slideToItem({
+        item,
+        onRest: callback
+      })
+    }
+  }
+
   const carouselFragment = (
-    <ReactSpringCarouselContext.Provider
-      value={{
-        activeItem,
-        isFullscreen,
-        enterFullscreen,
-        exitFullscreen,
-        getIsAnimating,
-        getIsDragging,
-        getIsNextItem: (id) => {
-          const itemIndex = items.findIndex((item) => item.id === id)
-          return itemIndex - 1 === activeItem
-        },
-        getIsPrevItem: (id) => {
-          const itemIndex = items.findIndex((item) => item.id === id)
-          return itemIndex - 1 === activeItem - 2
-        },
-        getIsActiveItem: (id) => {
-          const itemIndex = items.findIndex((item) => item.id === id)
-          return itemIndex === activeItem
-        },
-        slideToItem: (item, callback) => {
-          slideToItem({
-            item,
-            onRest: callback
-          })
-        }
-      }}
-    >
+    <ReactSpringCarouselContext.Provider value={contextProps}>
       <Wrapper ref={mainCarouselWrapperRef}>
-        <div
-          onClick={handleSlideToPrevItem}
-          style={{
-            position: 'relative',
-            background: 'blue',
-            zIndex: 100
-          }}
-        >
-          prev item
-        </div>
         <CarouselWrapper
           {...bindDrag()}
           style={carouselStyles}
@@ -411,16 +407,6 @@ export function useReactSpringCarousel({
             </CarouselItemWrapper>
           ))}
         </CarouselWrapper>
-        <div
-          style={{
-            position: 'relative',
-            background: 'blue',
-            zIndex: 100
-          }}
-          onClick={handleSlideToNextItem}
-        >
-          next item
-        </div>
       </Wrapper>
     </ReactSpringCarouselContext.Provider>
   )
@@ -428,11 +414,6 @@ export function useReactSpringCarousel({
   return {
     carouselFragment,
     thumbs,
-    enterFullscreen,
-    exitFullscreen,
-    isFullscreen,
-    getIsAnimating,
-    getIsDragging,
-    slideToItem
+    ...contextProps
   }
 }
