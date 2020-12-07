@@ -1,10 +1,6 @@
 import React from 'react'
 import { useReactSpringCarousel } from 'react-spring-carousel'
 
-const CustomThumbsWrapper: React.FC<{ children: React.ReactNode }> = ({
-  children
-}) => <div>{children}</div>
-
 const items = [
   {
     id: 'item-1',
@@ -68,10 +64,9 @@ const items = [
 ]
 
 const App = () => {
-  const { reactSpringCarouselFragment, thumbs } = useReactSpringCarousel({
+  const { carouselFragment, thumbs } = useReactSpringCarousel({
     items,
-    withLoop: false,
-    CustomThumbsWrapper
+    withLoop: false
   })
 
   return (
@@ -89,7 +84,7 @@ const App = () => {
           flex: 1
         }}
       >
-        {reactSpringCarouselFragment}
+        {carouselFragment}
         {thumbs}
       </div>
     </div>

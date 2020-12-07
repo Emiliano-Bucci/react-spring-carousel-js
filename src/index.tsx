@@ -27,6 +27,8 @@ type Props = {
   draggingSlideTreshold?: number
   springConfig?: SpringConfig
   shouldResizeOnWindowResize?: boolean
+  withTumbs?: boolean
+  removeSingleThumbWrapper?: boolean
   CustomThumbsWrapper?: React.FC<{ children: React.ReactNode }>
 }
 
@@ -55,6 +57,7 @@ export function useReactSpringCarousel({
   draggingSlideTreshold = 50,
   springConfig = config.default,
   shouldResizeOnWindowResize = true,
+  removeSingleThumbWrapper = false,
   CustomThumbsWrapper
 }: Props) {
   const internalItems = withLoop
@@ -295,13 +298,26 @@ export function useReactSpringCarousel({
 
   const thumbs = (
     <ThumbsWrapper>
-      {items.map((item) => (
-        <Fragment key={`thumb-${item.id}`}>{item.renderThumb}</Fragment>
-      ))}
+      {items.map((item, index) => {
+        if (removeSingleThumbWrapper) {
+          return (
+            <Fragment key={`thumb-${item.id}`}>{item.renderThumb}</Fragment>
+          )
+        }
+
+        return (
+          <div
+            key={`thumb-${item.id}`}
+            onClick={() => handleGoToItem({ item: index })}
+          >
+            {item.renderThumb}
+          </div>
+        )
+      })}
     </ThumbsWrapper>
   )
 
-  const reactSpringCarouselFragment = (
+  const carouselFragment = (
     <ReactSpringCarouselContext.Provider
       value={{
         activeItem,
@@ -397,7 +413,7 @@ export function useReactSpringCarousel({
   )
 
   return {
-    reactSpringCarouselFragment,
+    carouselFragment,
     thumbs
   }
 }
