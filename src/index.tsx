@@ -72,6 +72,7 @@ type Props = {
   withTumbs?: boolean
   CustomWrapper?: CustomElement
   CustomThumbsWrapper?: React.FC<{ children: React.ReactNode }>
+  enableThumbsWrapperScroll?: boolean
   onItemStartToChange?(): void
   onItemChange?(): void
 }
@@ -117,7 +118,8 @@ export function useReactSpringCarousel({
   CustomThumbsWrapper,
   CustomWrapper,
   onItemStartToChange = () => {},
-  onItemChange = () => {}
+  onItemChange = () => {},
+  enableThumbsWrapperScroll = true
 }: Props) {
   const internalItems = withLoop
     ? [items[items.length - 1], ...items, items[0]]
@@ -174,26 +176,33 @@ export function useReactSpringCarousel({
   })
 
   useEffect(() => {
-    const currentThumbItemNode = document.getElementById(
-      `thumb-${items[activeItem].id}`
-    )
+    if (enableThumbsWrapperScroll) {
+      const currentThumbItemNode = document.getElementById(
+        `thumb-${items[activeItem].id}`
+      )
 
-    if (currentThumbItemNode) {
-      const thumbLeftPosition =
-        currentThumbItemNode.offsetLeft + currentThumbItemNode.offsetWidth / 2
-      const tumbScrollWidth =
-        thumbsWrapperRef.current!.getBoundingClientRect().width / 2
+      if (currentThumbItemNode) {
+        const thumbLeftPosition =
+          currentThumbItemNode.offsetLeft + currentThumbItemNode.offsetWidth / 2
+        const tumbScrollWidth =
+          thumbsWrapperRef.current!.getBoundingClientRect().width / 2
 
-      setThumbWrapperScrollStyles({
-        from: {
-          x: thumbsWrapperRef.current!.scrollLeft
-        },
-        to: {
-          x: thumbLeftPosition - tumbScrollWidth
-        }
-      })
+        setThumbWrapperScrollStyles({
+          from: {
+            x: thumbsWrapperRef.current!.scrollLeft
+          },
+          to: {
+            x: thumbLeftPosition - tumbScrollWidth
+          }
+        })
+      }
     }
-  }, [activeItem, items, setThumbWrapperScrollStyles])
+  }, [
+    activeItem,
+    enableThumbsWrapperScroll,
+    items,
+    setThumbWrapperScrollStyles
+  ])
 
   useEffect(() => {
     const _carouselwrapperRef = mainCarouselWrapperRef.current
