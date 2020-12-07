@@ -3,23 +3,55 @@ import React, {
   useRef,
   createContext,
   useEffect,
-  Fragment
+  Fragment,
+  forwardRef
 } from 'react'
-import { useSpring, config, SpringConfig } from 'react-spring'
+import { useSpring, config, SpringConfig, animated } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
-import {
-  Wrapper,
-  CarouselWrapper,
-  CarouselItemWrapper,
-  InternalThumbsWrapper
-} from './index.styles'
 import screenfull from 'screenfull'
+
+const InternalCarouselWrapper = forwardRef(
+  (
+    { children }: { children: React.ReactNode },
+    ref: React.ForwardedRef<HTMLDivElement>
+  ) => {
+    return (
+      <div
+        ref={ref}
+        style={{
+          display: 'flex',
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          overflow: 'hidden'
+        }}
+      >
+        {children}
+      </div>
+    )
+  }
+)
+
+function InternalThumbsWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        width: '100%'
+      }}
+    >
+      {children}
+    </div>
+  )
+}
 
 type Item = {
   id: string
   renderItem: React.ReactNode
   renderThumb: React.ReactNode
 }
+
+type CustomElement = React.FC<{ children: React.ReactNode }>
 
 type Props = {
   withLoop?: boolean
@@ -29,7 +61,12 @@ type Props = {
   shouldResizeOnWindowResize?: boolean
   withTumbs?: boolean
   removeSingleThumbWrapper?: boolean
-  CustomThumbsWrapper?: React.FC<{ children: React.ReactNode }>
+  CustomWrapper?: React.ForwardRefExoticComponent<
+    {
+      children: React.ReactNode
+    } & React.RefAttributes<HTMLDivElement>
+  >
+  CustomThumbsWrapper?: CustomElement
   onItemStartToChange?(): void
   onItemChange?(): void
 }
@@ -45,6 +82,8 @@ type ReactSpringCarouselContextProps = {
   getIsActiveItem(id: string): boolean
   enterFullscreen(): void
   exitFullscreen(): void
+  slideToPrevItem(): void
+  slideToNextItem(): void
 }
 
 export const ReactSpringCarouselContext = createContext<ReactSpringCarouselContextProps>(
@@ -58,7 +97,9 @@ export const ReactSpringCarouselContext = createContext<ReactSpringCarouselConte
     getIsDragging: () => false,
     getIsActiveItem: () => false,
     enterFullscreen: () => {},
-    exitFullscreen: () => {}
+    exitFullscreen: () => {},
+    slideToPrevItem: () => {},
+    slideToNextItem: () => {}
   }
 )
 
@@ -70,6 +111,7 @@ export function useReactSpringCarousel({
   shouldResizeOnWindowResize = true,
   removeSingleThumbWrapper = false,
   CustomThumbsWrapper,
+  CustomWrapper,
   onItemStartToChange = () => {},
   onItemChange = () => {}
 }: Props) {
@@ -106,13 +148,13 @@ export function useReactSpringCarousel({
         if (!withLoop && activeItem === internalItems.length - 1) {
           setCarouselStyles({ x: currentSlidedValue })
         } else {
-          handleSlideToNextItem()
+          slideToNextItem()
         }
       } else if (prevItemTreshold) {
         if (!withLoop && activeItem === 0) {
           setCarouselStyles({ x: currentSlidedValue })
         } else {
-          handleSlideToPrevItem()
+          slideToPrevItem()
         }
       } else {
         setCarouselStyles({ x: currentSlidedValue })
@@ -228,7 +270,7 @@ export function useReactSpringCarousel({
     })
   }
 
-  function handleSlideToPrevItem() {
+  function slideToPrevItem() {
     if (
       (!withLoop && activeItem === 0) ||
       (isDragging.current && isAnimating.current)
@@ -272,7 +314,7 @@ export function useReactSpringCarousel({
     })
   }
 
-  function handleSlideToNextItem() {
+  function slideToNextItem() {
     if (
       (!withLoop && activeItem === internalItems.length - 1) ||
       (isDragging.current && isAnimating.current)
@@ -329,22 +371,27 @@ export function useReactSpringCarousel({
     return isDragging.current
   }
 
+  function findItemIndex(id: string) {
+    return items.findIndex((item) => item.id === id)
+  }
+
   function getIsNextItem(id: string) {
-    const itemIndex = items.findIndex((item) => item.id === id)
+    const itemIndex = findItemIndex(id)
     return itemIndex - 1 === activeItem
   }
 
   function getIsPrevItem(id: string) {
-    const itemIndex = items.findIndex((item) => item.id === id)
+    const itemIndex = findItemIndex(id)
     return itemIndex - 1 === activeItem - 2
   }
 
   function getIsActiveItem(id: string) {
-    const itemIndex = items.findIndex((item) => item.id === id)
+    const itemIndex = findItemIndex(id)
     return itemIndex === activeItem
   }
 
   const ThumbsWrapper = CustomThumbsWrapper || InternalThumbsWrapper
+  const CarouselWrapper = CustomWrapper || InternalCarouselWrapper
 
   const thumbs = (
     <ThumbsWrapper>
@@ -377,6 +424,8 @@ export function useReactSpringCarousel({
     getIsNextItem,
     getIsPrevItem,
     getIsActiveItem,
+    slideToPrevItem,
+    slideToNextItem,
     slideToItem: (item, callback) => {
       slideToItem({
         item,
@@ -387,10 +436,16 @@ export function useReactSpringCarousel({
 
   const carouselFragment = (
     <ReactSpringCarouselContext.Provider value={contextProps}>
-      <Wrapper ref={mainCarouselWrapperRef}>
-        <CarouselWrapper
+      <CarouselWrapper ref={mainCarouselWrapperRef}>
+        <animated.div
           {...bindDrag()}
-          style={carouselStyles}
+          style={{
+            display: 'flex',
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+            ...carouselStyles
+          }}
           ref={(ref) => {
             if (ref) {
               carouselWrapperRef.current = ref
@@ -402,12 +457,17 @@ export function useReactSpringCarousel({
           }}
         >
           {internalItems.map(({ id, renderItem }, index) => (
-            <CarouselItemWrapper key={`${id}-${index}`}>
+            <div
+              key={`${id}-${index}`}
+              style={{
+                flex: '1 0 100%'
+              }}
+            >
               {renderItem}
-            </CarouselItemWrapper>
+            </div>
           ))}
-        </CarouselWrapper>
-      </Wrapper>
+        </animated.div>
+      </CarouselWrapper>
     </ReactSpringCarouselContext.Provider>
   )
 
