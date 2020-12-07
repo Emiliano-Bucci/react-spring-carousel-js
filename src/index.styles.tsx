@@ -3,6 +3,7 @@ import { animated } from 'react-spring'
 
 export const Wrapper = styled.div`
   display: flex;
+  position: relative;
   width: 100%;
   height: 100%;
   background-color: orange;
@@ -20,4 +21,10 @@ export const CarouselWrapper = styled(animated.div)`
 export const CarouselItemWrapper = styled.div`
   flex: 1 0 100%;
   background-color: red;
+`
+
+export const InternalThumbsWrapper = styled.div`
+  display: flex;
+  background-color: olive;
+  width: 100%;
 `

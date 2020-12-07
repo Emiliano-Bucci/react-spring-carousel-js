@@ -1,12 +1,24 @@
-import React, { useState, useRef, createContext, useEffect } from 'react'
+import React, {
+  useState,
+  useRef,
+  createContext,
+  useEffect,
+  Fragment
+} from 'react'
 import { useSpring, config, SpringConfig } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
-import { Wrapper, CarouselWrapper, CarouselItemWrapper } from './index.styles'
+import {
+  Wrapper,
+  CarouselWrapper,
+  CarouselItemWrapper,
+  InternalThumbsWrapper
+} from './index.styles'
 import screenfull from 'screenfull'
 
 type Item = {
   id: string
   renderItem: React.ReactNode
+  renderThumb: React.ReactNode
 }
 
 type Props = {
@@ -15,6 +27,7 @@ type Props = {
   draggingSlideTreshold?: number
   springConfig?: SpringConfig
   shouldResizeOnWindowResize?: boolean
+  CustomThumbsWrapper?: React.FC<{ children: React.ReactNode }>
 }
 
 type ReactSpringCarouselContextProps = {
@@ -41,7 +54,8 @@ export function useReactSpringCarousel({
   withLoop = false,
   draggingSlideTreshold = 50,
   springConfig = config.default,
-  shouldResizeOnWindowResize = true
+  shouldResizeOnWindowResize = true,
+  CustomThumbsWrapper
 }: Props) {
   const internalItems = withLoop
     ? [items[items.length - 1], ...items, items[0]]
@@ -277,6 +291,16 @@ export function useReactSpringCarousel({
     })
   }
 
+  const ThumbsWrapper = CustomThumbsWrapper || InternalThumbsWrapper
+
+  const thumbs = (
+    <ThumbsWrapper>
+      {items.map((item) => (
+        <Fragment key={`thumb-${item.id}`}>{item.renderThumb}</Fragment>
+      ))}
+    </ThumbsWrapper>
+  )
+
   const reactSpringCarouselFragment = (
     <ReactSpringCarouselContext.Provider
       value={{
@@ -310,12 +334,12 @@ export function useReactSpringCarousel({
     >
       <Wrapper ref={mainCarouselWrapperRef}>
         <div
+          onClick={() => handleEnterFullscreen(mainCarouselWrapperRef.current!)}
           style={{
             color: 'yellow',
-            zIndex: 12321312,
+            zIndex: 10,
             background: 'brown'
           }}
-          onClick={() => handleEnterFullscreen(mainCarouselWrapperRef.current!)}
         >
           Enter FULLSCREEN
         </div>
@@ -359,12 +383,12 @@ export function useReactSpringCarousel({
           next item
         </div>
         <div
+          onClick={handleExitFullscreen}
           style={{
             color: 'yellow',
             background: 'brown',
-            zIndex: 12321312
+            zIndex: 10
           }}
-          onClick={handleExitFullscreen}
         >
           EXIT FULLSCREEN
         </div>
@@ -373,6 +397,7 @@ export function useReactSpringCarousel({
   )
 
   return {
-    reactSpringCarouselFragment
+    reactSpringCarouselFragment,
+    thumbs
   }
 }
