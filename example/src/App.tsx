@@ -8,8 +8,7 @@ function Comp() {
 const items = [
   {
     id: 'item-1',
-    renderItem: <Comp />,
-    renderThumb: <div>Thumb FIRST</div>
+    renderItem: <Comp />
   },
   {
     id: 'item-1a',
@@ -21,8 +20,7 @@ const items = [
       >
         FIRST
       </div>
-    ),
-    renderThumb: <div>Thumb FIRST</div>
+    )
   },
   {
     id: 'item-1b',
@@ -34,35 +32,30 @@ const items = [
       >
         FIRST
       </div>
-    ),
-    renderThumb: <div>Thumb FIRST</div>
+    )
   },
   {
     id: 'item-2',
-    renderItem: <div>YOYOYO</div>,
-    renderThumb: <div>Thumb YOYOYO</div>
+    renderItem: <div>YOYOYO</div>
   },
   {
     id: 'item-3',
-    renderItem: <div>LAST</div>,
-    renderThumb: <div>Thumb LAST</div>
+    renderItem: <div>LAST</div>
   },
   {
     id: 'item-22',
-    renderItem: <div>YOYOYOqwe</div>,
-    renderThumb: <div>Thumb YOYOYO12312</div>
+    renderItem: <div>YOYOYOqwe</div>
   },
   {
     id: 'item-3a',
-    renderItem: <div>LASTa</div>,
-    renderThumb: <div>Thumb LAST</div>
+    renderItem: <div>LASTa</div>
   }
 ]
 
 const App = () => {
   const { carouselFragment, thumbs } = useReactSpringCarousel({
     items,
-    withLoop: false
+    withTumbs: false
   })
 
   return (

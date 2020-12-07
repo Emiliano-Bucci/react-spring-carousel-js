@@ -8,6 +8,7 @@ import React, {
 import { useSpring, config, SpringConfig, animated } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
 import screenfull from 'screenfull'
+import { useMount } from './index.utils'
 
 const InternalCarouselWrapper = forwardRef(
   (
@@ -41,8 +42,7 @@ function InternalThumbsWrapper({ children }: { children: React.ReactNode }) {
     >
       <div
         style={{
-          display: 'flex',
-          background: 'red'
+          display: 'flex'
         }}
       >
         {children}
@@ -54,7 +54,7 @@ function InternalThumbsWrapper({ children }: { children: React.ReactNode }) {
 type Item = {
   id: string
   renderItem: React.ReactNode
-  renderThumb: React.ReactNode
+  renderThumb?: React.ReactNode
 }
 
 type CustomElement = React.ForwardRefExoticComponent<
@@ -119,6 +119,7 @@ export function useReactSpringCarousel({
   CustomWrapper,
   onItemStartToChange = () => {},
   onItemChange = () => {},
+  withTumbs = true,
   enableThumbsWrapperScroll = true
 }: Props) {
   const internalItems = withLoop
@@ -171,6 +172,18 @@ export function useReactSpringCarousel({
         }
       } else {
         setCarouselStyles({ x: currentSlidedValue })
+      }
+    }
+  })
+
+  useMount(() => {
+    if (withTumbs) {
+      const missingThumbs = items.some((item) => !item.renderThumb)
+
+      if (missingThumbs) {
+        throw new Error(
+          'The renderThumb property is missing in one or more items. You need to add the renderThumb property to every item of the carousel when withThumbs prop is true.'
+        )
       }
     }
   })
@@ -435,7 +448,7 @@ export function useReactSpringCarousel({
   const ThumbsWrapper = CustomThumbsWrapper || InternalThumbsWrapper
   const CarouselWrapper = CustomWrapper || InternalCarouselWrapper
 
-  const thumbs = (
+  const thumbs = withTumbs ? (
     <animated.div
       scrollLeft={thumbWrapperScrollStyles.x}
       ref={thumbsWrapperRef}
@@ -459,7 +472,7 @@ export function useReactSpringCarousel({
         })}
       </ThumbsWrapper>
     </animated.div>
-  )
+  ) : null
 
   const contextProps: ReactSpringCarouselContextProps = {
     activeItem,
