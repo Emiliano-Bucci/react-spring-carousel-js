@@ -43,8 +43,8 @@ type ReactSpringCarouselContextProps = {
   getIsAnimating(): boolean
   getIsDragging(): boolean
   getIsActiveItem(id: string): boolean
-  enableFullscreen(): void
-  disableFullscreen(): void
+  enterFullscreen(): void
+  exitFullscreen(): void
 }
 
 export const ReactSpringCarouselContext = createContext<ReactSpringCarouselContextProps>(
@@ -57,8 +57,8 @@ export const ReactSpringCarouselContext = createContext<ReactSpringCarouselConte
     getIsAnimating: () => false,
     getIsDragging: () => false,
     getIsActiveItem: () => false,
-    enableFullscreen: () => {},
-    disableFullscreen: () => {}
+    enterFullscreen: () => {},
+    exitFullscreen: () => {}
   }
 )
 
@@ -177,7 +177,7 @@ export function useReactSpringCarousel({
     }
   }
 
-  function handleExitFullscreen() {
+  function exitFullscreen() {
     if (screenfull.isEnabled) {
       screenfull.exit()
     }
@@ -199,7 +199,7 @@ export function useReactSpringCarousel({
     return carouselWrapperRef.current.getBoundingClientRect().width
   }
 
-  function handleGoToItem({
+  function slideToItem({
     item,
     immediate = false,
     onRest = () => {}
@@ -240,11 +240,11 @@ export function useReactSpringCarousel({
 
     if (withLoop && activeItem === 0) {
       if (isDragging.current) {
-        handleGoToItem({
+        slideToItem({
           item: getPrevItem(),
           onRest: () => {
             setActiveItem(internalItems.length - 3)
-            handleGoToItem({
+            slideToItem({
               item: internalItems.length - 3,
               immediate: true,
               onRest: onItemChange
@@ -252,11 +252,11 @@ export function useReactSpringCarousel({
           }
         })
       } else {
-        handleGoToItem({
+        slideToItem({
           item: internalItems.length - 2,
           immediate: true,
           onRest: () => {
-            handleGoToItem({
+            slideToItem({
               item: internalItems.length - 3,
               onRest: onItemChange
             })
@@ -266,7 +266,7 @@ export function useReactSpringCarousel({
       return
     }
 
-    handleGoToItem({
+    slideToItem({
       item: getPrevItem(),
       onRest: onItemChange
     })
@@ -284,22 +284,22 @@ export function useReactSpringCarousel({
 
     if (withLoop && activeItem === internalItems.length - 3) {
       if (!isDragging.current) {
-        handleGoToItem({
+        slideToItem({
           item: -1,
           immediate: true,
           onRest: () => {
-            handleGoToItem({
+            slideToItem({
               item: 0,
               onRest: onItemChange
             })
           }
         })
       } else {
-        handleGoToItem({
+        slideToItem({
           item: getNextItem(),
           onRest: () => {
             setActiveItem(0)
-            handleGoToItem({
+            slideToItem({
               item: 0,
               immediate: true,
               onRest: onItemChange
@@ -311,10 +311,22 @@ export function useReactSpringCarousel({
       return
     }
 
-    handleGoToItem({
+    slideToItem({
       item: getNextItem(),
       onRest: onItemChange
     })
+  }
+
+  function enterFullscreen() {
+    handleEnterFullscreen(mainCarouselWrapperRef.current!)
+  }
+
+  function getIsAnimating() {
+    return isAnimating.current
+  }
+
+  function getIsDragging() {
+    return isDragging.current
   }
 
   const ThumbsWrapper = CustomThumbsWrapper || InternalThumbsWrapper
@@ -331,7 +343,7 @@ export function useReactSpringCarousel({
         return (
           <div
             key={`thumb-${item.id}`}
-            onClick={() => handleGoToItem({ item: index })}
+            onClick={() => slideToItem({ item: index })}
           >
             {item.renderThumb}
           </div>
@@ -345,12 +357,10 @@ export function useReactSpringCarousel({
       value={{
         activeItem,
         isFullscreen,
-        enableFullscreen: () => {
-          handleEnterFullscreen(mainCarouselWrapperRef.current!)
-        },
-        disableFullscreen: handleExitFullscreen,
-        getIsAnimating: () => isAnimating.current,
-        getIsDragging: () => isDragging.current,
+        enterFullscreen,
+        exitFullscreen,
+        getIsAnimating,
+        getIsDragging,
         getIsNextItem: (id) => {
           const itemIndex = items.findIndex((item) => item.id === id)
           return itemIndex - 1 === activeItem
@@ -364,7 +374,7 @@ export function useReactSpringCarousel({
           return itemIndex === activeItem
         },
         slideToItem: (item, callback) => {
-          handleGoToItem({
+          slideToItem({
             item,
             onRest: callback
           })
@@ -372,16 +382,6 @@ export function useReactSpringCarousel({
       }}
     >
       <Wrapper ref={mainCarouselWrapperRef}>
-        <div
-          onClick={() => handleEnterFullscreen(mainCarouselWrapperRef.current!)}
-          style={{
-            color: 'yellow',
-            zIndex: 10,
-            background: 'brown'
-          }}
-        >
-          Enter FULLSCREEN
-        </div>
         <div
           onClick={handleSlideToPrevItem}
           style={{
@@ -421,22 +421,18 @@ export function useReactSpringCarousel({
         >
           next item
         </div>
-        <div
-          onClick={handleExitFullscreen}
-          style={{
-            color: 'yellow',
-            background: 'brown',
-            zIndex: 10
-          }}
-        >
-          EXIT FULLSCREEN
-        </div>
       </Wrapper>
     </ReactSpringCarouselContext.Provider>
   )
 
   return {
     carouselFragment,
-    thumbs
+    thumbs,
+    enterFullscreen,
+    exitFullscreen,
+    isFullscreen,
+    getIsAnimating,
+    getIsDragging,
+    slideToItem
   }
 }
