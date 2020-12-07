@@ -448,7 +448,7 @@ export function useReactSpringCarousel({
   const ThumbsWrapper = CustomThumbsWrapper || InternalThumbsWrapper
   const CarouselWrapper = CustomWrapper || InternalCarouselWrapper
 
-  const thumbs = withTumbs ? (
+  const thumbsFragment = withTumbs ? (
     <animated.div
       scrollLeft={thumbWrapperScrollStyles.x}
       ref={thumbsWrapperRef}
@@ -533,7 +533,7 @@ export function useReactSpringCarousel({
 
   return {
     carouselFragment,
-    thumbs,
+    thumbsFragment,
     ...contextProps
   }
 }

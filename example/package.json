@@ -1,5 +1,5 @@
 {
-  "name": "react-spring-carousel-example",
+  "name": "react-spring-carousel-js-example",
   "homepage": ".",
   "version": "0.0.0",
   "private": true,
@@ -21,7 +21,7 @@
     "react-dom": "file:../node_modules/react-dom",
     "react-scripts": "file:../node_modules/react-scripts",
     "typescript": "file:../node_modules/typescript",
-    "react-spring-carousel": "file:.."
+    "react-spring-carousel-js": "file:.."
   },
   "devDependencies": {
     "@babel/plugin-syntax-object-rest-spread": "^7.8.3"

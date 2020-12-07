@@ -1,63 +1,98 @@
-import React from 'react'
-import { useReactSpringCarousel } from 'react-spring-carousel'
+import React, { useContext } from 'react'
+import {
+  ReactSpringCarouselContext,
+  useReactSpringCarousel
+} from 'react-spring-carousel-js'
 
-function Comp() {
-  return <div>asdsadasd</div>
+function Comp1() {
+  const { activeItem, slideToItem } = useContext(ReactSpringCarouselContext)
+
+  console.log({ activeItem })
+
+  return <div onClick={() => slideToItem(1)}>asdsadasd</div>
 }
 
-const items = [
+const items1 = [
   {
     id: 'item-1',
-    renderItem: <Comp />
-  },
-  {
-    id: 'item-1a',
-    renderItem: (
-      <div
-        style={{
-          background: 'brown'
-        }}
-      >
-        FIRST
-      </div>
-    )
-  },
-  {
-    id: 'item-1b',
-    renderItem: (
-      <div
-        style={{
-          background: 'orange'
-        }}
-      >
-        FIRST
-      </div>
-    )
+    renderItem: <Comp1 />
   },
   {
     id: 'item-2',
-    renderItem: <div>YOYOYO</div>
+    renderItem: <div>Item 2</div>
   },
   {
     id: 'item-3',
-    renderItem: <div>LAST</div>
+    renderItem: <div>Item 3</div>
+  }
+]
+const items2 = [
+  {
+    id: 'item-1a',
+    renderItem: <div>Item 1a</div>
   },
   {
-    id: 'item-22',
-    renderItem: <div>YOYOYOqwe</div>
+    id: 'item-2a',
+    renderItem: <div>Item 2a</div>
   },
   {
     id: 'item-3a',
-    renderItem: <div>LASTa</div>
+    renderItem: <div>Item 3a</div>
   }
 ]
 
-const App = () => {
+const Car1 = () => {
   const { carouselFragment, thumbs } = useReactSpringCarousel({
-    items,
+    items: items1,
     withTumbs: false
   })
 
+  return (
+    <div
+      style={{
+        margin: 40,
+        backgroundColor: '#fff',
+        flex: 1
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 600
+        }}
+      >
+        {carouselFragment}
+        {thumbs}
+      </div>
+    </div>
+  )
+}
+const Car2 = () => {
+  const { carouselFragment, thumbs } = useReactSpringCarousel({
+    items: items2,
+    withTumbs: false
+  })
+
+  return (
+    <div
+      style={{
+        margin: 40,
+        backgroundColor: '#fff',
+        flex: 1
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 600
+        }}
+      >
+        {carouselFragment}
+        {thumbs}
+      </div>
+    </div>
+  )
+}
+
+const App = () => {
   return (
     <div
       style={{
@@ -66,22 +101,8 @@ const App = () => {
         backgroundColor: '#eee'
       }}
     >
-      <div
-        style={{
-          margin: 40,
-          backgroundColor: '#fff',
-          flex: 1
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 600
-          }}
-        >
-          {carouselFragment}
-          {thumbs}
-        </div>
-      </div>
+      <Car1 />
+      <Car2 />
     </div>
   )
 }
