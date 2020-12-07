@@ -289,7 +289,8 @@ export function ReactSpringCarousel<T extends Item>({
         <div
           style={{
             color: 'yellow',
-            zIndex: 12321312
+            zIndex: 12321312,
+            background: 'brown'
           }}
           onClick={() => handleEnterFullscreen(mainCarouselWrapperRef.current!)}
         >
@@ -337,6 +338,7 @@ export function ReactSpringCarousel<T extends Item>({
         <div
           style={{
             color: 'yellow',
+            background: 'brown',
             zIndex: 12321312
           }}
           onClick={handleExitFullscreen}

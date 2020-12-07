@@ -15,10 +15,13 @@ export interface Props<T extends Item> {
 
 export interface ReactSpringCarouselContextProps {
   activeItem: number
+  isFullscreen?: boolean
   getIsPrevItem?(id: string): boolean
   getIsNextItem?(id: string): boolean
   slideToItem?(item: number, callback?: VoidFunction): void
   getIsAnimating?(): boolean
   getIsDragging?(): boolean
   getIsActiveItem?(id: string): boolean
+  enableFullscreen?(): void
+  disableFullscreen?(): void
 }
