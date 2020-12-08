@@ -27,7 +27,7 @@ or
 yarn add --save react-spring-carousel-js
 ```
 
-# Usage
+## Usage
 
 At it's most basic, to start you can do:
 
