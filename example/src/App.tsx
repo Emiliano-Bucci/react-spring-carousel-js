@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useRef } from 'react'
 import {
   ReactSpringCarouselContext,
   useReactSpringCarousel
@@ -26,23 +26,10 @@ const items1 = [
     renderItem: <div>Item 3</div>
   }
 ]
-const items2 = [
-  {
-    id: 'item-1a',
-    renderItem: <div>Item 1a</div>
-  },
-  {
-    id: 'item-2a',
-    renderItem: <div>Item 2a</div>
-  },
-  {
-    id: 'item-3a',
-    renderItem: <div>Item 3a</div>
-  }
-]
 
 const Car1 = () => {
-  const { carouselFragment, thumbs } = useReactSpringCarousel({
+  const ref = useRef<HTMLDivElement | null>(null)
+  const { carouselFragment, enterFullscreen } = useReactSpringCarousel({
     items: items1,
     withTumbs: false
   })
@@ -51,7 +38,7 @@ const Car1 = () => {
     <div
       style={{
         margin: 40,
-        backgroundColor: '#fff',
+        backgroundColor: 'red',
         flex: 1
       }}
     >
@@ -61,32 +48,16 @@ const Car1 = () => {
         }}
       >
         {carouselFragment}
-        {thumbs}
       </div>
-    </div>
-  )
-}
-const Car2 = () => {
-  const { carouselFragment, thumbs } = useReactSpringCarousel({
-    items: items2,
-    withTumbs: false
-  })
 
-  return (
-    <div
-      style={{
-        margin: 40,
-        backgroundColor: '#fff',
-        flex: 1
-      }}
-    >
       <div
+        ref={ref}
+        onClick={() => enterFullscreen(ref.current!)}
         style={{
-          maxWidth: 600
+          background: 'yellow'
         }}
       >
-        {carouselFragment}
-        {thumbs}
+        adqwqe
       </div>
     </div>
   )
@@ -102,7 +73,6 @@ const App = () => {
       }}
     >
       <Car1 />
-      <Car2 />
     </div>
   )
 }

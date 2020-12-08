@@ -51,7 +51,7 @@ function InternalThumbsWrapper({ children }: { children: React.ReactNode }) {
   )
 }
 
-type Item = {
+export interface ReactSpringCarouselItem {
   id: string
   renderItem: React.ReactNode
   renderThumb?: React.ReactNode
@@ -63,9 +63,9 @@ type CustomElement = React.ForwardRefExoticComponent<
   } & React.RefAttributes<HTMLDivElement>
 >
 
-type Props = {
+interface Props<T extends ReactSpringCarouselItem> {
   withLoop?: boolean
-  items: Item[]
+  items: T[]
   draggingSlideTreshold?: number
   springConfig?: SpringConfig
   shouldResizeOnWindowResize?: boolean
@@ -86,7 +86,7 @@ type ReactSpringCarouselContextProps = {
   getIsAnimating(): boolean
   getIsDragging(): boolean
   getIsActiveItem(id: string): boolean
-  enterFullscreen(): void
+  enterFullscreen<T extends HTMLElement>(elementRef?: T): void
   exitFullscreen(): void
   slideToPrevItem(): void
   slideToNextItem(): void
@@ -109,7 +109,7 @@ export const ReactSpringCarouselContext = createContext<ReactSpringCarouselConte
   }
 )
 
-export function useReactSpringCarousel({
+export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   items,
   withLoop = false,
   draggingSlideTreshold = 50,
@@ -121,7 +121,7 @@ export function useReactSpringCarousel({
   onItemChange = () => {},
   withTumbs = true,
   enableThumbsWrapperScroll = true
-}: Props) {
+}: Props<T>) {
   const internalItems = withLoop
     ? [items[items.length - 1], ...items, items[0]]
     : items
@@ -281,7 +281,7 @@ export function useReactSpringCarousel({
     }
   }, [activeItem, setCarouselStyles, shouldResizeOnWindowResize])
 
-  function handleEnterFullscreen(element: HTMLDivElement) {
+  function handleEnterFullscreen(element: HTMLElement) {
     if (screenfull.isEnabled) {
       screenfull.request(element)
     }
@@ -427,8 +427,8 @@ export function useReactSpringCarousel({
     })
   }
 
-  function enterFullscreen() {
-    handleEnterFullscreen(mainCarouselWrapperRef.current!)
+  function enterFullscreen<T extends HTMLElement>(elementRef?: T) {
+    handleEnterFullscreen(elementRef || mainCarouselWrapperRef.current!)
   }
 
   function getIsAnimating() {
