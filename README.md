@@ -1,9 +1,7 @@
 # react-spring-carousel-js
 
 > A performant React carousel component powered by `react-spring` and `react-use-gesture`.
-
-[![NPM](https://img.shields.io/npm/v/react-spring-carousel-js.svg)](https://www.npmjs.com/package/react-spring-carousel-js)
-[![NPM](https://img.shields.io/bundlephobia/minzip/react-spring-carousel-js)](https://img.shields.io/bundlephobia/minzip/react-spring-carousel-js)
+> [![NPM](https://img.shields.io/npm/v/react-spring-carousel-js.svg)](https://www.npmjs.com/package/react-spring-carousel-js) > [![NPM](https://img.shields.io/bundlephobia/minzip/react-spring-carousel-js)](https://img.shields.io/bundlephobia/minzip/react-spring-carousel-js)
 
 ## Features
 
@@ -79,7 +77,7 @@ You can provide this **options** to better customize the behavior and the aspect
 
 ## Options (API)
 
-The following options and API can be both extracted from the main `hook` or for the own carouse `Context` (that can be imported and used inside any component rendered inside the Carousel :smirk:)
+The following options and API can be both extracted from the main `hook` or from the own Carousel `Context` (that can be imported and used inside any component rendered inside the Carousel :smirk:)
 
 | Option          | Type                                            | Default Value | Description                                                                                                                                                                                                                                                                                                                          |
 | --------------- | ----------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
