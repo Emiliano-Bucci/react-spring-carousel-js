@@ -176,15 +176,28 @@ export function useReactSpringCarousel({
     }
   })
 
+  // Perform some check on first mount
   useMount(() => {
     if (withTumbs) {
       const missingThumbs = items.some((item) => !item.renderThumb)
 
       if (missingThumbs) {
         throw new Error(
-          'The renderThumb property is missing in one or more items. You need to add the renderThumb property to every item of the carousel when withThumbs prop is true.'
+          'The renderThumb property is missing in one or more items. You need to add the renderThumb property to every item of the carousel when withThumbs={true}'
         )
       }
+    }
+
+    if (!withTumbs && !!CustomThumbsWrapper) {
+      console.warn(
+        "You set withThumbs={false} but you're still passing a <CustomThumbsWrapper /> component."
+      )
+    }
+
+    if (!shouldResizeOnWindowResize) {
+      console.warn(
+        'You set shouldResizeOnWindowResize={false}; be aware that the carousel could behave in a strange way if you also use the fullscreen functionality.'
+      )
     }
   })
 
