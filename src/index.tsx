@@ -286,12 +286,6 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     }
   }
 
-  function exitFullscreen() {
-    if (screenfull.isEnabled) {
-      screenfull.exit()
-    }
-  }
-
   function getPrevItem() {
     return activeItem - 1
   }
@@ -426,35 +420,8 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     })
   }
 
-  function enterFullscreen<T extends HTMLElement>(elementRef?: T) {
-    handleEnterFullscreen(elementRef || mainCarouselWrapperRef.current!)
-  }
-
-  function getIsAnimating() {
-    return isAnimating.current
-  }
-
-  function getIsDragging() {
-    return isDragging.current
-  }
-
   function findItemIndex(id: string) {
     return items.findIndex((item) => item.id === id)
-  }
-
-  function getIsNextItem(id: string) {
-    const itemIndex = findItemIndex(id)
-    return itemIndex - 1 === activeItem
-  }
-
-  function getIsPrevItem(id: string) {
-    const itemIndex = findItemIndex(id)
-    return itemIndex - 1 === activeItem - 2
-  }
-
-  function getIsActiveItem(id: string) {
-    const itemIndex = findItemIndex(id)
-    return itemIndex === activeItem
   }
 
   const ThumbsWrapper = CustomThumbsWrapper || InternalThumbsWrapper
@@ -489,13 +456,15 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   const contextProps: ReactSpringCarouselContextProps = {
     activeItem,
     isFullscreen,
-    enterFullscreen,
-    exitFullscreen,
-    getIsAnimating,
-    getIsDragging,
-    getIsNextItem,
-    getIsPrevItem,
-    getIsActiveItem,
+    enterFullscreen: (elementRef) => {
+      handleEnterFullscreen(elementRef || mainCarouselWrapperRef.current!)
+    },
+    exitFullscreen: () => screenfull.isEnabled && screenfull.exit(),
+    getIsAnimating: () => isAnimating.current,
+    getIsDragging: () => isDragging.current,
+    getIsNextItem: (id) => findItemIndex(id) - 1 === activeItem,
+    getIsPrevItem: (id) => findItemIndex(id) - 1 === activeItem - 2,
+    getIsActiveItem: (id) => findItemIndex(id) === activeItem,
     slideToPrevItem,
     slideToNextItem,
     slideToItem: (item, callback) => {
