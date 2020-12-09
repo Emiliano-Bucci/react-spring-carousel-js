@@ -271,7 +271,6 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
         x: -(getCarouselWrapperWidth() * activeItem),
         immediate: true
       })
-      carouselWrapperRef.current!.style.left = `-${getCarouselWrapperWidth()}px`
     }
 
     if (shouldResizeOnWindowResize) {
