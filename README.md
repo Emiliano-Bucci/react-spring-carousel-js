@@ -6,13 +6,13 @@
 
 ## Features
 
-- **Blazing fast**: `react-spring-carousel-js` uses `react-spring` under the hood, which means `smooth` and `natural` transitions like you've never seen before. :sunglasses:
-- **Hedless Carousel**: a part from some needed div's (which you can override and customize), you're in total control on how the carousel will appear, bringing your own UI.
-- **Highly customizable**: you can control what to render on every carousel item (and on every thumb item as well!).
-- **Complete API availability**: either from the main **hook**, or either importing the own Carousel context, you can control the Carousel from every component if you need to.
-- **Mobile first out of the box**: We use [**react-use-gesture**](https://www.npmjs.com/package/react-use-gesture) to implement the dragging functionality and there's no config required. It just works!
-- **Fullscreen implementation out of the box**: If you need to, `react-carouse-spring-js` exposes a method to enter/exit from fullscreen mode (we use [**screenful.js**](https://github.com/sindresorhus/screenfull.js/) under the hood for a better cross browser compatibility).
-- **Auto Resize out of the box**: The carousel will resize & adapt correctly when the browser resizes. This is particular useful when `entering`/`exiting` the fullscreen mode or when the mobile direction changes.
+- **Extreemely performant**: thanks to react-spring, you'll get a very performant results, and smooth and natural transitions with zero config.
+- **Mobile first**: You can swipe/drag with no config needed thanks to **react-use-gesture**.
+- Resizable: the carousel will automatically resize and adapt if the browser viewport change. Very useful when changing to landscape on mobile devices.
+- **Fullscreen capable**: we provide you the **API** to enter/exit from fullscreen mode! (thanks to **screenful.js**).
+- **Headles UI**: no more headaches trying to style the elements of the carousel. You decide every aspect of the elements of the carousel.
+- **Totally composable**: we give you the instruments (**API**) and you decide where to place all the elements of the carousel and how they will behave and interact.
+- **Easy to configure**: you can configure some aspects of the carousel in an easy and simple way.
 
 ## Install
 
