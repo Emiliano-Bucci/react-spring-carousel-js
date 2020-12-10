@@ -24,6 +24,7 @@ const App = () => {
     slideToNextItem
   } = useReactSpringCarousel({
     withTumbs: false,
+    slideAxis: 'y',
     items: [
       {
         id: 'item-1',

@@ -23,6 +23,7 @@ export interface CarouselProps<T extends ReactSpringCarouselItem> {
   CustomWrapper?: CustomElement
   CustomThumbsWrapper?: React.FC<{ children: React.ReactNode }>
   enableThumbsWrapperScroll?: boolean
+  slideAxis?: 'x' | 'y'
   onItemStartToChange?(): void
   onItemChange?(): void
 }
