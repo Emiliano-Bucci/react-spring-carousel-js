@@ -19,7 +19,8 @@ import {
   CarouselProps,
   ReactSpringCarouselContextProps,
   ReactSpringCarouselItem,
-  ReactSpringCustomEvents
+  ReactSpringCustomEvents,
+  SlideToItemFnProps
 } from './types'
 
 export const ReactSpringCarouselContext = createContext<ReactSpringCarouselContextProps>(
@@ -47,8 +48,6 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   shouldResizeOnWindowResize = true,
   CustomThumbsWrapper,
   CustomWrapper,
-  onItemStartToChange = () => {},
-  onItemChange = () => {},
   withThumbs = true,
   enableThumbsWrapperScroll = true,
   carouselSlideAxis = 'x',
@@ -78,7 +77,9 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     items,
     thumbsSlideAxis,
     thumbsMaxHeight,
-    springConfig
+    springConfig,
+    getCurrentActiveItem,
+    slideToItem
   })
 
   const bindDrag = useDrag((props) => {
@@ -225,11 +226,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     item,
     immediate = false,
     onRest = () => {}
-  }: {
-    item: number
-    immediate?: boolean
-    onRest?(): void
-  }) {
+  }: SlideToItemFnProps) {
     setActiveItem(item)
     isAnimating.current = true
 
@@ -276,7 +273,6 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
         nextItem: getNextItem()
       })
     )
-    onItemStartToChange()
 
     if (withLoop && getCurrentActiveItem() === 0) {
       if (isDragging.current) {
@@ -286,8 +282,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
             setActiveItem(internalItems.length - 3)
             slideToItem({
               item: internalItems.length - 3,
-              immediate: true,
-              onRest: onItemChange
+              immediate: true
             })
           }
         })
@@ -297,8 +292,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
           immediate: true,
           onRest: () => {
             slideToItem({
-              item: internalItems.length - 3,
-              onRest: onItemChange
+              item: internalItems.length - 3
             })
           }
         })
@@ -307,8 +301,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     }
 
     slideToItem({
-      item: getPrevItem(),
-      onRest: onItemChange
+      item: getPrevItem()
     })
   }
 
@@ -328,7 +321,6 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
         nextItem: getNextItem()
       })
     )
-    onItemStartToChange()
 
     if (withLoop && activeItem.current === internalItems.length - 3) {
       if (!isDragging.current) {
@@ -337,8 +329,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
           immediate: true,
           onRest: () => {
             slideToItem({
-              item: 0,
-              onRest: onItemChange
+              item: 0
             })
           }
         })
@@ -349,8 +340,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
             setActiveItem(0)
             slideToItem({
               item: 0,
-              immediate: true,
-              onRest: onItemChange
+              immediate: true
             })
           }
         })
@@ -360,8 +350,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     }
 
     slideToItem({
-      item: getNextItem(),
-      onRest: onItemChange
+      item: getNextItem()
     })
   }
 

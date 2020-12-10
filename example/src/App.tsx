@@ -8,8 +8,6 @@ const App = () => {
     slideToPrevItem,
     slideToNextItem
   } = useReactSpringCarousel({
-    // carouselSlideAxis: 'y',
-    thumbsSlideAxis: 'y',
     items: [
       {
         id: 'item-1',

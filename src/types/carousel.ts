@@ -26,8 +26,6 @@ export interface CarouselProps<T extends ReactSpringCarouselItem> {
   carouselSlideAxis?: 'x' | 'y'
   thumbsSlideAxis?: 'x' | 'y'
   thumbsMaxHeight?: number
-  onItemStartToChange?(): void
-  onItemChange?(): void
 }
 
 export type ReactSpringCarouselContextProps = {
@@ -46,4 +44,10 @@ export type ReactSpringCarouselContextProps = {
     eventName: ReactSpringCustomEvents,
     eventHandler: (data?: T) => void
   ): void
+}
+
+export type SlideToItemFnProps = {
+  item: number
+  immediate?: boolean
+  onRest?(): void
 }

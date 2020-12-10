@@ -1,8 +1,12 @@
 import React, { useRef } from 'react'
-import { animated, SpringConfig } from 'react-spring'
+import { useSpring, animated, SpringConfig } from 'react-spring'
 import { InternalThumbsWrapper } from './index.styles'
 import { useMount } from './index.utils'
-import { CarouselProps, ReactSpringCarouselItem } from './types'
+import {
+  CarouselProps,
+  ReactSpringCarouselItem,
+  SlideToItemFnProps
+} from './types'
 
 type Props<T extends ReactSpringCarouselItem> = {
   items: T[]
@@ -11,6 +15,8 @@ type Props<T extends ReactSpringCarouselItem> = {
   thumbsSlideAxis: CarouselProps<T>['thumbsSlideAxis']
   thumbsMaxHeight: CarouselProps<T>['thumbsMaxHeight']
   springConfig: SpringConfig
+  getCurrentActiveItem(): number
+  slideToItem(props: SlideToItemFnProps): void
 }
 
 export function useCarouselThumbs<T extends ReactSpringCarouselItem>({
@@ -19,10 +25,11 @@ export function useCarouselThumbs<T extends ReactSpringCarouselItem>({
   CustomThumbsWrapper,
   thumbsSlideAxis = 'x',
   thumbsMaxHeight = 0,
-  springConfig
+  springConfig,
+  getCurrentActiveItem,
+  slideToItem
 }: Props<T>) {
   const thumbsWrapperRef = useRef<HTMLDivElement | null>(null)
-
   // @ts-ignore
   const [thumbWrapperScrollStyles, setThumbWrapperScrollStyles] = useSpring(
     () => ({
@@ -105,7 +112,6 @@ export function useCarouselThumbs<T extends ReactSpringCarouselItem>({
   }
 
   const ThumbsWrapper = CustomThumbsWrapper || InternalThumbsWrapper
-
   const thumbsFragment = withThumbs ? (
     <ThumbsWrapper>
       <animated.div
