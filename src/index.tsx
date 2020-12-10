@@ -5,10 +5,20 @@ import React, {
   useEffect,
   forwardRef
 } from 'react'
-import { useSpring, config, SpringConfig, animated } from 'react-spring'
+import { useSpring, config, animated } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
 import screenfull from 'screenfull'
-import { useMount } from './index.utils'
+import {
+  prepareDataForCustomEvent,
+  useCustomEventListener,
+  useMount
+} from './index.utils'
+import {
+  CarouselProps,
+  ReactSpringCarouselContextProps,
+  ReactSpringCarouselItem,
+  ReactSpringCustomEvents
+} from './types'
 
 const InternalCarouselWrapper = forwardRef(
   (
@@ -51,46 +61,6 @@ function InternalThumbsWrapper({ children }: { children: React.ReactNode }) {
   )
 }
 
-export interface ReactSpringCarouselItem {
-  id: string
-  renderItem: React.ReactNode
-  renderThumb?: React.ReactNode
-}
-
-type CustomElement = React.ForwardRefExoticComponent<
-  {
-    children: React.ReactNode
-  } & React.RefAttributes<HTMLDivElement>
->
-
-interface Props<T extends ReactSpringCarouselItem> {
-  withLoop?: boolean
-  items: T[]
-  draggingSlideTreshold?: number
-  springConfig?: SpringConfig
-  shouldResizeOnWindowResize?: boolean
-  withTumbs?: boolean
-  CustomWrapper?: CustomElement
-  CustomThumbsWrapper?: React.FC<{ children: React.ReactNode }>
-  enableThumbsWrapperScroll?: boolean
-  onItemStartToChange?(): void
-  onItemChange?(): void
-}
-
-type ReactSpringCarouselContextProps = {
-  isFullscreen: boolean
-  getIsPrevItem(id: string): boolean
-  getIsNextItem(id: string): boolean
-  slideToItem(item: number, callback?: VoidFunction): void
-  getIsAnimating(): boolean
-  getIsDragging(): boolean
-  getIsActiveItem(id: string): boolean
-  enterFullscreen<T extends HTMLElement>(elementRef?: T): void
-  exitFullscreen(): void
-  slideToPrevItem(): void
-  slideToNextItem(): void
-}
-
 export const ReactSpringCarouselContext = createContext<ReactSpringCarouselContextProps>(
   {
     isFullscreen: false,
@@ -103,7 +73,8 @@ export const ReactSpringCarouselContext = createContext<ReactSpringCarouselConte
     enterFullscreen: () => {},
     exitFullscreen: () => {},
     slideToPrevItem: () => {},
-    slideToNextItem: () => {}
+    slideToNextItem: () => {},
+    useListenToCustomEvent: () => {}
   }
 )
 
@@ -119,7 +90,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   onItemChange = () => {},
   withTumbs = true,
   enableThumbsWrapperScroll = true
-}: Props<T>) {
+}: CarouselProps<T>) {
   const internalItems = withLoop
     ? [items[items.length - 1], ...items, items[0]]
     : items
@@ -134,6 +105,9 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     x: 0,
     config: springConfig
   }))
+
+  const { emitCustomEvent, useListenToCustomEvent } = useCustomEventListener()
+
   const [thumbWrapperScrollStyles, setThumbWrapperScrollStyles] = useSpring(
     () => ({
       x: 0,
@@ -319,10 +293,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     immediate?: boolean
     onRest?(): void
   }) {
-    if (!immediate) {
-      setActiveItem(item)
-    }
-
+    setActiveItem(item)
     isAnimating.current = true
 
     setCarouselStyles({
@@ -347,6 +318,14 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
       return
     }
 
+    emitCustomEvent(
+      ReactSpringCustomEvents['RCSJS:onSlideStartChange'],
+      prepareDataForCustomEvent({
+        prevItem: getPrevItem(),
+        currentItem: getCurrentActiveItem(),
+        nextItem: getNextItem()
+      })
+    )
     onItemStartToChange()
 
     if (withLoop && getCurrentActiveItem() === 0) {
@@ -391,6 +370,14 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
       return
     }
 
+    emitCustomEvent(
+      ReactSpringCustomEvents['RCSJS:onSlideStartChange'],
+      prepareDataForCustomEvent({
+        prevItem: getPrevItem(),
+        currentItem: getCurrentActiveItem(),
+        nextItem: getNextItem()
+      })
+    )
     onItemStartToChange()
 
     if (withLoop && activeItem.current === internalItems.length - 3) {
@@ -463,6 +450,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
 
   const contextProps: ReactSpringCarouselContextProps = {
     isFullscreen,
+    useListenToCustomEvent,
     enterFullscreen: (elementRef) => {
       handleEnterFullscreen(elementRef || mainCarouselWrapperRef.current!)
     },
@@ -525,3 +513,5 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     ...contextProps
   }
 }
+
+export * from './types'

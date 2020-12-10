@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react'
+import { ReactSpringCustomEvents } from '.'
 
 export function useMount(callback: () => void) {
   const isMounted = useRef(false)
@@ -11,15 +12,10 @@ export function useMount(callback: () => void) {
   }, [callback])
 }
 
-enum ReactSpringCustomEvents {
-  'RCSJS:onSlideStartChange' = 'RCSJS:onSlideStartChange',
-  'RCSJS:onSlideChange' = 'RCSJS:onSlideChange'
-}
-
-export function useCustomEventListener<U>() {
+export function useCustomEventListener() {
   const targetElement = useRef(document.createElement('div'))
 
-  function useListenToCustomEvent(
+  function useListenToCustomEvent<U>(
     eventName: ReactSpringCustomEvents,
     eventHandler: (data?: U) => void
   ) {
@@ -38,17 +34,21 @@ export function useCustomEventListener<U>() {
     })
   }
 
-  function emitCustomEvent<T>(
-    eventName: ReactSpringCustomEvents,
-    element: HTMLDivElement,
-    data?: T
-  ) {
+  function emitCustomEvent<T>(eventName: ReactSpringCustomEvents, data?: T) {
     const event = new CustomEvent(eventName, data)
-    element.dispatchEvent(event)
+    targetElement.current.dispatchEvent(event)
   }
 
   return {
     emitCustomEvent,
     useListenToCustomEvent
+  }
+}
+
+export function prepareDataForCustomEvent(data: Record<string, unknown>) {
+  return {
+    detail: {
+      ...data
+    }
   }
 }
