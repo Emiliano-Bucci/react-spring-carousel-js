@@ -39,8 +39,8 @@ export type ReactSpringCarouselContextProps = {
   exitFullscreen(): void
   slideToPrevItem(): void
   slideToNextItem(): void
-  useListenToCustomEvent(
+  useListenToCustomEvent<T>(
     eventName: ReactSpringCustomEvents,
-    eventHandler: (data?: unknown) => void
+    eventHandler: (data?: T) => void
   ): void
 }

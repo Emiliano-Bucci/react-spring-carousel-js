@@ -306,6 +306,15 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
         isDragging.current = false
         isAnimating.current = false
         onRest()
+
+        emitCustomEvent(
+          ReactSpringCustomEvents['RCSJS:onSlideChange'],
+          prepareDataForCustomEvent({
+            prevItem: getPrevItem(),
+            currentItem: getCurrentActiveItem(),
+            nextItem: getNextItem()
+          })
+        )
       }
     })
   }

@@ -2,16 +2,25 @@ import React, { useContext } from 'react'
 import {
   ReactSpringCarouselContext,
   ReactSpringCustomEvents,
-  useReactSpringCarousel
+  useReactSpringCarousel,
+  RCSJSOnSlideChange,
+  RCSJSOnSlideStartChange
 } from 'react-spring-carousel-js'
 
 function Comp() {
   const { useListenToCustomEvent } = useContext(ReactSpringCarouselContext)
 
-  useListenToCustomEvent(
+  useListenToCustomEvent<RCSJSOnSlideStartChange>(
     ReactSpringCustomEvents['RCSJS:onSlideStartChange'],
     (data) => {
-      console.log(data)
+      console.log('Start to change', data)
+    }
+  )
+
+  useListenToCustomEvent<RCSJSOnSlideChange>(
+    ReactSpringCustomEvents['RCSJS:onSlideChange'],
+    (data) => {
+      console.log('Changed', data)
     }
   )
 
