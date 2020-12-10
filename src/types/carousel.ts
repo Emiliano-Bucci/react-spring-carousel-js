@@ -25,6 +25,7 @@ export interface CarouselProps<T extends ReactSpringCarouselItem> {
   enableThumbsWrapperScroll?: boolean
   carouselSlideAxis?: 'x' | 'y'
   thumbsSlideAxis?: 'x' | 'y'
+  thumbsMaxHeight?: number
   onItemStartToChange?(): void
   onItemChange?(): void
 }

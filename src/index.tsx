@@ -50,7 +50,9 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   onItemChange = () => {},
   withTumbs = true,
   enableThumbsWrapperScroll = true,
-  carouselSlideAxis = 'x'
+  carouselSlideAxis = 'x',
+  thumbsSlideAxis = 'x',
+  thumbsMaxHeight = 0
 }: CarouselProps<T>) {
   const internalItems = withLoop
     ? [items[items.length - 1], ...items, items[0]]
@@ -62,15 +64,16 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   const isDragging = useRef(false)
   const isAnimating = useRef(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const { emitCustomEvent, useListenToCustomEvent } = useCustomEventListener()
   // @ts-ignore
   const [carouselStyles, setCarouselStyles] = useSpring(() => ({
     [carouselSlideAxis]: 0,
     config: springConfig
   }))
-  const { emitCustomEvent, useListenToCustomEvent } = useCustomEventListener()
+  // @ts-ignore
   const [thumbWrapperScrollStyles, setThumbWrapperScrollStyles] = useSpring(
     () => ({
-      x: 0,
+      [thumbsSlideAxis]: 0,
       config: springConfig
     })
   )
@@ -137,6 +140,18 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     if (!shouldResizeOnWindowResize) {
       console.warn(
         'You set shouldResizeOnWindowResize={false}; be aware that the carousel could behave in a strange way if you also use the fullscreen functionality.'
+      )
+    }
+
+    if (thumbsSlideAxis === 'y' && thumbsMaxHeight === 0) {
+      console.warn(
+        'When you set thumbsSlideAxis=`y` remember also to set a truthy thumbsMaxHeight value.'
+      )
+    }
+
+    if (thumbsSlideAxis === 'x' && thumbsMaxHeight > 0) {
+      console.warn(
+        "There's no need to specify a thumbsMaxHeight value when thumbsSlideAxis=`x`; the value will be omitted."
       )
     }
   })
@@ -270,17 +285,26 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
       )
 
       if (currentThumbItemNode) {
-        const thumbLeftPosition =
-          currentThumbItemNode.offsetLeft + currentThumbItemNode.offsetWidth / 2
-        const tumbScrollWidth =
-          thumbsWrapperRef.current!.getBoundingClientRect().width / 2
+        const offsetDirection =
+          thumbsSlideAxis === 'x' ? 'offsetLeft' : 'offsetTop'
+        const offsetDimension =
+          thumbsSlideAxis === 'x' ? 'offsetWidth' : 'offsetHeight'
+        const dimension = thumbsSlideAxis === 'x' ? 'width' : 'height'
+        const scrollDirection =
+          thumbsSlideAxis === 'x' ? 'scrollLeft' : 'scrollTop'
+
+        const thumbOffsetPosition =
+          currentThumbItemNode[offsetDirection] +
+          currentThumbItemNode[offsetDimension] / 2
+        const thumbScrollDimension =
+          thumbsWrapperRef.current!.getBoundingClientRect()[dimension] / 2
 
         setThumbWrapperScrollStyles({
           from: {
-            x: thumbsWrapperRef.current!.scrollLeft
+            [thumbsSlideAxis]: thumbsWrapperRef.current![scrollDirection]
           },
           to: {
-            x: thumbLeftPosition - tumbScrollWidth
+            [thumbsSlideAxis]: thumbOffsetPosition - thumbScrollDimension
           }
         })
       }
@@ -399,15 +423,30 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   const ThumbsWrapper = CustomThumbsWrapper || InternalThumbsWrapper
   const CarouselWrapper = CustomWrapper || InternalCarouselWrapper
 
+  function getThumbsScrollDirection() {
+    if (thumbsSlideAxis === 'x') {
+      return {
+        scrollLeft: thumbWrapperScrollStyles.x
+      }
+    }
+
+    return {
+      scrollTop: thumbWrapperScrollStyles.y
+    }
+  }
+
   const thumbsFragment = withTumbs ? (
     <ThumbsWrapper>
       <animated.div
-        scrollLeft={thumbWrapperScrollStyles.x}
+        {...getThumbsScrollDirection()}
         ref={thumbsWrapperRef}
         style={{
           display: 'flex',
-          overflowX: 'auto',
-          flex: 1
+          flex: 1,
+          flexDirection: thumbsSlideAxis === 'x' ? 'row' : 'column',
+          ...(thumbsSlideAxis === 'x'
+            ? { overflowX: 'auto' }
+            : { overflowY: 'auto', maxHeight: thumbsMaxHeight })
         }}
       >
         {items.map((item, index) => {
