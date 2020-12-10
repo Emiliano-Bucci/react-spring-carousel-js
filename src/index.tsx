@@ -105,16 +105,17 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     x: 0,
     config: springConfig
   }))
-
   const { emitCustomEvent, useListenToCustomEvent } = useCustomEventListener()
-
   const [thumbWrapperScrollStyles, setThumbWrapperScrollStyles] = useSpring(
     () => ({
       x: 0,
       config: springConfig
     })
   )
-  const bindDrag = useDrag(({ dragging, last, movement: [mx] }) => {
+  const bindDrag = useDrag((props) => {
+    const dragging = props.dragging
+    const movement = props.movement[0]
+
     const currentSlidedValue = -(
       getCarouselWrapperWidth() * getCurrentActiveItem()
     )
@@ -124,13 +125,18 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     }
 
     if (dragging) {
-      setCarouselStyles({ x: currentSlidedValue + mx })
+      setCarouselStyles({ x: currentSlidedValue + movement })
       isDragging.current = true
+
+      emitCustomEvent(
+        ReactSpringCustomEvents['RCSJS:onDrag'],
+        prepareDataForCustomEvent(props)
+      )
     }
 
-    if (last) {
-      const prevItemTreshold = mx > draggingSlideTreshold
-      const nextItemTreshold = mx < -draggingSlideTreshold
+    if (props.last) {
+      const prevItemTreshold = movement > draggingSlideTreshold
+      const nextItemTreshold = movement < -draggingSlideTreshold
 
       if (nextItemTreshold) {
         if (!withLoop && getCurrentActiveItem() === internalItems.length - 1) {

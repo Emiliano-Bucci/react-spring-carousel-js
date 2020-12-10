@@ -1,6 +1,14 @@
+import {
+  EventTypes,
+  FullGestureState,
+  GestureKey,
+  StateKey
+} from 'react-use-gesture/dist/types'
+
 export enum ReactSpringCustomEvents {
   'RCSJS:onSlideStartChange' = 'RCSJS:onSlideStartChange',
-  'RCSJS:onSlideChange' = 'RCSJS:onSlideChange'
+  'RCSJS:onSlideChange' = 'RCSJS:onSlideChange',
+  'RCSJS:onDrag' = 'RCSJS:onDrag'
 }
 
 export type RCSJSOnSlideStartChange = {
@@ -12,4 +20,11 @@ export type RCSJSOnSlideChange = {
   prevItem: number
   currentItem: number
   nextItem: number
+}
+
+export type RCSJSOnDrag = Omit<
+  FullGestureState<StateKey<GestureKey>>,
+  'event'
+> & {
+  event: EventTypes['drag']
 }
