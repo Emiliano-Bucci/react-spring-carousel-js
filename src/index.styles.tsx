@@ -30,17 +30,10 @@ export function InternalThumbsWrapper({
   return (
     <div
       style={{
-        display: 'flex',
-        padding: 32
+        display: 'flex'
       }}
     >
-      <div
-        style={{
-          display: 'flex'
-        }}
-      >
-        {children}
-      </div>
+      {children}
     </div>
   )
 }
