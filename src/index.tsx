@@ -227,7 +227,10 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     immediate = false,
     onRest = () => {}
   }: SlideToItemFnProps) {
-    setActiveItem(item)
+    if (!immediate) {
+      setActiveItem(item)
+    }
+
     isAnimating.current = true
 
     setCarouselStyles({
@@ -275,6 +278,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     )
 
     if (withLoop && getCurrentActiveItem() === 0) {
+      console.log('HERE')
       if (isDragging.current) {
         slideToItem({
           item: getPrevItem(),
@@ -307,7 +311,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
 
   function slideToNextItem() {
     if (
-      (!withLoop && activeItem.current === internalItems.length - 1) ||
+      (!withLoop && getCurrentActiveItem() === internalItems.length - 1) ||
       (isDragging.current && isAnimating.current)
     ) {
       return
@@ -322,7 +326,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
       })
     )
 
-    if (withLoop && activeItem.current === internalItems.length - 3) {
+    if (withLoop && getCurrentActiveItem() === internalItems.length - 3) {
       if (!isDragging.current) {
         slideToItem({
           item: -1,
@@ -359,7 +363,6 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   }
 
   const CarouselWrapper = CustomWrapper || InternalCarouselWrapper
-
   const contextProps: ReactSpringCarouselContextProps = {
     isFullscreen,
     useListenToCustomEvent,
@@ -401,8 +404,11 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
 
               if (withLoop) {
                 const position = carouselSlideAxis === 'x' ? 'left' : 'top'
+                const dimension = carouselSlideAxis === 'x' ? 'width' : 'height'
 
-                ref.style[position] = `-${ref.getBoundingClientRect().width}px`
+                ref.style[position] = `-${
+                  ref.getBoundingClientRect()[dimension]
+                }px`
               }
             }
           }}

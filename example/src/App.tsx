@@ -8,6 +8,8 @@ const App = () => {
     slideToPrevItem,
     slideToNextItem
   } = useReactSpringCarousel({
+    withLoop: true,
+    carouselSlideAxis: 'y',
     items: [
       {
         id: 'item-1',
@@ -205,7 +207,7 @@ const App = () => {
         <div style={{ margin: '0 32px', flex: 1 }}>{carouselFragment}</div>
         <div
           style={{
-            maxWidth: '100px',
+            maxWidth: '1200px',
             background: 'brown'
           }}
         >

@@ -69,6 +69,8 @@ export function useCarouselThumbs<T extends ReactSpringCarouselItem>({
   })
 
   function handleThumbsScroll() {
+    console.log(getCurrentActiveItem())
+
     const currentThumbItemNode = document.getElementById(
       `thumb-${items[getCurrentActiveItem()].id}`
     )
