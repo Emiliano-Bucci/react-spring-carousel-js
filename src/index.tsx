@@ -278,7 +278,6 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     )
 
     if (withLoop && getCurrentActiveItem() === 0) {
-      console.log('HERE')
       if (isDragging.current) {
         slideToItem({
           item: getPrevItem(),
