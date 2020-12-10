@@ -78,7 +78,6 @@ interface Props<T extends ReactSpringCarouselItem> {
 }
 
 type ReactSpringCarouselContextProps = {
-  activeItem: number
   isFullscreen: boolean
   getIsPrevItem(id: string): boolean
   getIsNextItem(id: string): boolean
@@ -94,7 +93,6 @@ type ReactSpringCarouselContextProps = {
 
 export const ReactSpringCarouselContext = createContext<ReactSpringCarouselContextProps>(
   {
-    activeItem: 0,
     isFullscreen: false,
     getIsPrevItem: () => false,
     getIsNextItem: () => false,
@@ -125,7 +123,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   const internalItems = withLoop
     ? [items[items.length - 1], ...items, items[0]]
     : items
-  const [activeItem, setActiveItem] = useState(0)
+  const activeItem = useRef(0)
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
   const carouselWrapperRef = useRef<HTMLDivElement | null>(null)
   const thumbsWrapperRef = useRef<HTMLDivElement | null>(null)
@@ -143,7 +141,9 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     })
   )
   const bindDrag = useDrag(({ dragging, last, movement: [mx] }) => {
-    const currentSlidedValue = -(getCarouselWrapperWidth() * activeItem)
+    const currentSlidedValue = -(
+      getCarouselWrapperWidth() * getCurrentActiveItem()
+    )
 
     if (isAnimating.current) {
       return
@@ -159,13 +159,13 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
       const nextItemTreshold = mx < -draggingSlideTreshold
 
       if (nextItemTreshold) {
-        if (!withLoop && activeItem === internalItems.length - 1) {
+        if (!withLoop && getCurrentActiveItem() === internalItems.length - 1) {
           setCarouselStyles({ x: currentSlidedValue })
         } else {
           slideToNextItem()
         }
       } else if (prevItemTreshold) {
-        if (!withLoop && activeItem === 0) {
+        if (!withLoop && getCurrentActiveItem() === 0) {
           setCarouselStyles({ x: currentSlidedValue })
         } else {
           slideToPrevItem()
@@ -204,7 +204,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   useEffect(() => {
     if (enableThumbsWrapperScroll) {
       const currentThumbItemNode = document.getElementById(
-        `thumb-${items[activeItem].id}`
+        `thumb-${items[getCurrentActiveItem()].id}`
       )
 
       if (currentThumbItemNode) {
@@ -268,7 +268,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   useEffect(() => {
     function handleResize() {
       setCarouselStyles({
-        x: -(getCarouselWrapperWidth() * activeItem),
+        x: -(getCarouselWrapperWidth() * getCurrentActiveItem()),
         immediate: true
       })
     }
@@ -278,7 +278,15 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
 
       return () => window.removeEventListener('resize', handleResize)
     }
-  }, [activeItem, setCarouselStyles, shouldResizeOnWindowResize])
+  }, [setCarouselStyles, shouldResizeOnWindowResize])
+
+  function setActiveItem(newItem: number) {
+    activeItem.current = newItem
+  }
+
+  function getCurrentActiveItem() {
+    return activeItem.current
+  }
 
   function handleEnterFullscreen(element: HTMLElement) {
     if (screenfull.isEnabled) {
@@ -287,11 +295,11 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   }
 
   function getPrevItem() {
-    return activeItem - 1
+    return getCurrentActiveItem() - 1
   }
 
   function getNextItem() {
-    return activeItem + 1
+    return getCurrentActiveItem() + 1
   }
 
   function getCarouselWrapperWidth() {
@@ -333,7 +341,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
 
   function slideToPrevItem() {
     if (
-      (!withLoop && activeItem === 0) ||
+      (!withLoop && getCurrentActiveItem() === 0) ||
       (isDragging.current && isAnimating.current)
     ) {
       return
@@ -341,7 +349,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
 
     onItemStartToChange()
 
-    if (withLoop && activeItem === 0) {
+    if (withLoop && getCurrentActiveItem() === 0) {
       if (isDragging.current) {
         slideToItem({
           item: getPrevItem(),
@@ -377,7 +385,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
 
   function slideToNextItem() {
     if (
-      (!withLoop && activeItem === internalItems.length - 1) ||
+      (!withLoop && activeItem.current === internalItems.length - 1) ||
       (isDragging.current && isAnimating.current)
     ) {
       return
@@ -385,7 +393,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
 
     onItemStartToChange()
 
-    if (withLoop && activeItem === internalItems.length - 3) {
+    if (withLoop && activeItem.current === internalItems.length - 3) {
       if (!isDragging.current) {
         slideToItem({
           item: -1,
@@ -454,7 +462,6 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   ) : null
 
   const contextProps: ReactSpringCarouselContextProps = {
-    activeItem,
     isFullscreen,
     enterFullscreen: (elementRef) => {
       handleEnterFullscreen(elementRef || mainCarouselWrapperRef.current!)
@@ -462,9 +469,9 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     exitFullscreen: () => screenfull.isEnabled && screenfull.exit(),
     getIsAnimating: () => isAnimating.current,
     getIsDragging: () => isDragging.current,
-    getIsNextItem: (id) => findItemIndex(id) - 1 === activeItem,
-    getIsPrevItem: (id) => findItemIndex(id) - 1 === activeItem - 2,
-    getIsActiveItem: (id) => findItemIndex(id) === activeItem,
+    getIsNextItem: (id) => findItemIndex(id) - 1 === getCurrentActiveItem(),
+    getIsPrevItem: (id) => findItemIndex(id) - 1 === getCurrentActiveItem() - 2,
+    getIsActiveItem: (id) => findItemIndex(id) === getCurrentActiveItem(),
     slideToPrevItem,
     slideToNextItem,
     slideToItem: (item, callback) => {

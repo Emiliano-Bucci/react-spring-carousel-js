@@ -1,6 +1,10 @@
 import React from 'react'
 import { useReactSpringCarousel } from 'react-spring-carousel-js'
 
+function Comp() {
+  return <div>Item 1</div>
+}
+
 const App = () => {
   const {
     carouselFragment,
@@ -11,16 +15,7 @@ const App = () => {
     items: [
       {
         id: 'item-1',
-        renderItem: (
-          <div
-            style={{
-              background: 'yellow',
-              padding: 8
-            }}
-          >
-            Item 1
-          </div>
-        )
+        renderItem: <Comp />
       },
       {
         id: 'item-2',
