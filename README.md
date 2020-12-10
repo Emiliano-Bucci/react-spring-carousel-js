@@ -7,7 +7,7 @@
 ## Features
 
 - **Extreemely performant**: thanks to react-spring, you'll get a very performant results, and smooth and natural transitions with zero config.
-- **Stateless :smirk:**: We don't use `state` to update the animation: this means solid and stable animations in every moment (because no React rerender will happen during animations!).
+- **Stateless :smirk:**: We don't use `state` to update the animation: this means solid and stable animations in every moment.
 - **Custom events**: Use our custom events to intercept when things happen and take the experience to the next level!
 - **Mobile first**: You can swipe/drag with no config needed thanks to **react-use-gesture**.
 - Resizable: the carousel will automatically resize and adapt if the browser viewport change. Very useful when changing to landscape on mobile devices.
@@ -77,7 +77,7 @@ You can provide this **options** to better customize the behavior and the aspect
 | CustomThumbsWrapper        | `React.FC<{ children: React.ReactNode }>`                                                              | `undefined`      | You can provide a custom `element` to customize the wrapper of the thumb list.                  |
 | carouselSlideAxis          | `x / y`                                                                                                | `x`              | Specify the slide axis direction of the carousel                                                |
 | thumbsSlideAxis            | `x / y`                                                                                                | `x`              | Specify the slide axis direction of the thumbs list                                             |
-| thumbsMaxHeight            | `number`                                                                                               | `0`              | To be only used if you set thumbsSlideAxis to `y`                                               |
+| thumbsMaxHeight            | `number`                                                                                               | `0`              | Set the max height of the thumb list wrapper; to be only used if you set thumbsSlideAxis to `y` |
 
 ## Options (API)
 
@@ -96,6 +96,35 @@ The following options and API can be both extracted from the main `hook` or from
 | slideToPrevItem        | `(): void`                                                                      | `() => {}`    | Use this method slide to the `previous` item. This is useful to build your own navigation buttons. You just need to call it and that's it; the carousel itself will handle all the internal logic part (for example, if the `withLoop` property is set to `false`, when reaching the first item, if you call it it will do nothing.) |
 | slideToNextItem        | `(): void`                                                                      | `() => {}`    | Use this method slide to the `next` item. This is useful to build your own navigation buttons. You just need to call it and that's it; the carousel itself will handle all the internal logic part (for example, if the `withLoop` property is set to `false`, when reaching the last item, if you call it it will do nothing.)      |
 | useListenToCustomEvent | `<T>(eventName: ReactSpringCustomEvents, eventHandler: (data?: T): void): void` | `() => {}`    | Use this hook to perform callback actions in your application when the carousel internal `state` change.                                                                                                                                                                                                                             |
+
+## Events
+
+Most of the React carousel libraries out there handle the animations by updating the state (`this.setState()` or `useState()`). While this is totally fine from the React perspective, it isn't that much from the `animation` perspective, since when React triggers a rerender lots of things happen under the hood and this can cause animations to junky a bit. For this reason we decide to not leverage at all on React state to animate things (pretty much like `react-spring` do, actually), but we stick to the `react-spring` way.
+
+So far so good, but we still needed a way to interact when things happens in our carousel. For simple cases probably we wouldn't need to respond at all, but what if we had to render a carousel full of images that need to be lazy loaded in a particular way, or if we need to do some handy stuff when a particular item becomes the active one? To solve this problem, without sacrificing performance, we use `custom events`.
+
+### How they works?
+
+Every instance of the Carousel will expose a `useListenToCustomEvent` hook. `useListenToCustomEvent` accept two arguments:
+
+- The event name to listen
+- A callback that will receive some data (dependind on the event that we listen)
+
+This way, whenever we listen for some particular events, we can update our UI in a simple and effective way, getting the best possible result.
+
+### List of events
+
+| Event                    | Description                                                                                                                             |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| RCSJS:onSlideStartChange | The event is emitted every time a slide is about to slide .                                                                             |
+| RCSJS:onSlideChange      | The event is emitted after the animation slide is completed. **NOTE**: The event is emitted inside the `onRest()` react-spring callback |
+| RCSJS:onDrag             | The event is emitted when a user drags the carousel items                                                                               |
+
+In order to know which props the callback of the event emitter will receive, you can use the following types:
+
+- RCSJS:onSlideStartChange -> `RCSJSOnSlideStartChange`
+- RCSJS:onSlideChange -> `RCSJSOnSlideChange`
+- RCSJS:onDrag -> `RCSJSOnDrag`
 
 ## License
 
