@@ -8,12 +8,13 @@ import React, {
 import { useSpring, config, animated } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
 import screenfull from 'screenfull'
-import { InternalThumbsWrapper, InternalCarouselWrapper } from './index.styles'
+import { InternalCarouselWrapper } from './index.styles'
 import {
   prepareDataForCustomEvent,
   useCustomEventListener,
   useMount
 } from './index.utils'
+import { useCarouselThumbs } from './Thumbs'
 import {
   CarouselProps,
   ReactSpringCarouselContextProps,
@@ -48,7 +49,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   CustomWrapper,
   onItemStartToChange = () => {},
   onItemChange = () => {},
-  withTumbs = true,
+  withThumbs = true,
   enableThumbsWrapperScroll = true,
   carouselSlideAxis = 'x',
   thumbsSlideAxis = 'x',
@@ -60,7 +61,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   const activeItem = useRef(0)
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
   const carouselWrapperRef = useRef<HTMLDivElement | null>(null)
-  const thumbsWrapperRef = useRef<HTMLDivElement | null>(null)
+
   const isDragging = useRef(false)
   const isAnimating = useRef(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -70,13 +71,16 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     [carouselSlideAxis]: 0,
     config: springConfig
   }))
-  // @ts-ignore
-  const [thumbWrapperScrollStyles, setThumbWrapperScrollStyles] = useSpring(
-    () => ({
-      [thumbsSlideAxis]: 0,
-      config: springConfig
-    })
-  )
+
+  const { thumbsFragment, handleThumbsScroll } = useCarouselThumbs({
+    withThumbs,
+    CustomThumbsWrapper,
+    items,
+    thumbsSlideAxis,
+    thumbsMaxHeight,
+    springConfig
+  })
+
   const bindDrag = useDrag((props) => {
     const dragging = props.dragging
     const movement = props.movement[carouselSlideAxis === 'x' ? 0 : 1]
@@ -121,37 +125,9 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
 
   // Perform some check on first mount
   useMount(() => {
-    if (withTumbs) {
-      const missingThumbs = items.some((item) => !item.renderThumb)
-
-      if (missingThumbs) {
-        throw new Error(
-          'The renderThumb property is missing in one or more items. You need to add the renderThumb property to every item of the carousel when withThumbs={true}'
-        )
-      }
-    }
-
-    if (!withTumbs && !!CustomThumbsWrapper) {
-      console.warn(
-        "You set withThumbs={false} but you're still passing a <CustomThumbsWrapper /> component."
-      )
-    }
-
     if (!shouldResizeOnWindowResize) {
       console.warn(
         'You set shouldResizeOnWindowResize={false}; be aware that the carousel could behave in a strange way if you also use the fullscreen functionality.'
-      )
-    }
-
-    if (thumbsSlideAxis === 'y' && thumbsMaxHeight === 0) {
-      console.warn(
-        'When you set thumbsSlideAxis=`y` remember also to set a truthy thumbsMaxHeight value.'
-      )
-    }
-
-    if (thumbsSlideAxis === 'x' && thumbsMaxHeight > 0) {
-      console.warn(
-        "There's no need to specify a thumbsMaxHeight value when thumbsSlideAxis=`x`; the value will be omitted."
       )
     }
   })
@@ -280,34 +256,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     })
 
     if (enableThumbsWrapperScroll) {
-      const currentThumbItemNode = document.getElementById(
-        `thumb-${items[getCurrentActiveItem()].id}`
-      )
-
-      if (currentThumbItemNode) {
-        const offsetDirection =
-          thumbsSlideAxis === 'x' ? 'offsetLeft' : 'offsetTop'
-        const offsetDimension =
-          thumbsSlideAxis === 'x' ? 'offsetWidth' : 'offsetHeight'
-        const dimension = thumbsSlideAxis === 'x' ? 'width' : 'height'
-        const scrollDirection =
-          thumbsSlideAxis === 'x' ? 'scrollLeft' : 'scrollTop'
-
-        const thumbOffsetPosition =
-          currentThumbItemNode[offsetDirection] +
-          currentThumbItemNode[offsetDimension] / 2
-        const thumbScrollDimension =
-          thumbsWrapperRef.current!.getBoundingClientRect()[dimension] / 2
-
-        setThumbWrapperScrollStyles({
-          from: {
-            [thumbsSlideAxis]: thumbsWrapperRef.current![scrollDirection]
-          },
-          to: {
-            [thumbsSlideAxis]: thumbOffsetPosition - thumbScrollDimension
-          }
-        })
-      }
+      handleThumbsScroll()
     }
   }
 
@@ -420,51 +369,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     return items.findIndex((item) => item.id === id)
   }
 
-  const ThumbsWrapper = CustomThumbsWrapper || InternalThumbsWrapper
   const CarouselWrapper = CustomWrapper || InternalCarouselWrapper
-
-  function getThumbsScrollDirection() {
-    if (thumbsSlideAxis === 'x') {
-      return {
-        scrollLeft: thumbWrapperScrollStyles.x
-      }
-    }
-
-    return {
-      scrollTop: thumbWrapperScrollStyles.y
-    }
-  }
-
-  const thumbsFragment = withTumbs ? (
-    <ThumbsWrapper>
-      <animated.div
-        {...getThumbsScrollDirection()}
-        ref={thumbsWrapperRef}
-        style={{
-          display: 'flex',
-          flex: 1,
-          flexDirection: thumbsSlideAxis === 'x' ? 'row' : 'column',
-          ...(thumbsSlideAxis === 'x'
-            ? { overflowX: 'auto' }
-            : { overflowY: 'auto', maxHeight: thumbsMaxHeight })
-        }}
-      >
-        {items.map((item, index) => {
-          const thumbId = `thumb-${item.id}`
-
-          return (
-            <div
-              key={thumbId}
-              id={thumbId}
-              onClick={() => slideToItem({ item: index })}
-            >
-              {item.renderThumb}
-            </div>
-          )
-        })}
-      </animated.div>
-    </ThumbsWrapper>
-  ) : null
 
   const contextProps: ReactSpringCarouselContextProps = {
     isFullscreen,

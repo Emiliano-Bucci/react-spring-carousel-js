@@ -19,7 +19,7 @@ export interface CarouselProps<T extends ReactSpringCarouselItem> {
   draggingSlideTreshold?: number
   springConfig?: SpringConfig
   shouldResizeOnWindowResize?: boolean
-  withTumbs?: boolean
+  withThumbs?: boolean
   CustomWrapper?: CustomElement
   CustomThumbsWrapper?: React.FC<{ children: React.ReactNode }>
   enableThumbsWrapperScroll?: boolean
