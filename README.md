@@ -113,17 +113,19 @@ This way, whenever we listen for some particular events, we can update our UI in
 
 ### List of events
 
-| Event                    | Description                                                                                                                             |
-| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
-| RCSJS:onSlideStartChange | The event is emitted every time a slide is about to slide .                                                                             |
-| RCSJS:onSlideChange      | The event is emitted after the animation slide is completed. **NOTE**: The event is emitted inside the `onRest()` react-spring callback |
-| RCSJS:onDrag             | The event is emitted when a user drags the carousel items                                                                               |
+| Event                    | Description                                                                                                                              |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| RCSJS:onSlideStartChange | The event is emitted every time a slide is about to slide .                                                                              |
+| RCSJS:onSlideChange      | The event is emitted after the animation slide is completed. **NOTE**: The event is emitted inside the `onRest()` react-spring callback. |
+| RCSJS:onDrag             | The event is emitted when a user drags the carousel items .                                                                              |
+| RCSJS:onFullscreenChange | The event is emitted when you enter/exit from the fullscreen mode.                                                                       |
 
 In order to know which props the callback of the event emitter will receive, you can use the following types:
 
 - RCSJS:onSlideStartChange -> `RCSJSOnSlideStartChange`
 - RCSJS:onSlideChange -> `RCSJSOnSlideChange`
 - RCSJS:onDrag -> `RCSJSOnDrag`
+- RCSJS:onFullscreenChange -> `RCSJSOnFullscreenChange`
 
 ## License
 
