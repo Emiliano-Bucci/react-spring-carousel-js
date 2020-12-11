@@ -6,11 +6,11 @@
 
 ## Features
 
-- **Extreemely performant**: thanks to react-spring, you'll get a very performant results, and smooth and natural transitions with zero config.
+- **Extreemely performant**: thanks to react-spring, you'll get a excelent performance with smooth and natural transitions out of the box.
 - **Stateless :smirk:**: We don't use `state` to update the animation: this means solid and stable animations in every moment.
 - **Custom events**: Use our custom events to intercept when things happen and take the experience to the next level!
 - **Mobile first**: You can swipe/drag with no config needed thanks to **react-use-gesture**.
-- Resizable: the carousel will automatically resize and adapt if the browser viewport change. Very useful when changing to landscape on mobile devices.
+- **Resizable**: the carousel will automatically resize and adapt if the browser viewport change. Very useful when changing to landscape on mobile devices.
 - **Fullscreen capable**: we provide you the **API** to enter/exit from fullscreen mode! (thanks to **screenful.js**).
 - **Headles UI**: no more headaches trying to style the elements of the carousel. You decide every aspect of the elements of the carousel.
 - **Totally composable**: we give you the instruments (**API**) and you decide where to place all the elements of the carousel and how they will behave and interact.
@@ -98,18 +98,16 @@ The following options and API can be both extracted from the main `hook` or from
 
 ## Events
 
-Most of the React carousel libraries out there handle the animations by updating the state (`this.setState()` or `useState()`). While this is totally fine from the React perspective, it isn't that much from the `animation` perspective, since when React triggers a rerender lots of things happen under the hood and this can cause animations to junky a bit. For this reason we decide to not leverage at all on React state to animate things (pretty much like `react-spring` do, actually), but we stick to the `react-spring` way.
+Most of the React carousel libraries out there handle the animations by updating the state (`this.setState()` or `useState()`). While this is totally fine from the React perspective, it isn't that much from the `animation` perspective, since when React triggers a rerender lots of things happen under the hood and this can cause animations to be a bit junky. For this reason we decide to not leverage at all on React state to animate things (pretty much like `react-spring` do, actually), but we stick to the `react-spring` way.
 
-So far so good, but we still needed a way to interact when things happens in our carousel. For simple cases probably we wouldn't need to respond at all, but what if we had to render a carousel full of images that need to be lazy loaded in a particular way, or if we need to do some handy stuff when a particular item becomes the active one? To solve this problem, without sacrificing performance, we use `custom events`.
+So far so good, but how we can interact with the carousel in order to update the UI in response to some actions, like for example when the active slide changes? To solve this problem we create our `Custom events`. This way, you can listen to some actions, hook into them, and if that's the case, perform your own actions!
 
 ### How they works?
 
 Every instance of the Carousel will expose a `useListenToCustomEvent` hook. `useListenToCustomEvent` accept two arguments:
 
-- The event name to listen
-- A callback that will receive some data (dependind on the event that we listen)
-
-This way, whenever we listen for some particular events, we can update our UI in a simple and effective way, getting the best possible result.
+- The event name to listen.
+- A callback that will receive some data (dependind on the event that we listen) that will be triggered every time the event is emitted.
 
 ### List of events
 
@@ -120,7 +118,7 @@ This way, whenever we listen for some particular events, we can update our UI in
 | RCSJS:onDrag             | The event is emitted when a user drags the carousel items .                                                                              |
 | RCSJS:onFullscreenChange | The event is emitted when you enter/exit from the fullscreen mode.                                                                       |
 
-In order to know which props the callback of the event emitter will receive, you can use the following types:
+To proper type the props that the event will receive, you can use the following types:
 
 - RCSJS:onSlideStartChange -> `RCSJSOnSlideStartChange`
 - RCSJS:onSlideChange -> `RCSJSOnSlideChange`
