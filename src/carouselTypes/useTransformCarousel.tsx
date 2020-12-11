@@ -1,17 +1,17 @@
 import React, { useRef, createContext, useCallback } from 'react'
 import { useSpring, config, animated } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
-import screenfull from 'screenfull'
+
 import {
   fixNegativeIndex,
   prepareDataForCustomEvent,
   useCustomEventListener,
   useMount
 } from '../index.utils'
+import { useFullscreenModule } from '../modules/useFullscreenModule'
 import { useThumbsModule } from '../modules/useThumbsModule'
 import {
   CarouselProps,
-  RCSJOnFullscreenChange,
   RCSJSOnDrag,
   RCSJSOnSlideChange,
   RCSJSOnSlideStartChange,
@@ -57,17 +57,25 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
   const activeItem = useRef(0)
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
   const carouselWrapperRef = useRef<HTMLDivElement | null>(null)
-  const isFullscreen = useRef(false)
-
   const isDragging = useRef(false)
   const isAnimating = useRef(false)
-  const { emitCustomEvent, useListenToCustomEvent } = useCustomEventListener()
+
   // @ts-ignore
   const [carouselStyles, setCarouselStyles] = useSpring(() => ({
     [carouselSlideAxis]: 0,
     config: springConfig
   }))
 
+  // Custom modules
+  const { emitCustomEvent, useListenToCustomEvent } = useCustomEventListener()
+  const {
+    enterFullscreen,
+    exitFullscreen,
+    getIsFullscreen
+  } = useFullscreenModule({
+    mainCarouselWrapperRef,
+    emitCustomEvent
+  })
   const { thumbsFragment, handleThumbsScroll } = useThumbsModule({
     withThumbs,
     items,
@@ -142,44 +150,6 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
     return carouselWrapperRef.current.getBoundingClientRect().height
   }, [carouselSlideAxis])
 
-  function setIsFullscreen(_isFullscreen: boolean) {
-    isFullscreen.current = _isFullscreen
-  }
-
-  useMount(() => {
-    const _carouselwrapperRef = mainCarouselWrapperRef.current
-
-    function handleFullscreenChange(event: Event) {
-      if (
-        document.fullscreenElement &&
-        event.target === mainCarouselWrapperRef.current &&
-        !getIsFullscreen()
-      ) {
-        setIsFullscreen(true)
-      }
-
-      if (
-        !document.fullscreenElement &&
-        event.target === mainCarouselWrapperRef.current &&
-        getIsFullscreen()
-      ) {
-        setIsFullscreen(false)
-      }
-    }
-
-    _carouselwrapperRef!.addEventListener(
-      'fullscreenchange',
-      handleFullscreenChange
-    )
-
-    return () => {
-      _carouselwrapperRef!.removeEventListener(
-        'fullscreenchange',
-        handleFullscreenChange
-      )
-    }
-  })
-
   function adjustCarouselWrapperPosition(ref: HTMLDivElement) {
     const positionProperty = carouselSlideAxis === 'x' ? 'left' : 'top'
     const dimensionProperty = carouselSlideAxis === 'x' ? 'width' : 'height'
@@ -209,29 +179,12 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
     }
   })
 
-  function getIsFullscreen() {
-    return isFullscreen.current
-  }
-
   function setActiveItem(newItem: number) {
     activeItem.current = newItem
   }
 
   function getCurrentActiveItem() {
     return activeItem.current
-  }
-
-  function handleEnterFullscreen(element: HTMLElement) {
-    if (screenfull.isEnabled) {
-      screenfull.request(element)
-
-      emitCustomEvent(
-        ReactSpringCustomEvents['RCSJS:onFullscreenChange'],
-        prepareDataForCustomEvent<RCSJOnFullscreenChange>({
-          isFullscreen: true
-        })
-      )
-    }
   }
 
   function getIsAnimating() {
@@ -389,21 +342,10 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
   }
 
   const contextProps: ReactSpringCarouselContextProps = {
-    getIsFullscreen,
     useListenToCustomEvent,
-    enterFullscreen: (elementRef) => {
-      handleEnterFullscreen(elementRef || mainCarouselWrapperRef.current!)
-    },
-    exitFullscreen: () => {
-      screenfull.isEnabled && screenfull.exit()
-
-      emitCustomEvent(
-        ReactSpringCustomEvents['RCSJS:onFullscreenChange'],
-        prepareDataForCustomEvent<RCSJOnFullscreenChange>({
-          isFullscreen: false
-        })
-      )
-    },
+    getIsFullscreen,
+    enterFullscreen,
+    exitFullscreen,
     getIsAnimating,
     getIsDragging,
     getIsNextItem: (id) => findItemIndex(id) - 1 === getCurrentActiveItem(),
