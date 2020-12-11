@@ -3,14 +3,7 @@ import { useReactSpringCarousel } from 'react-spring-carousel-js'
 
 const App = () => {
   const wrapperRef = useRef<HTMLDivElement | null>(null)
-  const {
-    carouselFragment,
-    thumbsFragment,
-    // slideToPrevItem,
-    slideToNextItem,
-    enterFullscreen
-  } = useReactSpringCarousel({
-    // thumbsWrapperRef: wrapperRef,
+  const { carouselFragment } = useReactSpringCarousel({
     items: [
       {
         id: 'item-1',
@@ -192,13 +185,14 @@ const App = () => {
 
   return (
     <div
+      ref={wrapperRef}
       style={{
         display: 'flex',
         padding: 24,
         background: 'orange'
       }}
     >
-      <button onClick={() => enterFullscreen()}>PREV</button>
+      {/* <button onClick={() => enterFullscreen()}>PREV</button> */}
       <div
         style={{
           width: '100%',
@@ -206,7 +200,7 @@ const App = () => {
         }}
       >
         <div style={{ margin: '0 32px', flex: 1 }}>{carouselFragment}</div>
-        <div
+        {/* <div
           className='shalalala'
           ref={wrapperRef}
           style={{
@@ -216,9 +210,9 @@ const App = () => {
           }}
         >
           {thumbsFragment}
-        </div>
+        </div> */}
       </div>
-      <button onClick={slideToNextItem}>NEXT</button>
+      {/* <button onClick={slideToNextItem}>NEXT</button> */}
     </div>
   )
 }
