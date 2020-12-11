@@ -45,7 +45,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   carouselSlideAxis = 'x',
   thumbsSlideAxis = 'x',
   thumbsMaxHeight = 0,
-  thumbsWrapperRef
+  thumbsWrapperRef = null
 }: CarouselProps<T>) {
   const internalItems = withLoop
     ? [items[items.length - 1], ...items, items[0]]

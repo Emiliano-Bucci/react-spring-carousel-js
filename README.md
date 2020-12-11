@@ -64,18 +64,19 @@ As you can see, you don't have to call the component in the traditional way but 
 
 You can provide this **options** to better customize the behavior and the aspect of the Carousel:
 
-| Prop                       | Type           | Default          | Description                                                                                     |
-| -------------------------- | -------------- | ---------------- | ----------------------------------------------------------------------------------------------- |
-| items                      | `T[]`          | `[]`             | You can extend the main interface - `ReactSpringCarouselItem` - and add custom props.           |
-| withLoop                   | `boolean`      | `false`          | Set to `true` if you want to enable the infinite loop behavior.                                 |
-| withThumbs                 | `boolean`      | `true`           | Set to false if you don't want to render the list of thumbs.                                    |
-| springConfig               | `SpringConfig` | `config.default` | Customize the spring animation props.                                                           |
-| shouldResizeOnWindowResize | `boolean`      | `true`           | Set to false if you want to disable the auto rezise                                             |
-| draggingSlideTreshold      | `number`       | `50`             | Set the minimum treshold that is required to slide after the item is dragged and then released. |
-| enableThumbsWrapperScroll  | `boolean`      | `true`           | Set to false if you don't want to auto-scroll the list of thumbs when an item is selected.      |
-| carouselSlideAxis          | `x / y`        | `x`              | Specify the slide axis direction of the carousel                                                |
-| thumbsSlideAxis            | `x / y`        | `x`              | Specify the slide axis direction of the thumbs list                                             |
-| thumbsMaxHeight            | `number`       | `0`              | Set the max height of the thumb list wrapper; to be only used if you set thumbsSlideAxis to `y` |
+| Prop                       | Type                                   | Default          | Description                                                                                     |
+| -------------------------- | -------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| items                      | `T[]`                                  | `[]`             | You can extend the main interface - `ReactSpringCarouselItem` - and add custom props.           |
+| withLoop                   | `boolean`                              | `false`          | Set to `true` if you want to enable the infinite loop behavior.                                 |
+| withThumbs                 | `boolean`                              | `true`           | Set to false if you don't want to render the list of thumbs.                                    |
+| springConfig               | `SpringConfig`                         | `config.default` | Customize the spring animation props.                                                           |
+| shouldResizeOnWindowResize | `boolean`                              | `true`           | Set to false if you want to disable the auto rezise                                             |
+| draggingSlideTreshold      | `number`                               | `50`             | Set the minimum treshold that is required to slide after the item is dragged and then released. |
+| enableThumbsWrapperScroll  | `boolean`                              | `true`           | Set to false if you don't want to auto-scroll the list of thumbs when an item is selected.      |
+| carouselSlideAxis          | `x / y`                                | `x`              | Specify the slide axis direction of the carousel                                                |
+| thumbsSlideAxis            | `x / y`                                | `x`              | Specify the slide axis direction of the thumbs list                                             |
+| thumbsMaxHeight            | `number`                               | `0`              | Set the max height of the thumb list wrapper; to be only used if you set thumbsSlideAxis to `y` |
+| thumbsWrapperRef           | `React.MutableRefObject<HTMLDivElement | null>`           | `null`                                                                                          | Pass a wrapper ref if you want to style in a particular way the thumbs wrapper list and still want to have the automatic scroll out of the box. If you set `carouselSlideAxis='x'` probably you wouldn't want to do it, as we automatically handle this case. In case you set `carouselSlideAxis='y'` you have to options: or you set the `thumbsMaxHeight` to a fixed height, or if you need to have a fluid height - 100% - then in this case you should pass the ref of the wrapper. This way, we will use your ref to handle the scroll (remember to also set `overflow-y: auto`). |
 
 ## Options (API)
 
