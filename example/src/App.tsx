@@ -6,12 +6,11 @@ const App = () => {
   const {
     carouselFragment,
     thumbsFragment,
-    slideToPrevItem,
-    slideToNextItem
+    // slideToPrevItem,
+    slideToNextItem,
+    enterFullscreen
   } = useReactSpringCarousel({
-    withLoop: true,
-    thumbsSlideAxis: 'y',
-    thumbsWrapperRef: wrapperRef,
+    // thumbsWrapperRef: wrapperRef,
     items: [
       {
         id: 'item-1',
@@ -199,7 +198,7 @@ const App = () => {
         background: 'orange'
       }}
     >
-      <button onClick={slideToPrevItem}>PREV</button>
+      <button onClick={() => enterFullscreen()}>PREV</button>
       <div
         style={{
           display: 'flex',

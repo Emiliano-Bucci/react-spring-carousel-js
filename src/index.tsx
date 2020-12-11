@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useRef,
-  createContext,
-  useEffect,
-  useCallback
-} from 'react'
+import React, { useRef, createContext, useCallback } from 'react'
 import { useSpring, config, animated } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
 import screenfull from 'screenfull'
@@ -25,7 +19,7 @@ import {
 
 export const ReactSpringCarouselContext = createContext<ReactSpringCarouselContextProps>(
   {
-    isFullscreen: false,
+    getIsFullscreen: () => false,
     getIsPrevItem: () => false,
     getIsNextItem: () => false,
     slideToItem: () => {},
@@ -59,10 +53,10 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   const activeItem = useRef(0)
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
   const carouselWrapperRef = useRef<HTMLDivElement | null>(null)
+  const isFullscreen = useRef(false)
 
   const isDragging = useRef(false)
   const isAnimating = useRef(false)
-  const [isFullscreen, setIsFullscreen] = useState(false)
   const { emitCustomEvent, useListenToCustomEvent } = useCustomEventListener()
   // @ts-ignore
   const [carouselStyles, setCarouselStyles] = useSpring(() => ({
@@ -85,7 +79,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     const dragging = props.dragging
     const movement = props.movement[carouselSlideAxis === 'x' ? 0 : 1]
 
-    const currentSlidedValue = -(getWrapperDimention() * getCurrentActiveItem())
+    const currentSlidedValue = -(getWrapperDimension() * getCurrentActiveItem())
 
     if (getIsAnimating()) {
       return
@@ -132,7 +126,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     }
   })
 
-  const getWrapperDimention = useCallback(() => {
+  const getWrapperDimension = useCallback(() => {
     if (!carouselWrapperRef.current) {
       return 0
     }
@@ -144,14 +138,18 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     return carouselWrapperRef.current.getBoundingClientRect().height
   }, [carouselSlideAxis])
 
-  useEffect(() => {
+  function setIsFullscreen(_isFullscreen: boolean) {
+    isFullscreen.current = _isFullscreen
+  }
+
+  useMount(() => {
     const _carouselwrapperRef = mainCarouselWrapperRef.current
 
     function handleFullscreenChange(event: Event) {
       if (
         document.fullscreenElement &&
         event.target === mainCarouselWrapperRef.current &&
-        !isFullscreen
+        !getIsFullscreen()
       ) {
         setIsFullscreen(true)
       }
@@ -159,7 +157,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
       if (
         !document.fullscreenElement &&
         event.target === mainCarouselWrapperRef.current &&
-        isFullscreen
+        getIsFullscreen()
       ) {
         setIsFullscreen(false)
       }
@@ -176,15 +174,26 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
         handleFullscreenChange
       )
     }
-  }, [isFullscreen])
+  })
+
+  function adjustCarouselWrapperPosition(ref: HTMLDivElement) {
+    const position = carouselSlideAxis === 'x' ? 'left' : 'top'
+    const dimension = carouselSlideAxis === 'x' ? 'width' : 'height'
+
+    ref.style[position] = `-${ref.getBoundingClientRect()[dimension]}px`
+  }
 
   // @ts-ignore
-  useEffect(() => {
+  useMount(() => {
     function handleResize() {
       setCarouselStyles({
-        [carouselSlideAxis]: -(getWrapperDimention() * getCurrentActiveItem()),
+        [carouselSlideAxis]: -(getWrapperDimension() * getCurrentActiveItem()),
         immediate: true
       })
+
+      if (withLoop) {
+        adjustCarouselWrapperPosition(carouselWrapperRef.current!)
+      }
     }
 
     if (shouldResizeOnWindowResize) {
@@ -192,12 +201,11 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
 
       return () => window.removeEventListener('resize', handleResize)
     }
-  }, [
-    getWrapperDimention,
-    setCarouselStyles,
-    shouldResizeOnWindowResize,
-    carouselSlideAxis
-  ])
+  })
+
+  function getIsFullscreen() {
+    return isFullscreen.current
+  }
 
   function setActiveItem(newItem: number) {
     activeItem.current = newItem
@@ -241,7 +249,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     isAnimating.current = true
 
     setCarouselStyles({
-      [carouselSlideAxis]: -(getWrapperDimention() * item),
+      [carouselSlideAxis]: -(getWrapperDimension() * item),
       config: {
         ...springConfig,
         duration: immediate ? 0 : undefined
@@ -368,7 +376,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   }
 
   const contextProps: ReactSpringCarouselContextProps = {
-    isFullscreen,
+    getIsFullscreen,
     useListenToCustomEvent,
     enterFullscreen: (elementRef) => {
       handleEnterFullscreen(elementRef || mainCarouselWrapperRef.current!)
@@ -416,12 +424,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
               carouselWrapperRef.current = ref
 
               if (withLoop) {
-                const position = carouselSlideAxis === 'x' ? 'left' : 'top'
-                const dimension = carouselSlideAxis === 'x' ? 'width' : 'height'
-
-                ref.style[position] = `-${
-                  ref.getBoundingClientRect()[dimension]
-                }px`
+                adjustCarouselWrapperPosition(ref)
               }
             }
           }}

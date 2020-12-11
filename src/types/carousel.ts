@@ -22,7 +22,7 @@ export interface CarouselProps<T extends ReactSpringCarouselItem> {
 }
 
 export type ReactSpringCarouselContextProps = {
-  isFullscreen: boolean
+  getIsFullscreen(): boolean
   getIsPrevItem(id: string): boolean
   getIsNextItem(id: string): boolean
   slideToItem(item: number, callback?: VoidFunction): void

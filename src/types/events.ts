@@ -8,7 +8,8 @@ import {
 export enum ReactSpringCustomEvents {
   'RCSJS:onSlideStartChange' = 'RCSJS:onSlideStartChange',
   'RCSJS:onSlideChange' = 'RCSJS:onSlideChange',
-  'RCSJS:onDrag' = 'RCSJS:onDrag'
+  'RCSJS:onDrag' = 'RCSJS:onDrag',
+  'RCSJS:onFullscreenChange' = 'RCSJS:onFullscreenChange'
 }
 
 export type RCSJSOnSlideStartChange = {
@@ -27,4 +28,8 @@ export type RCSJSOnDrag = Omit<
   'event'
 > & {
   event: EventTypes['drag']
+}
+
+export type RCSJOnFullscreenChange = {
+  isFullscreen: boolean
 }
