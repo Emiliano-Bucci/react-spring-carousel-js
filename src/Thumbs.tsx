@@ -33,7 +33,7 @@ export function useCarouselThumbs<T extends ReactSpringCarouselItem>({
 }: Props<T>) {
   const internalThumbsWrapperRef = useRef<HTMLDivElement | null>(null)
   // @ts-ignore
-  const thumbsList = useSpring(() => ({
+  const [, setThumbListStyles] = useSpring(() => ({
     [thumbsSlideAxis]: 0,
     config: springConfig
   }))
@@ -94,7 +94,7 @@ export function useCarouselThumbs<T extends ReactSpringCarouselItem>({
       const thumbScrollDimension =
         internalThumbsWrapperRef.current!.getBoundingClientRect()[dimension] / 2
 
-      thumbsList[1]({
+      setThumbListStyles({
         from: {
           [thumbsSlideAxis]: internalThumbsWrapperRef.current![scrollDirection]
         },
