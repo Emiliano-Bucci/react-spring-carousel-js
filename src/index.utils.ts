@@ -45,7 +45,7 @@ export function useCustomEventListener() {
   }
 }
 
-export function prepareDataForCustomEvent(data: Record<string, unknown>) {
+export function prepareDataForCustomEvent<T>(data: T) {
   return {
     detail: {
       ...data

@@ -11,6 +11,10 @@ import {
 import { useCarouselThumbs } from './Thumbs'
 import {
   CarouselProps,
+  RCSJOnFullscreenChange,
+  RCSJSOnDrag,
+  RCSJSOnSlideChange,
+  RCSJSOnSlideStartChange,
   ReactSpringCarouselContextProps,
   ReactSpringCarouselItem,
   ReactSpringCustomEvents,
@@ -91,7 +95,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
 
       emitCustomEvent(
         ReactSpringCustomEvents['RCSJS:onDrag'],
-        prepareDataForCustomEvent(props)
+        prepareDataForCustomEvent<RCSJSOnDrag>(props)
       )
     }
 
@@ -218,6 +222,13 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   function handleEnterFullscreen(element: HTMLElement) {
     if (screenfull.isEnabled) {
       screenfull.request(element)
+
+      emitCustomEvent(
+        ReactSpringCustomEvents['RCSJS:onFullscreenChange'],
+        prepareDataForCustomEvent<RCSJOnFullscreenChange>({
+          isFullscreen: true
+        })
+      )
     }
   }
 
@@ -261,7 +272,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
 
         emitCustomEvent(
           ReactSpringCustomEvents['RCSJS:onSlideChange'],
-          prepareDataForCustomEvent({
+          prepareDataForCustomEvent<RCSJSOnSlideChange>({
             prevItem: getPrevItem(),
             currentItem: getCurrentActiveItem(),
             nextItem: getNextItem()
@@ -285,7 +296,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
 
     emitCustomEvent(
       ReactSpringCustomEvents['RCSJS:onSlideStartChange'],
-      prepareDataForCustomEvent({
+      prepareDataForCustomEvent<RCSJSOnSlideStartChange>({
         prevItem: getPrevItem(),
         currentItem: getCurrentActiveItem(),
         nextItem: getNextItem()
@@ -332,7 +343,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
 
     emitCustomEvent(
       ReactSpringCustomEvents['RCSJS:onSlideStartChange'],
-      prepareDataForCustomEvent({
+      prepareDataForCustomEvent<RCSJSOnSlideStartChange>({
         prevItem: getPrevItem(),
         currentItem: getCurrentActiveItem(),
         nextItem: getNextItem()
@@ -381,7 +392,16 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     enterFullscreen: (elementRef) => {
       handleEnterFullscreen(elementRef || mainCarouselWrapperRef.current!)
     },
-    exitFullscreen: () => screenfull.isEnabled && screenfull.exit(),
+    exitFullscreen: () => {
+      screenfull.isEnabled && screenfull.exit()
+
+      emitCustomEvent(
+        ReactSpringCustomEvents['RCSJS:onFullscreenChange'],
+        prepareDataForCustomEvent<RCSJOnFullscreenChange>({
+          isFullscreen: false
+        })
+      )
+    },
     getIsAnimating,
     getIsDragging,
     getIsNextItem: (id) => findItemIndex(id) - 1 === getCurrentActiveItem(),
