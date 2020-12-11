@@ -1,6 +1,5 @@
 import React, { useRef } from 'react'
 import { useSpring, animated, SpringConfig } from 'react-spring'
-import { InternalThumbsWrapper } from './index.styles'
 import { fixNegativeIndex, useMount } from './index.utils'
 import {
   CarouselProps,
@@ -11,7 +10,6 @@ import {
 type Props<T extends ReactSpringCarouselItem> = {
   items: T[]
   withThumbs: boolean
-  CustomThumbsWrapper: CarouselProps<T>['CustomThumbsWrapper']
   thumbsSlideAxis: CarouselProps<T>['thumbsSlideAxis']
   thumbsMaxHeight: CarouselProps<T>['thumbsMaxHeight']
   thumbsWrapperRef?: CarouselProps<T>['thumbsWrapperRef']
@@ -23,7 +21,6 @@ type Props<T extends ReactSpringCarouselItem> = {
 export function useCarouselThumbs<T extends ReactSpringCarouselItem>({
   items,
   withThumbs,
-  CustomThumbsWrapper,
   thumbsSlideAxis = 'x',
   thumbsMaxHeight = 0,
   springConfig,
@@ -47,12 +44,6 @@ export function useCarouselThumbs<T extends ReactSpringCarouselItem>({
           'The renderThumb property is missing in one or more items. You need to add the renderThumb property to every item of the carousel when withThumbs={true}'
         )
       }
-    }
-
-    if (!withThumbs && !!CustomThumbsWrapper) {
-      console.warn(
-        "You set withThumbs={false} but you're still passing a <CustomThumbsWrapper /> component."
-      )
     }
 
     if (thumbsSlideAxis === 'y' && thumbsMaxHeight === 0) {
@@ -114,35 +105,32 @@ export function useCarouselThumbs<T extends ReactSpringCarouselItem>({
     }
   }
 
-  const ThumbsWrapper = CustomThumbsWrapper || InternalThumbsWrapper
   const thumbsFragment = withThumbs ? (
-    <ThumbsWrapper>
-      <animated.div
-        ref={internalThumbsWrapperRef}
-        style={{
-          display: 'flex',
-          flex: 1,
-          flexDirection: thumbsSlideAxis === 'x' ? 'row' : 'column',
-          ...(thumbsSlideAxis === 'x'
-            ? { overflowX: 'auto' }
-            : { overflowY: 'auto', maxHeight: '100%' })
-        }}
-      >
-        {items.map((item, index) => {
-          const thumbId = `thumb-${item.id}`
+    <animated.div
+      ref={internalThumbsWrapperRef}
+      style={{
+        display: 'flex',
+        flex: 1,
+        flexDirection: thumbsSlideAxis === 'x' ? 'row' : 'column',
+        ...(thumbsSlideAxis === 'x'
+          ? { overflowX: 'auto' }
+          : { overflowY: 'auto', maxHeight: '100%' })
+      }}
+    >
+      {items.map((item, index) => {
+        const thumbId = `thumb-${item.id}`
 
-          return (
-            <div
-              key={thumbId}
-              id={thumbId}
-              onClick={() => slideToItem({ item: index })}
-            >
-              {item.renderThumb}
-            </div>
-          )
-        })}
-      </animated.div>
-    </ThumbsWrapper>
+        return (
+          <div
+            key={thumbId}
+            id={thumbId}
+            onClick={() => slideToItem({ item: index })}
+          >
+            {item.renderThumb}
+          </div>
+        )
+      })}
+    </animated.div>
   ) : null
 
   return {

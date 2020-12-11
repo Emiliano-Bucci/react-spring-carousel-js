@@ -7,12 +7,6 @@ export interface ReactSpringCarouselItem {
   renderThumb?: React.ReactNode
 }
 
-export type CustomElement = React.ForwardRefExoticComponent<
-  {
-    children: React.ReactNode
-  } & React.RefAttributes<HTMLDivElement>
->
-
 export interface CarouselProps<T extends ReactSpringCarouselItem> {
   withLoop?: boolean
   items: T[]
@@ -20,8 +14,6 @@ export interface CarouselProps<T extends ReactSpringCarouselItem> {
   springConfig?: SpringConfig
   shouldResizeOnWindowResize?: boolean
   withThumbs?: boolean
-  CustomWrapper?: CustomElement
-  CustomThumbsWrapper?: React.FC<{ children: React.ReactNode }>
   enableThumbsWrapperScroll?: boolean
   carouselSlideAxis?: 'x' | 'y'
   thumbsSlideAxis?: 'x' | 'y'

@@ -8,7 +8,6 @@ import React, {
 import { useSpring, config, animated } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
 import screenfull from 'screenfull'
-import { InternalCarouselWrapper } from './index.styles'
 import {
   fixNegativeIndex,
   prepareDataForCustomEvent,
@@ -47,8 +46,6 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   draggingSlideTreshold = 50,
   springConfig = config.default,
   shouldResizeOnWindowResize = true,
-  CustomThumbsWrapper,
-  CustomWrapper,
   withThumbs = true,
   enableThumbsWrapperScroll = true,
   carouselSlideAxis = 'x',
@@ -75,7 +72,6 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
 
   const { thumbsFragment, handleThumbsScroll } = useCarouselThumbs({
     withThumbs,
-    CustomThumbsWrapper,
     items,
     thumbsSlideAxis,
     thumbsMaxHeight,
@@ -371,7 +367,6 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     return items.findIndex((item) => item.id === id)
   }
 
-  const CarouselWrapper = CustomWrapper || InternalCarouselWrapper
   const contextProps: ReactSpringCarouselContextProps = {
     isFullscreen,
     useListenToCustomEvent,
@@ -396,7 +391,16 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
 
   const carouselFragment = (
     <ReactSpringCarouselContext.Provider value={contextProps}>
-      <CarouselWrapper ref={mainCarouselWrapperRef}>
+      <div
+        ref={mainCarouselWrapperRef}
+        style={{
+          display: 'flex',
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          overflow: 'hidden'
+        }}
+      >
         <animated.div
           {...bindDrag()}
           style={{
@@ -434,7 +438,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
             </div>
           ))}
         </animated.div>
-      </CarouselWrapper>
+      </div>
     </ReactSpringCarouselContext.Provider>
   )
 
