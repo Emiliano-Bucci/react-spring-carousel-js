@@ -10,17 +10,17 @@ import { useCustomEventsModule } from '../modules/useCustomEventsModule'
 import { useFullscreenModule } from '../modules/useFullscreenModule'
 import { useThumbsModule } from '../modules/useThumbsModule'
 import {
-  CarouselProps,
+  TransformCarouselProps,
   RCSJSOnDrag,
   RCSJSOnSlideChange,
   RCSJSOnSlideStartChange,
-  ReactSpringCarouselContextProps,
+  TransformCarouselContextProps,
   ReactSpringCarouselItem,
   ReactSpringCustomEvents,
   SlideToItemFnProps
 } from '../types'
 
-export const ReactSpringCarouselContext = createContext<ReactSpringCarouselContextProps>(
+export const TransformCarouselContext = createContext<TransformCarouselContextProps>(
   {
     getIsFullscreen: () => false,
     getIsPrevItem: () => false,
@@ -49,7 +49,7 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
   thumbsSlideAxis = 'x',
   thumbsMaxHeight = 0,
   thumbsWrapperRef
-}: CarouselProps<T>) {
+}: TransformCarouselProps<T>) {
   const internalItems = withLoop
     ? [items[items.length - 1], ...items, items[0]]
     : items
@@ -340,7 +340,7 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
     return items.findIndex((item) => item.id === id)
   }
 
-  const contextProps: ReactSpringCarouselContextProps = {
+  const contextProps: TransformCarouselContextProps = {
     useListenToCustomEvent,
     getIsFullscreen,
     enterFullscreen,
@@ -361,7 +361,7 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
   }
 
   const carouselFragment = (
-    <ReactSpringCarouselContext.Provider value={contextProps}>
+    <TransformCarouselContext.Provider value={contextProps}>
       <div
         ref={mainCarouselWrapperRef}
         style={{
@@ -405,7 +405,7 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
           ))}
         </animated.div>
       </div>
-    </ReactSpringCarouselContext.Provider>
+    </TransformCarouselContext.Provider>
   )
 
   return {

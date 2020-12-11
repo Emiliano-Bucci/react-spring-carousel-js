@@ -1,13 +1,13 @@
 import { SpringConfig } from 'react-spring'
 import { ReactSpringCustomEvents } from '.'
 
-export interface ReactSpringCarouselItem {
+export type ReactSpringCarouselItem = {
   id: string
   renderItem: React.ReactNode
   renderThumb?: React.ReactNode
 }
 
-export interface CarouselProps<T extends ReactSpringCarouselItem> {
+export type TransformCarouselProps<T extends ReactSpringCarouselItem> = {
   withLoop?: boolean
   items: T[]
   draggingSlideTreshold?: number
@@ -21,7 +21,7 @@ export interface CarouselProps<T extends ReactSpringCarouselItem> {
   thumbsMaxHeight?: number
 }
 
-export type ReactSpringCarouselContextProps = {
+export type TransformCarouselContextProps = {
   getIsFullscreen(): boolean
   getIsPrevItem(id: string): boolean
   getIsNextItem(id: string): boolean

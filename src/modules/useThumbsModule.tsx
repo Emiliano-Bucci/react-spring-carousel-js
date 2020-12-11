@@ -2,7 +2,7 @@ import React, { useRef } from 'react'
 import { useSpring, SpringConfig } from 'react-spring'
 import { fixNegativeIndex, useMount } from '../index.utils'
 import {
-  CarouselProps,
+  TransformCarouselProps,
   ReactSpringCarouselItem,
   SlideToItemFnProps
 } from '../types'
@@ -10,9 +10,9 @@ import {
 type Props<T extends ReactSpringCarouselItem> = {
   items: T[]
   withThumbs: boolean
-  thumbsSlideAxis: CarouselProps<T>['thumbsSlideAxis']
-  thumbsMaxHeight: CarouselProps<T>['thumbsMaxHeight']
-  thumbsWrapperRef?: CarouselProps<T>['thumbsWrapperRef']
+  thumbsSlideAxis: TransformCarouselProps<T>['thumbsSlideAxis']
+  thumbsMaxHeight: TransformCarouselProps<T>['thumbsMaxHeight']
+  thumbsWrapperRef?: TransformCarouselProps<T>['thumbsWrapperRef']
   springConfig: SpringConfig
   getCurrentActiveItem(): number
   slideToItem(props: SlideToItemFnProps): void
