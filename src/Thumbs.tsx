@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { useSpring, animated, SpringConfig } from 'react-spring'
+import { useSpring, SpringConfig } from 'react-spring'
 import { fixNegativeIndex, useMount } from './index.utils'
 import {
   CarouselProps,
@@ -75,7 +75,7 @@ export function useCarouselThumbs<T extends ReactSpringCarouselItem>({
         thumbsSlideAxis === 'x' ? 'offsetLeft' : 'offsetTop'
       const offsetDimension =
         thumbsSlideAxis === 'x' ? 'offsetWidth' : 'offsetHeight'
-      const dimension = thumbsSlideAxis === 'x' ? 'width' : 'height'
+      const dimensionProperty = thumbsSlideAxis === 'x' ? 'width' : 'height'
       const scrollDirection =
         thumbsSlideAxis === 'x' ? 'scrollLeft' : 'scrollTop'
 
@@ -83,7 +83,9 @@ export function useCarouselThumbs<T extends ReactSpringCarouselItem>({
         currentThumbItemNode[offsetDirection] +
         currentThumbItemNode[offsetDimension] / 2
       const thumbScrollDimension =
-        internalThumbsWrapperRef.current!.getBoundingClientRect()[dimension] / 2
+        internalThumbsWrapperRef.current!.getBoundingClientRect()[
+          dimensionProperty
+        ] / 2
 
       setThumbListStyles({
         from: {
@@ -106,7 +108,7 @@ export function useCarouselThumbs<T extends ReactSpringCarouselItem>({
   }
 
   const thumbsFragment = withThumbs ? (
-    <animated.div
+    <div
       ref={internalThumbsWrapperRef}
       style={{
         display: 'flex',
@@ -130,7 +132,7 @@ export function useCarouselThumbs<T extends ReactSpringCarouselItem>({
           </div>
         )
       })}
-    </animated.div>
+    </div>
   ) : null
 
   return {

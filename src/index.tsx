@@ -181,10 +181,12 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   })
 
   function adjustCarouselWrapperPosition(ref: HTMLDivElement) {
-    const position = carouselSlideAxis === 'x' ? 'left' : 'top'
-    const dimension = carouselSlideAxis === 'x' ? 'width' : 'height'
+    const positionProperty = carouselSlideAxis === 'x' ? 'left' : 'top'
+    const dimensionProperty = carouselSlideAxis === 'x' ? 'width' : 'height'
 
-    ref.style[position] = `-${ref.getBoundingClientRect()[dimension]}px`
+    ref.style[positionProperty] = `-${
+      ref.getBoundingClientRect()[dimensionProperty]
+    }px`
   }
 
   // @ts-ignore
