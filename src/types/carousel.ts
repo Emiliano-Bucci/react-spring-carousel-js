@@ -48,6 +48,7 @@ export type ReactSpringCarouselContextProps = {
 
 export type SlideToItemFnProps = {
   item: number
+  newIndex?: number
   immediate?: boolean
   onRest?(): void
 }

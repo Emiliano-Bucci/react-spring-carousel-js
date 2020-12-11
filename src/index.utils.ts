@@ -52,3 +52,15 @@ export function prepareDataForCustomEvent(data: Record<string, unknown>) {
     }
   }
 }
+
+export function fixNegativeIndex(index: number, totalItems: number) {
+  if (index === -1) {
+    return totalItems - 1
+  }
+
+  if (index >= totalItems) {
+    return 0
+  }
+
+  return index
+}

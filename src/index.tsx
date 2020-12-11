@@ -10,6 +10,7 @@ import { useDrag } from 'react-use-gesture'
 import screenfull from 'screenfull'
 import { InternalCarouselWrapper } from './index.styles'
 import {
+  fixNegativeIndex,
   prepareDataForCustomEvent,
   useCustomEventListener,
   useMount
@@ -88,7 +89,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
 
     const currentSlidedValue = -(getWrapperDimention() * getCurrentActiveItem())
 
-    if (isAnimating.current) {
+    if (getIsAnimating()) {
       return
     }
 
@@ -214,6 +215,14 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     }
   }
 
+  function getIsAnimating() {
+    return isAnimating.current
+  }
+
+  function getIsDragging() {
+    return isDragging.current
+  }
+
   function getPrevItem() {
     return getCurrentActiveItem() - 1
   }
@@ -228,7 +237,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     onRest = () => {}
   }: SlideToItemFnProps) {
     if (!immediate) {
-      setActiveItem(item)
+      setActiveItem(fixNegativeIndex(item, items.length))
     }
 
     isAnimating.current = true
@@ -263,7 +272,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   function slideToPrevItem() {
     if (
       (!withLoop && getCurrentActiveItem() === 0) ||
-      (isDragging.current && isAnimating.current)
+      (getIsDragging() && getIsAnimating())
     ) {
       return
     }
@@ -278,11 +287,10 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     )
 
     if (withLoop && getCurrentActiveItem() === 0) {
-      if (isDragging.current) {
+      if (getIsDragging()) {
         slideToItem({
           item: getPrevItem(),
           onRest: () => {
-            setActiveItem(internalItems.length - 3)
             slideToItem({
               item: internalItems.length - 3,
               immediate: true
@@ -311,7 +319,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   function slideToNextItem() {
     if (
       (!withLoop && getCurrentActiveItem() === internalItems.length - 1) ||
-      (isDragging.current && isAnimating.current)
+      (getIsDragging() && getIsAnimating())
     ) {
       return
     }
@@ -326,17 +334,7 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     )
 
     if (withLoop && getCurrentActiveItem() === internalItems.length - 3) {
-      if (!isDragging.current) {
-        slideToItem({
-          item: -1,
-          immediate: true,
-          onRest: () => {
-            slideToItem({
-              item: 0
-            })
-          }
-        })
-      } else {
+      if (getIsDragging()) {
         slideToItem({
           item: getNextItem(),
           onRest: () => {
@@ -344,6 +342,16 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
             slideToItem({
               item: 0,
               immediate: true
+            })
+          }
+        })
+      } else {
+        slideToItem({
+          item: -1,
+          immediate: true,
+          onRest: () => {
+            slideToItem({
+              item: 0
             })
           }
         })
@@ -369,8 +377,8 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
       handleEnterFullscreen(elementRef || mainCarouselWrapperRef.current!)
     },
     exitFullscreen: () => screenfull.isEnabled && screenfull.exit(),
-    getIsAnimating: () => isAnimating.current,
-    getIsDragging: () => isDragging.current,
+    getIsAnimating,
+    getIsDragging,
     getIsNextItem: (id) => findItemIndex(id) - 1 === getCurrentActiveItem(),
     getIsPrevItem: (id) => findItemIndex(id) - 1 === getCurrentActiveItem() - 2,
     getIsActiveItem: (id) => findItemIndex(id) === getCurrentActiveItem(),

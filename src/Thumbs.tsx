@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import { useSpring, animated, SpringConfig } from 'react-spring'
 import { InternalThumbsWrapper } from './index.styles'
-import { useMount } from './index.utils'
+import { fixNegativeIndex, useMount } from './index.utils'
 import {
   CarouselProps,
   ReactSpringCarouselItem,
@@ -69,10 +69,10 @@ export function useCarouselThumbs<T extends ReactSpringCarouselItem>({
   })
 
   function handleThumbsScroll() {
-    console.log(getCurrentActiveItem())
-
     const currentThumbItemNode = document.getElementById(
-      `thumb-${items[getCurrentActiveItem()].id}`
+      `thumb-${
+        items[fixNegativeIndex(getCurrentActiveItem(), items.length)].id
+      }`
     )
 
     if (currentThumbItemNode) {
