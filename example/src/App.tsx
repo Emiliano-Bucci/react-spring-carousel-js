@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useReactSpringCarousel } from 'react-spring-carousel-js'
 
 const App = () => {
+  const wrapperRef = useRef<HTMLDivElement | null>(null)
   const {
     carouselFragment,
     thumbsFragment,
@@ -9,7 +10,8 @@ const App = () => {
     slideToNextItem
   } = useReactSpringCarousel({
     withLoop: true,
-    carouselSlideAxis: 'y',
+    thumbsSlideAxis: 'y',
+    thumbsWrapperRef: wrapperRef,
     items: [
       {
         id: 'item-1',
@@ -26,7 +28,7 @@ const App = () => {
         renderThumb: (
           <div
             style={{
-              height: 20,
+              height: 200,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -51,7 +53,7 @@ const App = () => {
         renderThumb: (
           <div
             style={{
-              height: 20,
+              height: 200,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -76,7 +78,7 @@ const App = () => {
         renderThumb: (
           <div
             style={{
-              height: 20,
+              height: 200,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -101,7 +103,7 @@ const App = () => {
         renderThumb: (
           <div
             style={{
-              height: 20,
+              height: 200,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -126,7 +128,7 @@ const App = () => {
         renderThumb: (
           <div
             style={{
-              height: 20,
+              height: 200,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -151,7 +153,7 @@ const App = () => {
         renderThumb: (
           <div
             style={{
-              height: 20,
+              height: 200,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -176,7 +178,7 @@ const App = () => {
         renderThumb: (
           <div
             style={{
-              height: 20,
+              height: 200,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -200,15 +202,19 @@ const App = () => {
       <button onClick={slideToPrevItem}>PREV</button>
       <div
         style={{
+          display: 'flex',
           width: '100%',
-          display: 'grid'
+          height: 500
         }}
       >
         <div style={{ margin: '0 32px', flex: 1 }}>{carouselFragment}</div>
         <div
+          className='shalalala'
+          ref={wrapperRef}
           style={{
             maxWidth: '1200px',
-            background: 'brown'
+            background: 'brown',
+            overflowY: 'auto'
           }}
         >
           {thumbsFragment}

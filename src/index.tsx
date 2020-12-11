@@ -53,7 +53,8 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
   enableThumbsWrapperScroll = true,
   carouselSlideAxis = 'x',
   thumbsSlideAxis = 'x',
-  thumbsMaxHeight = 0
+  thumbsMaxHeight = 0,
+  thumbsWrapperRef
 }: CarouselProps<T>) {
   const internalItems = withLoop
     ? [items[items.length - 1], ...items, items[0]]
@@ -80,7 +81,8 @@ export function useReactSpringCarousel<T extends ReactSpringCarouselItem>({
     thumbsMaxHeight,
     springConfig,
     getCurrentActiveItem,
-    slideToItem
+    slideToItem,
+    thumbsWrapperRef
   })
 
   const bindDrag = useDrag((props) => {
