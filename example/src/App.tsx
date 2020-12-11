@@ -1,16 +1,14 @@
 import React, { useRef } from 'react'
-import { useReactSpringCarousel } from 'react-spring-carousel-js'
+import { useTransformCarousel } from 'react-spring-carousel-js'
 
 const App = () => {
   const wrapperRef = useRef<HTMLDivElement | null>(null)
   const {
     carouselFragment,
     thumbsFragment,
-    // slideToPrevItem,
     slideToNextItem,
     enterFullscreen
-  } = useReactSpringCarousel({
-    // thumbsWrapperRef: wrapperRef,
+  } = useTransformCarousel({
     items: [
       {
         id: 'item-1',

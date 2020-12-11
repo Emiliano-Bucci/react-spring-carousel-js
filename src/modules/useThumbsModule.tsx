@@ -1,11 +1,11 @@
 import React, { useRef } from 'react'
 import { useSpring, SpringConfig } from 'react-spring'
-import { fixNegativeIndex, useMount } from './index.utils'
+import { fixNegativeIndex, useMount } from '../index.utils'
 import {
   CarouselProps,
   ReactSpringCarouselItem,
   SlideToItemFnProps
-} from './types'
+} from '../types'
 
 type Props<T extends ReactSpringCarouselItem> = {
   items: T[]
@@ -18,7 +18,7 @@ type Props<T extends ReactSpringCarouselItem> = {
   slideToItem(props: SlideToItemFnProps): void
 }
 
-export function useCarouselThumbs<T extends ReactSpringCarouselItem>({
+export function useThumbsModule<T extends ReactSpringCarouselItem>({
   items,
   withThumbs,
   thumbsSlideAxis = 'x',
