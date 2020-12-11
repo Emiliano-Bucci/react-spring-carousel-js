@@ -201,7 +201,6 @@ const App = () => {
       <button onClick={() => enterFullscreen()}>PREV</button>
       <div
         style={{
-          display: 'flex',
           width: '100%',
           height: 500
         }}
@@ -211,7 +210,7 @@ const App = () => {
           className='shalalala'
           ref={wrapperRef}
           style={{
-            maxWidth: '1200px',
+            maxWidth: '400px',
             background: 'brown',
             overflowY: 'auto'
           }}

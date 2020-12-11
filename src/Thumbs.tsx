@@ -46,9 +46,9 @@ export function useCarouselThumbs<T extends ReactSpringCarouselItem>({
       }
     }
 
-    if (thumbsSlideAxis === 'y' && thumbsMaxHeight === 0) {
+    if (thumbsSlideAxis === 'y' && thumbsMaxHeight === 0 && !thumbsWrapperRef) {
       console.warn(
-        'When you set thumbsSlideAxis=`y` remember also to set a truthy thumbsMaxHeight value.'
+        'When you set thumbsSlideAxis=`y` you would also probably set thumbsMaxHeight or thumbsWrapperRef props.'
       )
     }
 
