@@ -17,6 +17,7 @@ import {
   ReactSpringCustomEvents,
   SlideToItemFnProps
 } from '../types'
+import { AnimationModuleReturnData } from './AnimationModule'
 
 export function useTransformAnimationModule<T extends ReactSpringCarouselItem>({
   items,
@@ -30,7 +31,7 @@ export function useTransformAnimationModule<T extends ReactSpringCarouselItem>({
   thumbsSlideAxis = 'x',
   thumbsMaxHeight = 0,
   thumbsWrapperRef
-}: CarouselProps<T>) {
+}: CarouselProps<T>): AnimationModuleReturnData {
   const internalItems = withLoop
     ? [items[items.length - 1], ...items, items[0]]
     : items

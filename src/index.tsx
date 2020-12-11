@@ -1,33 +1,16 @@
 import React, { createContext, useRef } from 'react'
-import { useTransformAnimationModule } from './animationModules/TransformAnimationModule'
 import { prepareDataForCustomEvent, useMount } from './index.utils'
 import {
-  CarouselProps,
   RCSJOnFullscreenChange,
   ReactSpringCarouselContextProps,
   ReactSpringCarouselItem,
   ReactSpringCustomEvents
 } from './types'
 import screenfull from 'screenfull'
-
-export type AnimationType = 'transform' | 'fadeInOut'
-
-type AnimationModuleProps<
-  T extends ReactSpringCarouselItem
-> = CarouselProps<T> & { type?: AnimationType }
-
-function useAnimationModules<T extends ReactSpringCarouselItem>({
-  type,
-  ...rest
-}: AnimationModuleProps<T>) {
-  switch (type) {
-    default:
-    case 'transform': {
-      const data = useTransformAnimationModule(rest)
-      return data
-    }
-  }
-}
+import {
+  AnimationModuleProps,
+  useAnimationModules
+} from './animationModules/AnimationModule'
 
 export const ReactSpringCarouselContext = createContext<ReactSpringCarouselContextProps>(
   {
