@@ -1,13 +1,12 @@
 import React, { useRef, createContext, useCallback } from 'react'
 import { useSpring, config, animated } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
-
 import {
   fixNegativeIndex,
   prepareDataForCustomEvent,
-  useCustomEventListener,
   useMount
 } from '../index.utils'
+import { useCustomEventsModule } from '../modules/useCustomEventsModule'
 import { useFullscreenModule } from '../modules/useFullscreenModule'
 import { useThumbsModule } from '../modules/useThumbsModule'
 import {
@@ -56,7 +55,7 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
     : items
   const activeItem = useRef(0)
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
-  const carouselWrapperRef = useRef<HTMLDivElement | null>(null)
+  const carouselTrackWrapperRef = useRef<HTMLDivElement | null>(null)
   const isDragging = useRef(false)
   const isAnimating = useRef(false)
 
@@ -67,7 +66,7 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
   }))
 
   // Custom modules
-  const { emitCustomEvent, useListenToCustomEvent } = useCustomEventListener()
+  const { emitCustomEvent, useListenToCustomEvent } = useCustomEventsModule()
   const {
     enterFullscreen,
     exitFullscreen,
@@ -139,15 +138,15 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
   })
 
   const getWrapperDimension = useCallback(() => {
-    if (!carouselWrapperRef.current) {
+    if (!carouselTrackWrapperRef.current) {
       return 0
     }
 
     if (carouselSlideAxis === 'x') {
-      return carouselWrapperRef.current.getBoundingClientRect().width
+      return carouselTrackWrapperRef.current.getBoundingClientRect().width
     }
 
-    return carouselWrapperRef.current.getBoundingClientRect().height
+    return carouselTrackWrapperRef.current.getBoundingClientRect().height
   }, [carouselSlideAxis])
 
   function adjustCarouselWrapperPosition(ref: HTMLDivElement) {
@@ -168,7 +167,7 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
       })
 
       if (withLoop) {
-        adjustCarouselWrapperPosition(carouselWrapperRef.current!)
+        adjustCarouselWrapperPosition(carouselTrackWrapperRef.current!)
       }
     }
 
@@ -385,7 +384,7 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
           }}
           ref={(ref) => {
             if (ref) {
-              carouselWrapperRef.current = ref
+              carouselTrackWrapperRef.current = ref
 
               if (withLoop) {
                 adjustCarouselWrapperPosition(ref)
