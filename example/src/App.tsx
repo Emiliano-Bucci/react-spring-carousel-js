@@ -1,5 +1,5 @@
 import React from 'react'
-import { useFadingCarousel } from 'react-spring-carousel-js'
+import { useTransitionCarousel } from 'react-spring-carousel-js'
 
 const App = () => {
   const {
@@ -7,7 +7,7 @@ const App = () => {
     slideToPrevItem,
     slideToNextItem,
     getIsAnimating
-  } = useFadingCarousel({
+  } = useTransitionCarousel({
     items: [
       {
         id: 'item-1',

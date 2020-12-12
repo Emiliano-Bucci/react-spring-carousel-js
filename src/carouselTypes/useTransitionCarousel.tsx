@@ -13,6 +13,7 @@ import {
   useCustomEventsModule
 } from '../modules/useCustomEventsModule'
 import { useFullscreenModule } from '../modules/useFullscreenModule'
+import { useThumbsModule } from '../modules/useThumbsModule'
 import {
   RCSJSOnSlideChange,
   RCSJSOnSlideStartChange,
@@ -33,6 +34,9 @@ type FadingCarouselProps<T extends ReactSpringCarouselItem> = {
   springConfig?: SpringConfig
   springAnimationPops?: SpringAnimationProps<T>
   withLoop?: boolean
+  thumbsSlideAxis?: 'x' | 'y'
+  thumbsMaxHeight?: number
+  enableThumbsWrapperScroll?: boolean
 }
 
 type FadingCarouselContextProps = {
@@ -61,11 +65,14 @@ const FadingCarouselContext = createContext<FadingCarouselContextProps>({
   useListenToCustomEvent: () => {}
 })
 
-export function useFadingCarousel<T extends ReactSpringCarouselItem>({
+export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
   items,
   withLoop = true,
-  // withThumbs = true,
+  withThumbs = true,
   springConfig = config.default,
+  thumbsSlideAxis = 'x',
+  thumbsMaxHeight = 0,
+  enableThumbsWrapperScroll = true,
   springAnimationPops = {
     initial: {
       opacity: 1
@@ -92,6 +99,15 @@ export function useFadingCarousel<T extends ReactSpringCarouselItem>({
   const { enterFullscreen, exitFullscreen } = useFullscreenModule({
     emitCustomEvent,
     mainCarouselWrapperRef
+  })
+  const { thumbsFragment, handleThumbsScroll } = useThumbsModule({
+    items,
+    withThumbs,
+    thumbsSlideAxis,
+    thumbsMaxHeight,
+    springConfig,
+    getCurrentActiveItem: () => activeItem,
+    slideToItem
   })
 
   // @ts-ignore
@@ -151,6 +167,10 @@ export function useFadingCarousel<T extends ReactSpringCarouselItem>({
       })
     )
     setActiveItem(item)
+
+    if (enableThumbsWrapperScroll) {
+      handleThumbsScroll()
+    }
   }
 
   function slideToNextItem() {
@@ -245,6 +265,7 @@ export function useFadingCarousel<T extends ReactSpringCarouselItem>({
 
   return {
     carouselFragment,
+    thumbsFragment,
     ...contextProps
   }
 }

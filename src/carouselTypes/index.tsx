@@ -1,2 +1,2 @@
 export * from './useTransformCarousel'
-export * from './useFadingCarousel'
+export * from './useTransitionCarousel'

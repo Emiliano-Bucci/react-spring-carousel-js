@@ -82,7 +82,7 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
     thumbsMaxHeight,
     springConfig,
     getCurrentActiveItem,
-    slideToItem,
+    slideToItem: (item: number) => slideToItem({ item }),
     thumbsWrapperRef
   })
 
