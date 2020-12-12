@@ -5,8 +5,7 @@ const App = () => {
   const {
     carouselFragment,
     slideToPrevItem,
-    slideToNextItem,
-    getIsPrevItem
+    slideToNextItem
   } = useFadingCarousel({
     items: [
       {
@@ -86,8 +85,6 @@ const App = () => {
       }
     ]
   })
-
-  console.log(getIsPrevItem('item-2'))
 
   return (
     <div
