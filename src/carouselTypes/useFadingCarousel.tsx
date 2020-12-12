@@ -194,7 +194,7 @@ export function useFadingCarousel<T extends ReactSpringCarouselItem>({
   function getIsNextItem(id: string) {
     const itemIndex = findItemIndex(id)
 
-    if (activeItem === items.length - 1) {
+    if (withLoop && activeItem === items.length - 1) {
       return itemIndex === 0
     }
 
@@ -204,7 +204,7 @@ export function useFadingCarousel<T extends ReactSpringCarouselItem>({
   function getIsPrevItem(id: string) {
     const itemIndex = findItemIndex(id)
 
-    if (activeItem === 0) {
+    if (withLoop && activeItem === 0) {
       return itemIndex === items.length - 1
     }
 

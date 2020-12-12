@@ -356,7 +356,7 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
     const itemIndex = findItemIndex(id)
     const activeItem = getCurrentActiveItem()
 
-    if (activeItem === items.length - 1) {
+    if (withLoop && activeItem === items.length - 1) {
       return itemIndex === 0
     }
 
@@ -367,7 +367,7 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
     const itemIndex = findItemIndex(id)
     const activeItem = getCurrentActiveItem()
 
-    if (activeItem === 0) {
+    if (withLoop && activeItem === 0) {
       return itemIndex === items.length - 1
     }
 
