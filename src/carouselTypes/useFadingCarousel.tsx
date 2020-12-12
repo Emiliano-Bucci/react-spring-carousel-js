@@ -71,10 +71,12 @@ export function useFadingCarousel<T extends ReactSpringCarouselItem>({
       opacity: 1
     },
     from: {
-      opacity: 0
+      opacity: 0,
+      position: 'absolute'
     },
     enter: {
-      opacity: 1
+      opacity: 1,
+      position: 'relative'
     },
     leave: {
       opacity: 0,
