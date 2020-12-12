@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, createContext } from 'react'
 import {
   useTransition,
   SpringConfig,
@@ -8,7 +8,10 @@ import {
   TransitionTo
 } from 'react-spring'
 import { prepareDataForCustomEvent } from '../index.utils'
-import { useCustomEventsModule } from '../modules/useCustomEventsModule'
+import {
+  ListenToCustomEvent,
+  useCustomEventsModule
+} from '../modules/useCustomEventsModule'
 import { useFullscreenModule } from '../modules/useFullscreenModule'
 import {
   RCSJSOnSlideChange,
@@ -32,6 +35,29 @@ type FadingCarouselProps<T extends ReactSpringCarouselItem> = {
   withLoop?: boolean
 }
 
+type FadingCarouselContextProps = {
+  activeItem: number
+  slideToNextItem(): void
+  slideToPrevItem(): void
+  enterFullscreen(elementRef?: HTMLElement): void
+  exitFullscreen(): void
+  slideToItem(item: number): void
+  getIsAnimating(): boolean
+
+  useListenToCustomEvent: ListenToCustomEvent
+}
+
+const FadingCarouselContext = createContext<FadingCarouselContextProps>({
+  activeItem: 0,
+  slideToNextItem: () => {},
+  slideToPrevItem: () => {},
+  enterFullscreen: () => {},
+  exitFullscreen: () => {},
+  slideToItem: () => {},
+  getIsAnimating: () => false,
+  useListenToCustomEvent: () => {}
+})
+
 export function useFadingCarousel<T extends ReactSpringCarouselItem>({
   items,
   withLoop = true,
@@ -54,6 +80,7 @@ export function useFadingCarousel<T extends ReactSpringCarouselItem>({
   }
 }: FadingCarouselProps<T>) {
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
+  const isAnimating = useRef(false)
   const [activeItem, setActiveItem] = useState(0)
 
   const { emitCustomEvent, useListenToCustomEvent } = useCustomEventsModule()
@@ -68,6 +95,7 @@ export function useFadingCarousel<T extends ReactSpringCarouselItem>({
     key: () => items[activeItem].id,
     ...springAnimationPops,
     onRest: () => {
+      isAnimating.current = false
       emitCustomEvent(
         ReactSpringCustomEvents['RCSJS:onSlideChange'],
         prepareDataForCustomEvent<RCSJSOnSlideChange>({
@@ -108,6 +136,7 @@ export function useFadingCarousel<T extends ReactSpringCarouselItem>({
   }
 
   function slideToItem(item: number) {
+    isAnimating.current = true
     emitCustomEvent(
       ReactSpringCustomEvents['RCSJS:onSlideStartChange'],
       prepareDataForCustomEvent<RCSJSOnSlideStartChange>({
@@ -151,27 +180,40 @@ export function useFadingCarousel<T extends ReactSpringCarouselItem>({
     }
   }
 
-  const carouselFragment = (
-    <div
-      ref={mainCarouselWrapperRef}
-      style={{
-        display: 'flex',
-        position: 'relative',
-        width: '100%',
-        height: '100%',
-        overflow: 'hidden'
-      }}
-    >
-      {itemsFragment}
-    </div>
-  )
+  function getIsAnimating() {
+    return isAnimating.current
+  }
 
-  return {
-    carouselFragment,
+  const contextProps: FadingCarouselContextProps = {
+    activeItem,
     slideToNextItem,
     slideToPrevItem,
     enterFullscreen,
     exitFullscreen,
-    useListenToCustomEvent
+    useListenToCustomEvent,
+    slideToItem,
+    getIsAnimating
+  }
+
+  const carouselFragment = (
+    <FadingCarouselContext.Provider value={contextProps}>
+      <div
+        ref={mainCarouselWrapperRef}
+        style={{
+          display: 'flex',
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          overflow: 'hidden'
+        }}
+      >
+        {itemsFragment}
+      </div>
+    </FadingCarouselContext.Provider>
+  )
+
+  return {
+    carouselFragment,
+    ...contextProps
   }
 }

@@ -1,5 +1,5 @@
 import { SpringConfig } from 'react-spring'
-import { ReactSpringCustomEvents } from '.'
+import { ListenToCustomEvent } from '../modules/useCustomEventsModule'
 
 export type ReactSpringCarouselItem = {
   id: string
@@ -29,14 +29,11 @@ export type TransformCarouselContextProps = {
   getIsAnimating(): boolean
   getIsDragging(): boolean
   getIsActiveItem(id: string): boolean
-  enterFullscreen<T extends HTMLElement>(elementRef?: T): void
+  enterFullscreen(elementRef?: HTMLElement): void
   exitFullscreen(): void
   slideToPrevItem(): void
   slideToNextItem(): void
-  useListenToCustomEvent<T>(
-    eventName: ReactSpringCustomEvents,
-    eventHandler: (data?: T) => void
-  ): void
+  useListenToCustomEvent: ListenToCustomEvent
 }
 
 export type SlideToItemFnProps = {

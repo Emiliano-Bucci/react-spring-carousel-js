@@ -2,13 +2,11 @@ import { useRef, MutableRefObject } from 'react'
 import { prepareDataForCustomEvent, useMount } from '../index.utils'
 import screenfull from 'screenfull'
 import { RCSJOnFullscreenChange, ReactSpringCustomEvents } from '../types'
+import { EmitCustomEvent } from './useCustomEventsModule'
 
 type FullscreenModule = {
   mainCarouselWrapperRef: MutableRefObject<HTMLDivElement | null>
-  emitCustomEvent<T>(
-    eventName: ReactSpringCustomEvents,
-    data?: T | undefined
-  ): void
+  emitCustomEvent: EmitCustomEvent
 }
 
 export function useFullscreenModule({

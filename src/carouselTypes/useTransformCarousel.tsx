@@ -195,11 +195,23 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
   }
 
   function getPrevItem() {
-    return getCurrentActiveItem() - 1
+    const currentActiveItem = getCurrentActiveItem()
+
+    if (currentActiveItem === 0) {
+      return items.length - 1
+    }
+
+    return currentActiveItem - 1
   }
 
   function getNextItem() {
-    return getCurrentActiveItem() + 1
+    const currentActiveItem = getCurrentActiveItem()
+
+    if (currentActiveItem === items.length - 1) {
+      return 0
+    }
+
+    return currentActiveItem + 1
   }
 
   function slideToItem({
