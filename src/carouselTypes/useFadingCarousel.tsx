@@ -97,9 +97,6 @@ export function useFadingCarousel<T extends ReactSpringCarouselItem>({
     config: springConfig,
     key: () => items[activeItem].id,
     ...springAnimationPops,
-    onStart: () => {
-      isAnimating.current = true
-    },
     onRest: () => {
       isAnimating.current = false
       emitCustomEvent(
@@ -142,6 +139,7 @@ export function useFadingCarousel<T extends ReactSpringCarouselItem>({
   }
 
   function slideToItem(item: number) {
+    isAnimating.current = true
     emitCustomEvent(
       ReactSpringCustomEvents['RCSJS:onSlideStartChange'],
       prepareDataForCustomEvent<RCSJSOnSlideStartChange>({

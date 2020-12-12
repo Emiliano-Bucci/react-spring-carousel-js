@@ -5,7 +5,8 @@ const App = () => {
   const {
     carouselFragment,
     slideToPrevItem,
-    slideToNextItem
+    slideToNextItem,
+    getIsAnimating
   } = useFadingCarousel({
     items: [
       {
@@ -185,6 +186,8 @@ const App = () => {
       }
     ]
   })
+
+  console.log(getIsAnimating())
 
   return (
     <div
