@@ -43,7 +43,8 @@ type FadingCarouselContextProps = {
   exitFullscreen(): void
   slideToItem(item: number): void
   getIsAnimating(): boolean
-
+  getIsPrevItem(id: string): boolean
+  getIsNextItem(id: string): boolean
   useListenToCustomEvent: ListenToCustomEvent
 }
 
@@ -55,6 +56,8 @@ const FadingCarouselContext = createContext<FadingCarouselContextProps>({
   exitFullscreen: () => {},
   slideToItem: () => {},
   getIsAnimating: () => false,
+  getIsPrevItem: () => false,
+  getIsNextItem: () => false,
   useListenToCustomEvent: () => {}
 })
 
@@ -184,6 +187,30 @@ export function useFadingCarousel<T extends ReactSpringCarouselItem>({
     return isAnimating.current
   }
 
+  function findItemIndex(id: string) {
+    return items.findIndex((item) => item.id === id)
+  }
+
+  function getIsNextItem(id: string) {
+    const itemIndex = findItemIndex(id)
+
+    if (activeItem === items.length - 1) {
+      return itemIndex === 0
+    }
+
+    return itemIndex === activeItem + 1
+  }
+
+  function getIsPrevItem(id: string) {
+    const itemIndex = findItemIndex(id)
+
+    if (activeItem === 0) {
+      return itemIndex === items.length - 1
+    }
+
+    return itemIndex === activeItem - 1
+  }
+
   const contextProps: FadingCarouselContextProps = {
     activeItem,
     slideToNextItem,
@@ -192,7 +219,9 @@ export function useFadingCarousel<T extends ReactSpringCarouselItem>({
     exitFullscreen,
     useListenToCustomEvent,
     slideToItem,
-    getIsAnimating
+    getIsAnimating,
+    getIsNextItem,
+    getIsPrevItem
   }
 
   const carouselFragment = (

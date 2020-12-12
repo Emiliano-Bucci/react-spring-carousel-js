@@ -5,7 +5,8 @@ const App = () => {
   const {
     carouselFragment,
     slideToPrevItem,
-    slideToNextItem
+    slideToNextItem,
+    getIsPrevItem
   } = useFadingCarousel({
     items: [
       {
@@ -67,7 +68,7 @@ const App = () => {
               padding: '8px 16px'
             }}
           >
-            Item 2
+            Item 3
           </div>
         ),
         renderThumb: (
@@ -82,109 +83,11 @@ const App = () => {
             THUMB 3
           </div>
         )
-      },
-      {
-        id: 'item-4',
-        renderItem: (
-          <div
-            style={{
-              background: 'green',
-              padding: 8
-            }}
-          >
-            Item 2
-          </div>
-        ),
-        renderThumb: (
-          <div
-            style={{
-              height: 200,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 4
-          </div>
-        )
-      },
-      {
-        id: 'item-5',
-        renderItem: (
-          <div
-            style={{
-              background: 'green',
-              padding: 8
-            }}
-          >
-            Item 5
-          </div>
-        ),
-        renderThumb: (
-          <div
-            style={{
-              height: 200,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 5
-          </div>
-        )
-      },
-      {
-        id: 'item-6',
-        renderItem: (
-          <div
-            style={{
-              background: 'green',
-              padding: 8
-            }}
-          >
-            Item 6
-          </div>
-        ),
-        renderThumb: (
-          <div
-            style={{
-              height: 200,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 6
-          </div>
-        )
-      },
-      {
-        id: 'item-7',
-        renderItem: (
-          <div
-            style={{
-              background: 'green',
-              padding: 8
-            }}
-          >
-            Item 7
-          </div>
-        ),
-        renderThumb: (
-          <div
-            style={{
-              height: 200,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 7
-          </div>
-        )
       }
     ]
   })
+
+  console.log(getIsPrevItem('item-2'))
 
   return (
     <div

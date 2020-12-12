@@ -352,6 +352,28 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
     return items.findIndex((item) => item.id === id)
   }
 
+  function getIsNextItem(id: string) {
+    const itemIndex = findItemIndex(id)
+    const activeItem = getCurrentActiveItem()
+
+    if (activeItem === items.length - 1) {
+      return itemIndex === 0
+    }
+
+    return itemIndex === activeItem + 1
+  }
+
+  function getIsPrevItem(id: string) {
+    const itemIndex = findItemIndex(id)
+    const activeItem = getCurrentActiveItem()
+
+    if (activeItem === 0) {
+      return itemIndex === items.length - 1
+    }
+
+    return itemIndex === activeItem - 1
+  }
+
   const contextProps: TransformCarouselContextProps = {
     useListenToCustomEvent,
     getIsFullscreen,
@@ -359,8 +381,8 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
     exitFullscreen,
     getIsAnimating,
     getIsDragging,
-    getIsNextItem: (id) => findItemIndex(id) - 1 === getCurrentActiveItem(),
-    getIsPrevItem: (id) => findItemIndex(id) - 1 === getCurrentActiveItem() - 2,
+    getIsNextItem,
+    getIsPrevItem,
     getIsActiveItem: (id) => findItemIndex(id) === getCurrentActiveItem(),
     slideToPrevItem,
     slideToNextItem,
