@@ -1,14 +1,12 @@
-import React, { useRef } from 'react'
-import { useTransformCarousel } from 'react-spring-carousel-js'
+import React from 'react'
+import { useFadingCarousel } from 'react-spring-carousel-js'
 
 const App = () => {
-  const wrapperRef = useRef<HTMLDivElement | null>(null)
   const {
     carouselFragment,
-    thumbsFragment,
-    slideToNextItem,
-    enterFullscreen
-  } = useTransformCarousel({
+    slideToPrevItem,
+    slideToNextItem
+  } = useFadingCarousel({
     items: [
       {
         id: 'item-1',
@@ -196,7 +194,7 @@ const App = () => {
         background: 'orange'
       }}
     >
-      <button onClick={() => enterFullscreen()}>PREV</button>
+      <button onClick={slideToPrevItem}>PREV</button>
       <div
         style={{
           width: '100%',
@@ -204,17 +202,6 @@ const App = () => {
         }}
       >
         <div style={{ margin: '0 32px', flex: 1 }}>{carouselFragment}</div>
-        <div
-          className='shalalala'
-          ref={wrapperRef}
-          style={{
-            maxWidth: '400px',
-            background: 'brown',
-            overflowY: 'auto'
-          }}
-        >
-          {thumbsFragment}
-        </div>
       </div>
       <button onClick={slideToNextItem}>NEXT</button>
     </div>

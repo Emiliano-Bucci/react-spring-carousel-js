@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import {
   useTransition,
   SpringConfig,
@@ -18,44 +18,82 @@ type SpringAnimationProps<Item> = {
 type FadingCarouselProps<T extends ReactSpringCarouselItem> = {
   items: T[]
   withThumbs?: boolean
-  springConfig: SpringConfig
-  springAnimationPops: SpringAnimationProps<T>
+  springConfig?: SpringConfig
+  springAnimationPops?: SpringAnimationProps<T>
+  withLoop?: boolean
 }
 
 export function useFadingCarousel<T extends ReactSpringCarouselItem>({
   items,
+  withLoop = true,
   // withThumbs = true,
-  springConfig = config.default,
-  springAnimationPops = {
+  springConfig = config.default
+}: FadingCarouselProps<T>) {
+  const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
+  const [activeItem, setActiveItem] = useState(0)
+
+  const transitions = useTransition(activeItem, {
+    config: springConfig,
+    key: () => items[activeItem].id,
+    initial: {
+      opacity: 1
+    },
     from: {
       opacity: 0
     },
     enter: {
-      opacity: 1
+      opacity: 1,
+      position: 'relative'
     },
     leave: {
-      opacity: 0
+      opacity: 0,
+      position: 'absolute'
     }
-  }
-}: FadingCarouselProps<T>) {
-  const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
-  const activeItem = useRef(0)
-
-  const transitions = useTransition(items[activeItem.current], {
-    config: springConfig,
-    ...springAnimationPops
   })
   const itemsFragment = transitions((styles, item) => (
     <animated.div
+      // @ts-ignore
       style={{
         ...styles,
         flex: '1 0 100%',
-        height: '100%'
+        width: '100%'
       }}
     >
-      {item}
+      {items[item].renderItem}
     </animated.div>
   ))
+
+  function slideToNextItem() {
+    const isLastItem = activeItem === items.length - 1
+
+    if (withLoop) {
+      if (isLastItem) {
+        setActiveItem(0)
+      } else {
+        setActiveItem((prev) => prev + 1)
+      }
+    } else {
+      if (!isLastItem) {
+        setActiveItem((prev) => prev + 1)
+      }
+    }
+  }
+
+  function slideToPrevItem() {
+    const isFirstItem = activeItem === 0
+
+    if (withLoop) {
+      if (isFirstItem) {
+        setActiveItem(items.length - 1)
+      } else {
+        setActiveItem((prev) => prev - 1)
+      }
+    } else {
+      if (!isFirstItem) {
+        setActiveItem((prev) => prev - 1)
+      }
+    }
+  }
 
   const carouselFragment = (
     <div
@@ -73,6 +111,8 @@ export function useFadingCarousel<T extends ReactSpringCarouselItem>({
   )
 
   return {
-    carouselFragment
+    carouselFragment,
+    slideToNextItem,
+    slideToPrevItem
   }
 }
