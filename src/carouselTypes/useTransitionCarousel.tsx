@@ -1,60 +1,20 @@
 import React, { createContext, useRef, useState } from 'react'
-import {
-  useTransition,
-  SpringConfig,
-  animated,
-  config,
-  TransitionFrom,
-  TransitionTo
-} from 'react-spring'
+import { useTransition, animated, config } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
 import { prepareDataForCustomEvent } from '../index.utils'
-import {
-  ListenToCustomEvent,
-  useCustomEventsModule
-} from '../modules/useCustomEventsModule'
+import { useCustomEventsModule } from '../modules/useCustomEventsModule'
 import { useFullscreenModule } from '../modules/useFullscreenModule'
 import { useThumbsModule } from '../modules/useThumbsModule'
 import {
   RCSJSOnSlideChange,
   RCSJSOnSlideStartChange,
   ReactSpringCarouselItem,
-  ReactSpringCustomEvents
+  ReactSpringCustomEvents,
+  TransitionCarouselContextProps,
+  TransitionCarouselProps
 } from '../types'
 
-type SpringAnimationProps<Item> = {
-  initial: TransitionFrom<Item>
-  from: TransitionFrom<Item>
-  enter: TransitionTo<Item>
-  leave: TransitionTo<Item>
-}
-
-type FadingCarouselProps<T extends ReactSpringCarouselItem> = {
-  items: T[]
-  withThumbs?: boolean
-  springConfig?: SpringConfig
-  springAnimationPops?: SpringAnimationProps<T>
-  withLoop?: boolean
-  thumbsSlideAxis?: 'x' | 'y'
-  thumbsMaxHeight?: number
-  enableThumbsWrapperScroll?: boolean
-  draggingSlideTreshold?: number
-}
-
-type FadingCarouselContextProps = {
-  activeItem: number
-  slideToNextItem(): void
-  slideToPrevItem(): void
-  enterFullscreen(elementRef?: HTMLElement): void
-  exitFullscreen(): void
-  slideToItem(item: number): void
-  getIsAnimating(): boolean
-  getIsPrevItem(id: string): boolean
-  getIsNextItem(id: string): boolean
-  useListenToCustomEvent: ListenToCustomEvent
-}
-
-const FadingCarouselContext = createContext<FadingCarouselContextProps>({
+const FadingCarouselContext = createContext<TransitionCarouselContextProps>({
   activeItem: 0,
   slideToNextItem: () => {},
   slideToPrevItem: () => {},
@@ -76,6 +36,7 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
   thumbsMaxHeight = 0,
   enableThumbsWrapperScroll = true,
   draggingSlideTreshold = 50,
+  prepareThumbsData,
   springAnimationPops = {
     initial: {
       opacity: 1
@@ -93,7 +54,7 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
       position: 'absolute'
     }
   }
-}: FadingCarouselProps<T>) {
+}: TransitionCarouselProps<T>) {
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
   const isAnimating = useRef(false)
   const [activeItem, setActiveItem] = useState(0)
@@ -110,7 +71,8 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     thumbsMaxHeight,
     springConfig,
     getCurrentActiveItem: () => activeItem,
-    slideToItem
+    slideToItem,
+    prepareThumbsData
   })
 
   const bindSwipe = useDrag(({ last, movement: [mx] }) => {
@@ -255,7 +217,7 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     return isAnimating.current
   }
 
-  const contextProps: FadingCarouselContextProps = {
+  const contextProps: TransitionCarouselContextProps = {
     activeItem,
     slideToItem,
     slideToNextItem,

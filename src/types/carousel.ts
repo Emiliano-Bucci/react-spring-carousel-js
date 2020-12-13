@@ -1,4 +1,4 @@
-import { SpringConfig } from 'react-spring'
+import { SpringConfig, TransitionFrom, TransitionTo } from 'react-spring'
 import { ListenToCustomEvent } from '../modules/useCustomEventsModule'
 
 export type ReactSpringCarouselItem = {
@@ -19,6 +19,7 @@ export type TransformCarouselProps<T extends ReactSpringCarouselItem> = {
   thumbsSlideAxis?: 'x' | 'y'
   thumbsWrapperRef?: React.MutableRefObject<HTMLDivElement | null>
   thumbsMaxHeight?: number
+  prepareThumbsData?(): T[]
 }
 
 export type TransformCarouselContextProps = {
@@ -41,4 +42,37 @@ export type SlideToItemFnProps = {
   newIndex?: number
   immediate?: boolean
   onRest?(): void
+}
+
+export type SpringAnimationProps<Item> = {
+  initial: TransitionFrom<Item>
+  from: TransitionFrom<Item>
+  enter: TransitionTo<Item>
+  leave: TransitionTo<Item>
+}
+
+export type TransitionCarouselProps<T extends ReactSpringCarouselItem> = {
+  items: T[]
+  withThumbs?: boolean
+  springConfig?: SpringConfig
+  springAnimationPops?: SpringAnimationProps<T>
+  withLoop?: boolean
+  thumbsSlideAxis?: 'x' | 'y'
+  thumbsMaxHeight?: number
+  enableThumbsWrapperScroll?: boolean
+  draggingSlideTreshold?: number
+  prepareThumbsData?(): T[]
+}
+
+export type TransitionCarouselContextProps = {
+  activeItem: number
+  slideToNextItem(): void
+  slideToPrevItem(): void
+  enterFullscreen(elementRef?: HTMLElement): void
+  exitFullscreen(): void
+  slideToItem(item: number): void
+  getIsAnimating(): boolean
+  getIsPrevItem(id: string): boolean
+  getIsNextItem(id: string): boolean
+  useListenToCustomEvent: ListenToCustomEvent
 }

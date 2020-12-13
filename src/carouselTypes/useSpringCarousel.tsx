@@ -37,7 +37,7 @@ export const TransformCarouselContext = createContext<TransformCarouselContextPr
   }
 )
 
-export function useTransformCarousel<T extends ReactSpringCarouselItem>({
+export function useSpringCarousel<T extends ReactSpringCarouselItem>({
   items,
   withLoop = false,
   draggingSlideTreshold = 50,
@@ -48,7 +48,8 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
   carouselSlideAxis = 'x',
   thumbsSlideAxis = 'x',
   thumbsMaxHeight = 0,
-  thumbsWrapperRef
+  thumbsWrapperRef,
+  prepareThumbsData
 }: TransformCarouselProps<T>) {
   const internalItems = withLoop
     ? [items[items.length - 1], ...items, items[0]]
@@ -83,7 +84,8 @@ export function useTransformCarousel<T extends ReactSpringCarouselItem>({
     springConfig,
     getCurrentActiveItem,
     slideToItem: (item: number) => slideToItem({ item }),
-    thumbsWrapperRef
+    thumbsWrapperRef,
+    prepareThumbsData
   })
 
   const bindDrag = useDrag((props) => {

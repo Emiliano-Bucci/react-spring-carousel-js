@@ -32,9 +32,9 @@ yarn add --save react-spring-carousel-js
 At it's most basic, to start you can do:
 
 ```tsx
-import { useTransformCarousel } from 'react-spring-carousel-js'
+import { useSpringCarousel } from 'react-spring-carousel-js'
 
-const { carouselFragment, thumbsFragment } = useTransformCarousel({
+const { carouselFragment, thumbsFragment } = useSpringCarousel({
   items: [
     {
       id: 'item-1',
