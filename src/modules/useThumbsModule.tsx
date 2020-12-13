@@ -37,7 +37,7 @@ export function useThumbsModule<T extends ReactSpringCarouselItem>({
 
       if (missingThumbs) {
         throw new Error(
-          'The renderThumb property is missing in one or more items. You need to add the renderThumb property to every item of the carousel when withThumbs={true}'
+          'The renderThumb property is missing in one or more items. You need to add the renderThumb property to every item of the carousel when the prop withThumbs={true} or eventually set withThumbs={false}.'
         )
       }
     }
