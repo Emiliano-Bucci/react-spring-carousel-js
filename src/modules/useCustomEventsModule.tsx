@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useEffect } from 'react'
 import { ReactSpringCustomEvents } from '../types'
 
 export type ListenToCustomEvent = <U>(
@@ -12,30 +12,31 @@ export type EmitCustomEvent = <T>(
 ) => void
 
 export function useCustomEventsModule() {
-  const targetElement = useRef(document.createElement('div'))
+  const targetElement = document?.createElement('div')
 
   const useListenToCustomEvent: ListenToCustomEvent = (
     eventName,
     eventHandler
   ) => {
+    // @ts-ignore
     useEffect(() => {
-      const elementRef = targetElement.current
-
       function handleEvent(event: CustomEvent) {
         eventHandler(event.detail)
       }
 
-      elementRef.addEventListener(eventName, handleEvent, false)
+      if (targetElement) {
+        targetElement.addEventListener(eventName, handleEvent, false)
 
-      return () => {
-        elementRef.removeEventListener(eventName, handleEvent, false)
+        return () => {
+          targetElement.removeEventListener(eventName, handleEvent, false)
+        }
       }
     })
   }
 
   const emitCustomEvent: EmitCustomEvent = (eventName, data) => {
     const event = new CustomEvent(eventName, data)
-    targetElement.current.dispatchEvent(event)
+    targetElement.dispatchEvent(event)
   }
 
   return {
