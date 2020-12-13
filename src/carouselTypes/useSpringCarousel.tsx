@@ -248,7 +248,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
       }
     })
 
-    if (enableThumbsWrapperScroll) {
+    if (enableThumbsWrapperScroll && withThumbs) {
       handleThumbsScroll()
     }
   }

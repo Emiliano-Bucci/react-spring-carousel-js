@@ -159,7 +159,7 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     )
     setActiveItem(itemIndex)
 
-    if (enableThumbsWrapperScroll) {
+    if (enableThumbsWrapperScroll && withThumbs) {
       handleThumbsScroll()
     }
   }
