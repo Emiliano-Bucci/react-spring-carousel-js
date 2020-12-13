@@ -1,12 +1,13 @@
 import React from 'react'
-import { useFadingCarousel } from 'react-spring-carousel-js'
+import { useTransitionCarousel } from 'react-spring-carousel-js'
 
 const App = () => {
   const {
     carouselFragment,
     slideToPrevItem,
-    slideToNextItem
-  } = useFadingCarousel({
+    slideToNextItem,
+    getIsAnimating
+  } = useTransitionCarousel({
     items: [
       {
         id: 'item-1',
@@ -85,6 +86,8 @@ const App = () => {
       }
     ]
   })
+
+  console.log(getIsAnimating())
 
   return (
     <div

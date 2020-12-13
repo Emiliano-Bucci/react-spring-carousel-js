@@ -1,11 +1,7 @@
 import React, { useRef } from 'react'
 import { useSpring, SpringConfig } from 'react-spring'
 import { fixNegativeIndex, useMount } from '../index.utils'
-import {
-  TransformCarouselProps,
-  ReactSpringCarouselItem,
-  SlideToItemFnProps
-} from '../types'
+import { TransformCarouselProps, ReactSpringCarouselItem } from '../types'
 
 type Props<T extends ReactSpringCarouselItem> = {
   items: T[]
@@ -15,7 +11,7 @@ type Props<T extends ReactSpringCarouselItem> = {
   thumbsWrapperRef?: TransformCarouselProps<T>['thumbsWrapperRef']
   springConfig: SpringConfig
   getCurrentActiveItem(): number
-  slideToItem(props: SlideToItemFnProps): void
+  slideToItem(item: number): void
 }
 
 export function useThumbsModule<T extends ReactSpringCarouselItem>({
@@ -123,11 +119,7 @@ export function useThumbsModule<T extends ReactSpringCarouselItem>({
         const thumbId = `thumb-${item.id}`
 
         return (
-          <div
-            key={thumbId}
-            id={thumbId}
-            onClick={() => slideToItem({ item: index })}
-          >
+          <div key={thumbId} id={thumbId} onClick={() => slideToItem(index)}>
             {item.renderThumb}
           </div>
         )
