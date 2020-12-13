@@ -7,6 +7,7 @@ import {
   TransitionFrom,
   TransitionTo
 } from 'react-spring'
+import { useDrag } from 'react-use-gesture'
 import { prepareDataForCustomEvent } from '../index.utils'
 import {
   ListenToCustomEvent,
@@ -37,6 +38,7 @@ type FadingCarouselProps<T extends ReactSpringCarouselItem> = {
   thumbsSlideAxis?: 'x' | 'y'
   thumbsMaxHeight?: number
   enableThumbsWrapperScroll?: boolean
+  draggingSlideTreshold?: number
 }
 
 type FadingCarouselContextProps = {
@@ -73,6 +75,7 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
   thumbsSlideAxis = 'x',
   thumbsMaxHeight = 0,
   enableThumbsWrapperScroll = true,
+  draggingSlideTreshold = 50,
   springAnimationPops = {
     initial: {
       opacity: 1
@@ -108,6 +111,25 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     springConfig,
     getCurrentActiveItem: () => activeItem,
     slideToItem
+  })
+
+  const bindSwipe = useDrag(({ last, movement: [mx] }) => {
+    if (getIsAnimating()) {
+      return
+    }
+
+    if (last) {
+      const prevItemTreshold = mx > draggingSlideTreshold
+      const nextItemTreshold = mx < -draggingSlideTreshold
+      const isFirstItem = activeItem === 0
+      const isLastItem = activeItem === items.length - 1
+
+      if (nextItemTreshold && !isLastItem) {
+        slideToNextItem()
+      } else if (prevItemTreshold && !isFirstItem) {
+        slideToPrevItem()
+      }
+    }
   })
 
   // @ts-ignore
@@ -250,6 +272,7 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     <FadingCarouselContext.Provider value={contextProps}>
       <div
         ref={mainCarouselWrapperRef}
+        {...bindSwipe()}
         style={{
           display: 'flex',
           position: 'relative',

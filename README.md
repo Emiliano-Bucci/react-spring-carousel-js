@@ -7,7 +7,6 @@
 ## Features
 
 - **Extreemely performant**: thanks to react-spring, you'll get a excelent performance with smooth and natural transitions out of the box.
-- **Stateless :smirk:**: We don't use `state` to update the animation: this means solid and stable animations in every moment.
 - **Custom events**: Use our custom events to intercept when things happen and take the experience to the next level!
 - **Mobile first**: You can swipe/drag with no config needed thanks to **react-use-gesture**.
 - **Resizable**: the carousel will automatically resize and adapt if the browser viewport change. Very useful when changing to landscape on mobile devices.
