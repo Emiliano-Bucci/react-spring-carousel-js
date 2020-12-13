@@ -6,7 +6,8 @@ const App = () => {
     carouselFragment,
     slideToPrevItem,
     slideToNextItem,
-    getIsAnimating
+    thumbsFragment,
+    slideToItem
   } = useTransitionCarousel({
     items: [
       {
@@ -23,6 +24,7 @@ const App = () => {
         ),
         renderThumb: (
           <div
+            onClick={() => slideToItem('item-2')}
             style={{
               height: 200,
               padding: '8px 16px',
@@ -87,8 +89,6 @@ const App = () => {
     ]
   })
 
-  console.log(getIsAnimating())
-
   return (
     <div
       style={{
@@ -105,6 +105,7 @@ const App = () => {
         }}
       >
         <div style={{ margin: '0 32px', flex: 1 }}>{carouselFragment}</div>
+        <div>{thumbsFragment}</div>
       </div>
       <button onClick={slideToNextItem}>NEXT</button>
     </div>

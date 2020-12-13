@@ -26,7 +26,7 @@ export type TransformCarouselContextProps = {
   getIsFullscreen(): boolean
   getIsPrevItem(id: string): boolean
   getIsNextItem(id: string): boolean
-  slideToItem(item: number, callback?: VoidFunction): void
+  slideToItem(item: string | number): void
   getIsAnimating(): boolean
   getIsDragging(): boolean
   getIsActiveItem(id: string): boolean
@@ -70,7 +70,7 @@ export type TransitionCarouselContextProps = {
   slideToPrevItem(): void
   enterFullscreen(elementRef?: HTMLElement): void
   exitFullscreen(): void
-  slideToItem(item: number): void
+  slideToItem(item: string | number): void
   getIsAnimating(): boolean
   getIsPrevItem(id: string): boolean
   getIsNextItem(id: string): boolean

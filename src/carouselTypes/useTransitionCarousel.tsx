@@ -71,7 +71,6 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     thumbsMaxHeight,
     springConfig,
     getCurrentActiveItem: () => activeItem,
-    slideToItem,
     prepareThumbsData
   })
 
@@ -140,7 +139,15 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     return activeItem
   }
 
-  function slideToItem(item: number) {
+  function slideToItem(item: string | number) {
+    let itemIndex = 0
+
+    if (typeof item === 'string') {
+      itemIndex = items.findIndex((_item) => _item.id === item)
+    } else {
+      itemIndex = item
+    }
+
     isAnimating.current = true
     emitCustomEvent(
       ReactSpringCustomEvents['RCSJS:onSlideStartChange'],
@@ -150,7 +157,7 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
         nextItem: getNextItem()
       })
     )
-    setActiveItem(item)
+    setActiveItem(itemIndex)
 
     if (enableThumbsWrapperScroll) {
       handleThumbsScroll()

@@ -83,7 +83,6 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     thumbsMaxHeight,
     springConfig,
     getCurrentActiveItem,
-    slideToItem: (item: number) => slideToItem({ item }),
     thumbsWrapperRef,
     prepareThumbsData
   })
@@ -388,10 +387,17 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     getIsActiveItem: (id) => findItemIndex(id) === getCurrentActiveItem(),
     slideToPrevItem,
     slideToNextItem,
-    slideToItem: (item, callback) => {
+    slideToItem: (item) => {
+      let itemIndex = 0
+
+      if (typeof item === 'string') {
+        itemIndex = items.findIndex((_item) => _item.id === item)
+      } else {
+        itemIndex = item
+      }
+
       slideToItem({
-        item,
-        onRest: callback
+        item: itemIndex
       })
     }
   }

@@ -11,7 +11,6 @@ type Props<T extends ReactSpringCarouselItem> = {
   thumbsWrapperRef?: TransformCarouselProps<T>['thumbsWrapperRef']
   springConfig: SpringConfig
   getCurrentActiveItem(): number
-  slideToItem(item: number): void
   prepareThumbsData?(): T[]
 }
 
@@ -22,7 +21,6 @@ export function useThumbsModule<T extends ReactSpringCarouselItem>({
   thumbsMaxHeight = 0,
   springConfig,
   getCurrentActiveItem,
-  slideToItem,
   thumbsWrapperRef,
   prepareThumbsData
 }: Props<T>) {
@@ -125,12 +123,12 @@ export function useThumbsModule<T extends ReactSpringCarouselItem>({
           : { overflowY: 'auto', maxHeight: '100%' })
       }}
     >
-      {handlePrepareThumbsDate().map((item, index) => {
-        const thumbId = `thumb-${item.id}`
+      {handlePrepareThumbsDate().map(({ id, renderThumb }) => {
+        const thumbId = `thumb-${id}`
 
         return (
-          <div key={thumbId} id={thumbId} onClick={() => slideToItem(index)}>
-            {item.renderThumb}
+          <div key={thumbId} id={thumbId}>
+            {renderThumb}
           </div>
         )
       })}
