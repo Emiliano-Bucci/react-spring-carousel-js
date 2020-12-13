@@ -29,7 +29,7 @@ const FadingCarouselContext = createContext<TransitionCarouselContextProps>({
 
 export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
   items,
-  withLoop = true,
+  withLoop = false,
   withThumbs = false,
   springConfig = config.default,
   thumbsSlideAxis = 'x',
@@ -85,9 +85,17 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
       const isFirstItem = activeItem === 0
       const isLastItem = activeItem === items.length - 1
 
-      if (nextItemTreshold && !isLastItem) {
+      if (nextItemTreshold) {
+        if (!withLoop && isLastItem) {
+          return
+        }
+
         slideToNextItem()
-      } else if (prevItemTreshold && !isFirstItem) {
+      } else if (prevItemTreshold) {
+        if (!withLoop && isFirstItem) {
+          return
+        }
+
         slideToPrevItem()
       }
     }

@@ -122,6 +122,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
           setCarouselStyles({ [carouselSlideAxis]: currentSlidedValue })
         } else {
           slideToPrevItem()
+          console.log('HEREEE')
         }
       } else {
         setCarouselStyles({ [carouselSlideAxis]: currentSlidedValue })
@@ -273,7 +274,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     if (withLoop && getCurrentActiveItem() === 0) {
       if (getIsDragging()) {
         slideToItem({
-          item: getPrevItem(),
+          item: activeItem.current - 1,
           onRest: () => {
             slideToItem({
               item: internalItems.length - 3,
@@ -320,7 +321,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     if (withLoop && getCurrentActiveItem() === internalItems.length - 3) {
       if (getIsDragging()) {
         slideToItem({
-          item: getNextItem(),
+          item: activeItem.current + 1,
           onRest: () => {
             setActiveItem(0)
             slideToItem({
