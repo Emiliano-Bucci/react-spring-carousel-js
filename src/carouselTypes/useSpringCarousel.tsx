@@ -43,7 +43,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
   draggingSlideTreshold = 50,
   springConfig = config.default,
   shouldResizeOnWindowResize = true,
-  withThumbs = true,
+  withThumbs = false,
   enableThumbsWrapperScroll = true,
   carouselSlideAxis = 'x',
   thumbsSlideAxis = 'x',

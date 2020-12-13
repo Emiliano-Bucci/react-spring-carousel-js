@@ -30,7 +30,7 @@ const FadingCarouselContext = createContext<TransitionCarouselContextProps>({
 export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
   items,
   withLoop = true,
-  withThumbs = true,
+  withThumbs = false,
   springConfig = config.default,
   thumbsSlideAxis = 'x',
   thumbsMaxHeight = 0,
