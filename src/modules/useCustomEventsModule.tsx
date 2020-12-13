@@ -13,7 +13,7 @@ export type EmitCustomEvent = <T>(
 
 export function useCustomEventsModule() {
   const targetElement =
-    typeof window !== undefined ? document.createElement('div') : null
+    typeof window !== 'undefined' ? document.createElement('div') : null
 
   const useListenToCustomEvent: ListenToCustomEvent = (
     eventName,
