@@ -12,7 +12,8 @@ export type EmitCustomEvent = <T>(
 ) => void
 
 export function useCustomEventsModule() {
-  const targetElement = document?.createElement('div')
+  const targetElement =
+    typeof window !== undefined ? document.createElement('div') : null
 
   const useListenToCustomEvent: ListenToCustomEvent = (
     eventName,
@@ -35,8 +36,10 @@ export function useCustomEventsModule() {
   }
 
   const emitCustomEvent: EmitCustomEvent = (eventName, data) => {
-    const event = new CustomEvent(eventName, data)
-    targetElement.dispatchEvent(event)
+    if (targetElement) {
+      const event = new CustomEvent(eventName, data)
+      targetElement.dispatchEvent(event)
+    }
   }
 
   return {
