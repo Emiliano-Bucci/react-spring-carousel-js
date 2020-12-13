@@ -13,7 +13,7 @@
 - **Fullscreen capable**: we provide you the **API** to enter/exit from fullscreen mode! (thanks to **screenful.js**).
 - **Headles UI**: no more headaches trying to style the elements of the carousel. You decide every aspect of the elements of the carousel.
 - **Totally composable**: we give you the instruments (**API**) and you decide where to place all the elements of the carousel and how they will behave and interact.
-- **Easy to configure**: you can configure some aspects of the carousel in an easy and simple way.
+- **Easy to configure**: configure the carousel behavior is a piece of cake!
 
 ## Install
 
