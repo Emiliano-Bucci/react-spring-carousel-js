@@ -69,9 +69,9 @@ export function useThumbsModule<T extends ReactSpringCarouselItem>({
       return thumbsSlideAxis === 'x' ? 'scrollLeft' : 'scrollTop'
     }
     function getThumbNode() {
-      return document.getElementById(
-        `thumb-${items[fixNegativeIndex(activeItem, items.length)].id}`
-      )
+      return internalThumbsWrapperRef.current!.querySelector(
+        `#thumb-${items[fixNegativeIndex(activeItem, items.length)].id}`
+      ) as HTMLElement
     }
     function getThumbOffsetPosition({
       thumbNode,

@@ -30,7 +30,7 @@ const App = () => {
           <div
             onClick={() => slideToItem('item-2')}
             style={{
-              height: 200,
+              height: 100,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -55,7 +55,7 @@ const App = () => {
         renderThumb: (
           <div
             style={{
-              height: 200,
+              height: 100,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -80,7 +80,7 @@ const App = () => {
         renderThumb: (
           <div
             style={{
-              height: 200,
+              height: 100,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -106,7 +106,7 @@ const App = () => {
           <div
             onClick={() => slideToItem('item-2')}
             style={{
-              height: 200,
+              height: 100,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -131,7 +131,7 @@ const App = () => {
         renderThumb: (
           <div
             style={{
-              height: 200,
+              height: 100,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -156,7 +156,7 @@ const App = () => {
         renderThumb: (
           <div
             style={{
-              height: 200,
+              height: 100,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -182,7 +182,7 @@ const App = () => {
           <div
             onClick={() => slideToItem('item-2')}
             style={{
-              height: 200,
+              height: 100,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -207,7 +207,7 @@ const App = () => {
         renderThumb: (
           <div
             style={{
-              height: 200,
+              height: 100,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -232,7 +232,7 @@ const App = () => {
         renderThumb: (
           <div
             style={{
-              height: 200,
+              height: 100,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -258,7 +258,7 @@ const App = () => {
           <div
             onClick={() => slideToItem('item-2')}
             style={{
-              height: 200,
+              height: 100,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -283,7 +283,7 @@ const App = () => {
         renderThumb: (
           <div
             style={{
-              height: 200,
+              height: 100,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -308,7 +308,7 @@ const App = () => {
         renderThumb: (
           <div
             style={{
-              height: 200,
+              height: 100,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -334,7 +334,7 @@ const App = () => {
           <div
             onClick={() => slideToItem('item-2')}
             style={{
-              height: 200,
+              height: 100,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -359,7 +359,7 @@ const App = () => {
         renderThumb: (
           <div
             style={{
-              height: 200,
+              height: 100,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -384,7 +384,7 @@ const App = () => {
         renderThumb: (
           <div
             style={{
-              height: 200,
+              height: 100,
               padding: '8px 16px',
               background: 'blue',
               width: 160
@@ -415,7 +415,13 @@ const App = () => {
       >
         <div style={{ margin: '0 32px', flex: 1 }}>{carouselFragment}</div>
 
-        {thumbsFragment}
+        <div
+          style={{
+            overflow: 'hidden'
+          }}
+        >
+          {thumbsFragment}
+        </div>
       </div>
       <button onClick={slideToNextItem}>NEXT</button>
     </div>
