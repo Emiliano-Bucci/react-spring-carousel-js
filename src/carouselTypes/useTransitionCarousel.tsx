@@ -70,7 +70,6 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     thumbsSlideAxis,
     thumbsMaxHeight,
     springConfig,
-    getCurrentActiveItem: () => activeItem,
     prepareThumbsData
   })
 
@@ -168,7 +167,7 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     setActiveItem(itemIndex)
 
     if (enableThumbsWrapperScroll && withThumbs) {
-      handleThumbsScroll()
+      handleThumbsScroll(itemIndex)
     }
   }
 

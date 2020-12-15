@@ -82,7 +82,6 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     thumbsSlideAxis,
     thumbsMaxHeight,
     springConfig,
-    getCurrentActiveItem,
     thumbsWrapperRef,
     prepareThumbsData
   })
@@ -221,8 +220,10 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     immediate = false,
     onRest = () => {}
   }: SlideToItemFnProps) {
+    const nextItemIndex = fixNegativeIndex(item, items.length)
+
     if (!immediate) {
-      setActiveItem(fixNegativeIndex(item, items.length))
+      setActiveItem(nextItemIndex)
     }
 
     isAnimating.current = true
@@ -249,8 +250,8 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
       }
     })
 
-    if (enableThumbsWrapperScroll && withThumbs) {
-      handleThumbsScroll()
+    if (enableThumbsWrapperScroll && withThumbs && !immediate) {
+      handleThumbsScroll(nextItemIndex)
     }
   }
 

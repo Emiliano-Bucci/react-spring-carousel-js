@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { useSpring, SpringConfig } from 'react-spring'
+import { useSpring, SpringConfig, animated } from 'react-spring'
 import { fixNegativeIndex, useMount } from '../index.utils'
 import { TransformCarouselProps, ReactSpringCarouselItem } from '../types'
 
@@ -10,7 +10,6 @@ type Props<T extends ReactSpringCarouselItem> = {
   thumbsMaxHeight: TransformCarouselProps<T>['thumbsMaxHeight']
   thumbsWrapperRef?: TransformCarouselProps<T>['thumbsWrapperRef']
   springConfig: SpringConfig
-  getCurrentActiveItem(): number
   prepareThumbsData?(): T[]
 }
 
@@ -20,13 +19,12 @@ export function useThumbsModule<T extends ReactSpringCarouselItem>({
   thumbsSlideAxis = 'x',
   thumbsMaxHeight = 0,
   springConfig,
-  getCurrentActiveItem,
   thumbsWrapperRef,
   prepareThumbsData
 }: Props<T>) {
   const internalThumbsWrapperRef = useRef<HTMLDivElement | null>(null)
   // @ts-ignore
-  const [, setThumbListStyles] = useSpring(() => ({
+  const [thumbListStyles, setThumbListStyles] = useSpring(() => ({
     [thumbsSlideAxis]: 0,
     config: springConfig
   }))
@@ -55,40 +53,112 @@ export function useThumbsModule<T extends ReactSpringCarouselItem>({
     }
   })
 
-  function handleThumbsScroll() {
+  function handleThumbsScroll(activeItem: number) {
+    function getOffsetDirection() {
+      return thumbsSlideAxis === 'x' ? 'offsetLeft' : 'offsetTop'
+    }
+    function getOffsetDimension() {
+      return thumbsSlideAxis === 'x' ? 'offsetWidth' : 'offsetHeight'
+    }
+    function getDimensionProperty() {
+      return thumbsSlideAxis === 'x' ? 'width' : 'height'
+    }
+    function getScrollDirecton() {
+      return thumbsSlideAxis === 'x' ? 'scrollLeft' : 'scrollTop'
+    }
+    function getThumbNode() {
+      return document.getElementById(
+        `thumb-${items[fixNegativeIndex(activeItem, items.length)].id}`
+      )
+    }
+    function getThumbOffsetPosition({
+      thumbNode,
+      offsetDirection,
+      offsetDimension
+    }: {
+      thumbNode: HTMLElement
+      offsetDirection: 'offsetLeft' | 'offsetTop'
+      offsetDimension: 'offsetWidth' | 'offsetHeight'
+    }) {
+      return thumbNode[offsetDirection] + thumbNode[offsetDimension] / 2
+    }
+    function getThumbScrollDimension({
+      thumbWrapper,
+      dimensionProperty
+    }: {
+      thumbWrapper: HTMLDivElement
+      dimensionProperty: 'width' | 'height'
+    }) {
+      return thumbWrapper.getBoundingClientRect()[dimensionProperty] / 2
+    }
+    function getScrollFromValue({
+      thumbWrapper,
+      scrollDirection
+    }: {
+      thumbWrapper: HTMLDivElement
+      scrollDirection: 'scrollLeft' | 'scrollTop'
+    }) {
+      return thumbWrapper[scrollDirection]
+    }
+    function getScrollToValue({
+      thumbWrapper,
+      thumbOffsetPosition,
+      thumbScrollDimension
+    }: {
+      thumbWrapper: HTMLDivElement
+      thumbOffsetPosition: number
+      thumbScrollDimension: number
+    }) {
+      if (
+        activeItem === items.length - 1 ||
+        thumbOffsetPosition - thumbScrollDimension >
+          thumbWrapper.scrollWidth - thumbWrapper.clientWidth
+      ) {
+        return thumbWrapper.scrollWidth - thumbWrapper.clientWidth
+      }
+
+      if (activeItem === 0) {
+        return 0
+      }
+
+      return thumbOffsetPosition - thumbScrollDimension
+    }
+
     if (thumbsWrapperRef && thumbsWrapperRef.current) {
       internalThumbsWrapperRef.current = thumbsWrapperRef.current
     }
 
-    const currentThumbItemNode = document.getElementById(
-      `thumb-${
-        items[fixNegativeIndex(getCurrentActiveItem(), items.length)].id
-      }`
-    )
+    const thumbNode = getThumbNode()
 
-    if (currentThumbItemNode) {
-      const offsetDirection =
-        thumbsSlideAxis === 'x' ? 'offsetLeft' : 'offsetTop'
-      const offsetDimension =
-        thumbsSlideAxis === 'x' ? 'offsetWidth' : 'offsetHeight'
-      const dimensionProperty = thumbsSlideAxis === 'x' ? 'width' : 'height'
-      const scrollDirection =
-        thumbsSlideAxis === 'x' ? 'scrollLeft' : 'scrollTop'
-
-      const thumbOffsetPosition =
-        currentThumbItemNode[offsetDirection] +
-        currentThumbItemNode[offsetDimension] / 2
-      const thumbScrollDimension =
-        internalThumbsWrapperRef.current!.getBoundingClientRect()[
-          dimensionProperty
-        ] / 2
+    if (thumbNode) {
+      const thumbWrapper = internalThumbsWrapperRef.current!
+      const offsetDirection = getOffsetDirection()
+      const offsetDimension = getOffsetDimension()
+      const dimensionProperty = getDimensionProperty()
+      const scrollDirection = getScrollDirecton()
+      const thumbOffsetPosition = getThumbOffsetPosition({
+        thumbNode,
+        offsetDimension,
+        offsetDirection
+      })
+      const thumbScrollDimension = getThumbScrollDimension({
+        thumbWrapper,
+        dimensionProperty
+      })
 
       setThumbListStyles({
         from: {
-          [thumbsSlideAxis]: internalThumbsWrapperRef.current![scrollDirection]
+          [thumbsSlideAxis]: getScrollFromValue({
+            thumbWrapper,
+            scrollDirection
+          })
         },
         to: {
-          [thumbsSlideAxis]: thumbOffsetPosition - thumbScrollDimension
+          [thumbsSlideAxis]: getScrollToValue({
+            thumbWrapper,
+            thumbOffsetPosition,
+            thumbScrollDimension
+          })
         },
         onChange: (val: unknown) => {
           if (thumbsSlideAxis === 'x') {
@@ -111,9 +181,22 @@ export function useThumbsModule<T extends ReactSpringCarouselItem>({
     return items
   }
 
+  function getScrollDirectionSpringValue() {
+    if (thumbsSlideAxis === 'x') {
+      return {
+        scrollLeft: thumbListStyles.x
+      }
+    }
+
+    return {
+      scrollTop: thumbListStyles.y
+    }
+  }
+
   const thumbsFragment = withThumbs ? (
-    <div
+    <animated.div
       ref={internalThumbsWrapperRef}
+      {...getScrollDirectionSpringValue()}
       style={{
         display: 'flex',
         flex: 1,
@@ -132,7 +215,7 @@ export function useThumbsModule<T extends ReactSpringCarouselItem>({
           </div>
         )
       })}
-    </div>
+    </animated.div>
   ) : null
 
   return {
