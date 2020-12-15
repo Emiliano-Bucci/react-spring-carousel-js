@@ -11,6 +11,8 @@ const App = () => {
   } = useSpringCarousel({
     withThumbs: true,
     withLoop: true,
+    thumbsSlideAxis: 'y',
+    thumbsMaxHeight: 200,
     items: [
       {
         id: 'item-1',
