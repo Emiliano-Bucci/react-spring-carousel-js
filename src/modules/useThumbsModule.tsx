@@ -209,6 +209,7 @@ export function useThumbsModule<T extends ReactSpringCarouselItem>({
       style={{
         display: 'flex',
         flex: 1,
+        position: 'relative',
         flexDirection: thumbsSlideAxis === 'x' ? 'row' : 'column',
         ...(thumbsSlideAxis === 'x'
           ? { overflowX: 'auto' }

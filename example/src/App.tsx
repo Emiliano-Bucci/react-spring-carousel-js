@@ -408,6 +408,7 @@ const App = () => {
       <button onClick={slideToPrevItem}>PREV</button>
       <div
         style={{
+          display: 'flex',
           width: '100%',
           height: 500,
           overflow: 'hidden'
