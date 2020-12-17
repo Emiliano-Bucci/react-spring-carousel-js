@@ -1,18 +1,21 @@
 import React from 'react'
-import { useSpringCarousel } from 'react-spring-carousel-js'
+import { useTransitionCarousel } from 'react-spring-carousel-js'
 
 const App = () => {
   const {
     carouselFragment,
     slideToPrevItem,
     slideToNextItem,
-    thumbsFragment,
     slideToItem
-  } = useSpringCarousel({
+  } = useTransitionCarousel({
     withThumbs: true,
     withLoop: true,
-    thumbsSlideAxis: 'y',
-    thumbsMaxHeight: 200,
+    onRightSwipe: () => {
+      console.log('on right swipe')
+    },
+    onLeftSwipe: () => {
+      console.log('on left swipe')
+    },
     items: [
       {
         id: 'item-1',
@@ -415,14 +418,6 @@ const App = () => {
         }}
       >
         <div style={{ margin: '0 32px', flex: 1 }}>{carouselFragment}</div>
-
-        <div
-          style={{
-            overflow: 'hidden'
-          }}
-        >
-          {thumbsFragment}
-        </div>
       </div>
       <button onClick={slideToNextItem}>NEXT</button>
     </div>

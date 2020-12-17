@@ -62,7 +62,7 @@ export type TransitionCarouselProps<T extends ReactSpringCarouselItem> = {
   enableThumbsWrapperScroll?: boolean
   draggingSlideTreshold?: number
   onLeftSwipe?(): void
-  onRightSwipte?(): void
+  onRightSwipe?(): void
   prepareThumbsData?(): T[]
 }
 
