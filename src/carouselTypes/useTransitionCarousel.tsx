@@ -123,7 +123,7 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
       style={{
         ...styles,
         flex: '1 0 100%',
-        width: '100%'
+        height: '100%'
       }}
     >
       {items[item].renderItem}
