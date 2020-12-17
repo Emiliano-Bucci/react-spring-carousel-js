@@ -76,6 +76,8 @@ You can provide this **options** to better customize the behavior and the aspect
 | thumbsSlideAxis            | `x / y`                                         | `x`              | Specify the slide axis direction of the thumbs list                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | thumbsMaxHeight            | `number`                                        | `0`              | Set the max height of the thumb list wrapper; to be only used if you set thumbsSlideAxis to `y`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | thumbsWrapperRef           | `React.MutableRefObject<HTMLDivElement / null>` | `undefined`      | Pass a wrapper ref if you want to style in a particular way the thumbs wrapper list and still want to have the automatic scroll out of the box. If you set `carouselSlideAxis='x'` probably you wouldn't want to do it, as we automatically handle this case. In case you set `carouselSlideAxis='y'` you have to options: or you set the `thumbsMaxHeight` to a fixed height, or if you need to have a fluid height - 100% - then in this case you should pass the ref of the wrapper. This way, we will use your ref to handle the scroll (remember to also set `overflow-y: auto`). |
+| onLeftSwipe                | `onLeftSwipe?(): void`                          | `undefined`      | A callback triggered when the user swipe to the left. Only available when using the `useTransitionCarousel` hook                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| onRightSwipe               | `onRightSwipe?(): void`                         | `undefined`      | A callback triggered when the user swipe to the right. Only available when using the `useTransitionCarousel` hook                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 
 ## Options (API)
 
@@ -110,12 +112,14 @@ Every instance of the Carousel will expose a `useListenToCustomEvent` hook. `use
 
 ### List of events
 
-| Event                    | Description                                                                                                                              |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| RCSJS:onSlideStartChange | The event is emitted every time a slide is about to slide .                                                                              |
-| RCSJS:onSlideChange      | The event is emitted after the animation slide is completed. **NOTE**: The event is emitted inside the `onRest()` react-spring callback. |
-| RCSJS:onDrag             | The event is emitted when a user drags the carousel items .                                                                              |
-| RCSJS:onFullscreenChange | The event is emitted when you enter/exit from the fullscreen mode.                                                                       |
+| Event                    | Description                                                           |
+| ------------------------ | --------------------------------------------------------------------- |
+| RCSJS:onSlideStartChange | The event is emitted every time a slide is about to slide .           |
+| RCSJS:onSlideChange      | The event is emitted after the animation slide is completed.          |
+| RCSJS:onDrag             | The event is emitted when a user drags the carousel items .           |
+| RCSJS:onFullscreenChange | The event is emitted when a user enter/exit from the fullscreen mode. |
+| RCSJS:onLeftSwipe        | The event is emitted when a user swipe to the left.                   |
+| RCSJS:onRightSwipe       | The event is emitted when a user swipe to the right.                  |
 
 To proper type the props that the event will receive, you can use the following types:
 
