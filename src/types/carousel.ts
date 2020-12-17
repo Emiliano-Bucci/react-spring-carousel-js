@@ -19,7 +19,7 @@ export type TransformCarouselProps<T extends ReactSpringCarouselItem> = {
   thumbsSlideAxis?: 'x' | 'y'
   thumbsWrapperRef?: React.MutableRefObject<HTMLDivElement | null>
   thumbsMaxHeight?: number
-  prepareThumbsData?(): T[]
+  prepareThumbsData?(items: T[]): T[]
 }
 
 export type TransformCarouselContextProps = {

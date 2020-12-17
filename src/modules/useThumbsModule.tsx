@@ -14,7 +14,7 @@ type Props<T extends ReactSpringCarouselItem> = {
   thumbsMaxHeight: TransformCarouselProps<T>['thumbsMaxHeight']
   thumbsWrapperRef?: TransformCarouselProps<T>['thumbsWrapperRef']
   springConfig: SpringConfig
-  prepareThumbsData?(): T[]
+  prepareThumbsData?(items: T[]): T[]
 }
 
 export function useThumbsModule<T extends ReactSpringCarouselItem>({
@@ -184,7 +184,7 @@ export function useThumbsModule<T extends ReactSpringCarouselItem>({
 
   function handlePrepareThumbsDate() {
     if (prepareThumbsData) {
-      return prepareThumbsData()
+      return prepareThumbsData(items)
     }
 
     return items
