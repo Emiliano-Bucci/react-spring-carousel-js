@@ -80,8 +80,6 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
       return
     }
 
-    console.log(mx)
-
     if (last) {
       const prevItemTreshold = mx > draggingSlideTreshold
       const nextItemTreshold = mx < -draggingSlideTreshold
@@ -94,12 +92,14 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
         }
 
         onLeftSwipe()
+        emitCustomEvent(ReactSpringCustomEvents['RCSJS:onLeftSwipe'])
       } else if (prevItemTreshold) {
         if (!withLoop && isFirstItem) {
           return
         }
 
         onRightSwipe()
+        emitCustomEvent(ReactSpringCustomEvents['RCSJS:onRightSwipe'])
       }
     }
   })

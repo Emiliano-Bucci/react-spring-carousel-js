@@ -9,7 +9,9 @@ export enum ReactSpringCustomEvents {
   'RCSJS:onSlideStartChange' = 'RCSJS:onSlideStartChange',
   'RCSJS:onSlideChange' = 'RCSJS:onSlideChange',
   'RCSJS:onDrag' = 'RCSJS:onDrag',
-  'RCSJS:onFullscreenChange' = 'RCSJS:onFullscreenChange'
+  'RCSJS:onFullscreenChange' = 'RCSJS:onFullscreenChange',
+  'RCSJS:onLeftSwipe' = 'RCSJS:onLeftSwipe',
+  'RCSJS:onRightSwipe' = 'RCSJS:onRightSwipe'
 }
 
 export type RCSJSOnSlideStartChange = {
