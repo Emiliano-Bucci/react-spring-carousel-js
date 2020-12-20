@@ -23,7 +23,7 @@
     "predeploy": "cd example && npm install && npm run build",
     "deploy": "gh-pages -d example/build",
     "lint": "eslint --fix --config src/.eslintrc.js 'src/**/*.{ts,tsx,js}'",
-    "postinstall": "node postinstall.js"
+    "postinstall": "node .src/postinstall.js"
   },
   "peerDependencies": {
     "react": "^17.0.1"
@@ -68,6 +68,7 @@
     "@emotion/styled": "^11.0.0",
     "react-spring": "9.0.0-rc.3",
     "react-use-gesture": "^8.0.1",
+    "replace-in-file": "^6.1.0",
     "screenfull": "^5.0.2"
   }
 }
