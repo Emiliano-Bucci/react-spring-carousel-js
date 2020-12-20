@@ -4,7 +4,7 @@
   "description": "A performant react-carousel powered by react-spring",
   "author": "Emiliano-Bucci",
   "license": "MIT",
-  "repository": "Emiliano-Bucci/react-spring-carousel-js-docs",
+  "repository": "Emiliano-Bucci/react-spring-carousel-js",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/index.tsx",
