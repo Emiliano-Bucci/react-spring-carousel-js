@@ -118,8 +118,8 @@ Every instance of the Carousel will expose a `useListenToCustomEvent` hook. `use
 | RCSJS:onSlideChange      | The event is emitted after the animation slide is completed.                                               |
 | RCSJS:onDrag             | The event is emitted when a user drags the carousel items (only available when using `useSpringCarousel`). |
 | RCSJS:onFullscreenChange | The event is emitted when a user enter/exit from the fullscreen mode.                                      |
-| RCSJS:onLeftSwipe        | The event is emitted when a user swipe to the left (only available when using `useSpringCarousel`).        |
-| RCSJS:onRightSwipe       | The event is emitted when a user swipe to the right (only available when using `useSpringCarousel`).       |
+| RCSJS:onLeftSwipe        | The event is emitted when a user swipe to the left (only available when using `useTransitionCarousel`).    |
+| RCSJS:onRightSwipe       | The event is emitted when a user swipe to the right (only available when using `useTransitionCarousel`).   |
 
 To proper type the props that the event will receive, you can use the following types:
 
