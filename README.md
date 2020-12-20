@@ -4,6 +4,10 @@
 
 [![NPM](https://img.shields.io/npm/v/react-spring-carousel-js.svg)](https://www.npmjs.com/package/react-spring-carousel-js) [![NPM](https://img.shields.io/bundlephobia/minzip/react-spring-carousel-js)](https://img.shields.io/bundlephobia/minzip/react-spring-carousel-js)
 
+## Official documentation
+
+[Visit here](https://react-spring-carousel-js.emilianobucci.com/events)
+
 ## Features
 
 - **Extreemely performant**: thanks to react-spring, you'll get a excelent performance with smooth and natural transitions out of the box.
