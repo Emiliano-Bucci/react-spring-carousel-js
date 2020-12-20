@@ -121,7 +121,6 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
           setCarouselStyles({ [carouselSlideAxis]: currentSlidedValue })
         } else {
           slideToPrevItem()
-          console.log('HEREEE')
         }
       } else {
         setCarouselStyles({ [carouselSlideAxis]: currentSlidedValue })

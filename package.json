@@ -4,7 +4,7 @@
   "description": "A performant react-carousel powered by react-spring",
   "author": "Emiliano-Bucci",
   "license": "MIT",
-  "repository": "Emiliano-Bucci/react-spring-carousel-js",
+  "repository": "Emiliano-Bucci/react-spring-carousel-js-docs",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/index.tsx",
@@ -22,7 +22,8 @@
     "test:watch": "react-scripts test --env=jsdom",
     "predeploy": "cd example && npm install && npm run build",
     "deploy": "gh-pages -d example/build",
-    "lint": "eslint --fix --config src/.eslintrc.js 'src/**/*.{ts,tsx,js}'"
+    "lint": "eslint --fix --config src/.eslintrc.js 'src/**/*.{ts,tsx,js}'",
+    "postinstall": "node postinstall.js"
   },
   "peerDependencies": {
     "react": "^17.0.1"
