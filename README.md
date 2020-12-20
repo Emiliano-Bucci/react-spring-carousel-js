@@ -6,7 +6,7 @@
 
 ## Official documentation
 
-[Visit here](https://react-spring-carousel-js.emilianobucci.com/events)
+[Visit here](https://react-spring-carousel-js.emilianobucci.com)
 
 ## Features
 
