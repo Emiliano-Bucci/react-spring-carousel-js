@@ -17,6 +17,6 @@
     "noUnusedParameters": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src"],
+  "include": ["src", "dist/postinstall.js"],
   "exclude": ["node_modules", "dist", "example"]
 }
