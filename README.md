@@ -99,9 +99,9 @@ The following options and API can be both extracted from the main `hook` or from
 
 ## Events
 
-Most of the React carousel libraries out there handle the animations by updating the state (`this.setState()` or `useState()`). While this is totally fine from the React perspective, it isn't that much from the `animation` perspective, since when React triggers a rerender lots of things happen under the hood and this can cause animations to be a bit junky. For this reason we decide to not leverage at all on React state to animate things (pretty much like `react-spring` do, actually), but we stick to the `react-spring` way.
+Sometimes it can happend that we'll want to perform some actions when a user interact with the carousel (for example, maybe you'll want to do something every time a slide changes). Normally you'll use **callbacks** to perform actions but this pattern wasn't enough from our perspective.
 
-So far so good, but how we can interact with the carousel in order to update the UI in response to some actions, like for example when the active slide changes? To solve this problem we create our `Custom events`. This way, you can listen to some actions, hook into them, and if that's the case, perform your own actions!
+The first reason was because we wanted to avoid, as much as possible, to leverage on the **state** update (AKA React rerender) to perform animations, so that wasn't an option. The second point was that if we wanted to use callbacks it would require us to pass them down from the highest level (you would need to pass them directly into the main hook), and this solution didn't give us the flexibility we wanted. For this reason it was decided to implement our custom events, so that you'll be able to listen pretty much from everywhere and respond accordingly in a simple and effective way.
 
 ### How they works?
 
