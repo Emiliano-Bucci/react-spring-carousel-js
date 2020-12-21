@@ -33,7 +33,6 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
   withThumbs = false,
   springConfig = config.default,
   thumbsSlideAxis = 'x',
-  thumbsMaxHeight = 0,
   enableThumbsWrapperScroll = true,
   draggingSlideTreshold = 50,
   prepareThumbsData,
@@ -70,7 +69,6 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     items,
     withThumbs,
     thumbsSlideAxis,
-    thumbsMaxHeight,
     springConfig,
     prepareThumbsData
   })

@@ -1,5 +1,18 @@
+import styled from '@emotion/styled'
 import React from 'react'
-import { useTransitionCarousel } from 'react-spring-carousel-js'
+import { useSpringCarousel } from 'react-spring-carousel-js'
+
+const Item = styled.div`
+  flex: 1;
+  padding: 8px 24px;
+
+  :not(:last-of-type) {
+    margin-right: 32px;
+  }
+
+  cursor: grab;
+  user-select: none;
+`
 
 const App = () => {
   const {
@@ -7,27 +20,20 @@ const App = () => {
     slideToPrevItem,
     slideToNextItem,
     slideToItem
-  } = useTransitionCarousel({
-    withThumbs: true,
+  } = useSpringCarousel({
     withLoop: true,
-    onRightSwipe: () => {
-      console.log('on right swipe')
-    },
-    onLeftSwipe: () => {
-      console.log('on left swipe')
-    },
+    itemsPerSlide: 4,
     items: [
       {
         id: 'item-1',
         renderItem: (
-          <div
+          <Item
             style={{
-              background: 'red',
-              padding: 8
+              background: 'red'
             }}
           >
             Item 1
-          </div>
+          </Item>
         ),
         renderThumb: (
           <div
@@ -46,14 +52,13 @@ const App = () => {
       {
         id: 'item-2',
         renderItem: (
-          <div
+          <Item
             style={{
-              background: 'yellow',
-              padding: 8
+              background: 'yellow'
             }}
           >
             Item 2
-          </div>
+          </Item>
         ),
         renderThumb: (
           <div
@@ -71,14 +76,13 @@ const App = () => {
       {
         id: 'item-3',
         renderItem: (
-          <div
+          <Item
             style={{
-              background: 'green',
-              padding: '8px 16px'
+              background: 'green'
             }}
           >
             Item 3
-          </div>
+          </Item>
         ),
         renderThumb: (
           <div
@@ -96,14 +100,13 @@ const App = () => {
       {
         id: 'item-1a',
         renderItem: (
-          <div
+          <Item
             style={{
-              background: 'red',
-              padding: 8
+              background: 'red'
             }}
           >
-            Item 1
-          </div>
+            Item 4
+          </Item>
         ),
         renderThumb: (
           <div
@@ -122,14 +125,13 @@ const App = () => {
       {
         id: 'item-2a',
         renderItem: (
-          <div
+          <Item
             style={{
-              background: 'yellow',
-              padding: 8
+              background: 'yellow'
             }}
           >
-            Item 2
-          </div>
+            Item 5
+          </Item>
         ),
         renderThumb: (
           <div
@@ -147,14 +149,13 @@ const App = () => {
       {
         id: 'item-3a',
         renderItem: (
-          <div
+          <Item
             style={{
-              background: 'green',
-              padding: '8px 16px'
+              background: 'green'
             }}
           >
-            Item 3
-          </div>
+            Item 6
+          </Item>
         ),
         renderThumb: (
           <div
@@ -172,14 +173,13 @@ const App = () => {
       {
         id: 'item-1s',
         renderItem: (
-          <div
+          <Item
             style={{
-              background: 'red',
-              padding: 8
+              background: 'red'
             }}
           >
-            Item 1
-          </div>
+            Item 7
+          </Item>
         ),
         renderThumb: (
           <div
@@ -198,14 +198,13 @@ const App = () => {
       {
         id: 'item-2s',
         renderItem: (
-          <div
+          <Item
             style={{
-              background: 'yellow',
-              padding: 8
+              background: 'yellow'
             }}
           >
-            Item 2
-          </div>
+            Item 8
+          </Item>
         ),
         renderThumb: (
           <div
@@ -223,14 +222,13 @@ const App = () => {
       {
         id: 'item-3s',
         renderItem: (
-          <div
+          <Item
             style={{
-              background: 'green',
-              padding: '8px 16px'
+              background: 'green'
             }}
           >
-            Item 3
-          </div>
+            Item 9
+          </Item>
         ),
         renderThumb: (
           <div
@@ -248,14 +246,13 @@ const App = () => {
       {
         id: 'item-1d',
         renderItem: (
-          <div
+          <Item
             style={{
-              background: 'red',
-              padding: 8
+              background: 'red'
             }}
           >
-            Item 1
-          </div>
+            Item 10
+          </Item>
         ),
         renderThumb: (
           <div
@@ -274,14 +271,13 @@ const App = () => {
       {
         id: 'item-2d',
         renderItem: (
-          <div
+          <Item
             style={{
-              background: 'yellow',
-              padding: 8
+              background: 'yellow'
             }}
           >
-            Item 2
-          </div>
+            Item 11
+          </Item>
         ),
         renderThumb: (
           <div
@@ -299,14 +295,13 @@ const App = () => {
       {
         id: 'item-3d',
         renderItem: (
-          <div
+          <Item
             style={{
-              background: 'green',
-              padding: '8px 16px'
+              background: 'green'
             }}
           >
-            Item 3
-          </div>
+            Item 12
+          </Item>
         ),
         renderThumb: (
           <div
@@ -324,14 +319,13 @@ const App = () => {
       {
         id: 'item-1q',
         renderItem: (
-          <div
+          <Item
             style={{
-              background: 'red',
-              padding: 8
+              background: 'red'
             }}
           >
-            Item 1
-          </div>
+            Item 13
+          </Item>
         ),
         renderThumb: (
           <div
@@ -350,14 +344,13 @@ const App = () => {
       {
         id: 'item-2q',
         renderItem: (
-          <div
+          <Item
             style={{
-              background: 'yellow',
-              padding: 8
+              background: 'yellow'
             }}
           >
-            Item 2
-          </div>
+            Item 14
+          </Item>
         ),
         renderThumb: (
           <div
@@ -375,14 +368,13 @@ const App = () => {
       {
         id: 'item-3q',
         renderItem: (
-          <div
+          <Item
             style={{
-              background: 'green',
-              padding: '8px 16px'
+              background: 'green'
             }}
           >
-            Item 3
-          </div>
+            Item 15
+          </Item>
         ),
         renderThumb: (
           <div

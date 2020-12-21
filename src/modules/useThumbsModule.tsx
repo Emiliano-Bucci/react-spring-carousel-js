@@ -11,7 +11,6 @@ type Props<T extends ReactSpringCarouselItem> = {
   items: T[]
   withThumbs: boolean
   thumbsSlideAxis: TransformCarouselProps<T>['thumbsSlideAxis']
-  thumbsMaxHeight: TransformCarouselProps<T>['thumbsMaxHeight']
   thumbsWrapperRef?: TransformCarouselProps<T>['thumbsWrapperRef']
   springConfig: SpringConfig
   prepareThumbsData?(items: T[]): T[]
@@ -21,7 +20,6 @@ export function useThumbsModule<T extends ReactSpringCarouselItem>({
   items,
   withThumbs,
   thumbsSlideAxis = 'x',
-  thumbsMaxHeight = 0,
   springConfig,
   thumbsWrapperRef,
   prepareThumbsData
@@ -42,18 +40,6 @@ export function useThumbsModule<T extends ReactSpringCarouselItem>({
           'The renderThumb property is missing in one or more items. You need to add the renderThumb property to every item of the carousel when the prop withThumbs={true} or eventually set withThumbs={false}.'
         )
       }
-    }
-
-    if (thumbsSlideAxis === 'y' && thumbsMaxHeight === 0 && !thumbsWrapperRef) {
-      console.warn(
-        'When you set thumbsSlideAxis=`y` you would also probably set thumbsMaxHeight or thumbsWrapperRef props.'
-      )
-    }
-
-    if (thumbsSlideAxis === 'x' && thumbsMaxHeight > 0) {
-      console.warn(
-        "There's no need to specify a thumbsMaxHeight value when thumbsSlideAxis=`x`; the value will be omitted."
-      )
     }
   })
 
@@ -215,7 +201,7 @@ export function useThumbsModule<T extends ReactSpringCarouselItem>({
           ? { overflowX: 'auto' }
           : {
               overflowY: 'auto',
-              maxHeight: thumbsMaxHeight ? `${thumbsMaxHeight}px` : '100%'
+              maxHeight: '100%'
             })
       }}
     >

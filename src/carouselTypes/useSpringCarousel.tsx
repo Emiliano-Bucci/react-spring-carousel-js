@@ -40,21 +40,30 @@ export const TransformCarouselContext = createContext<TransformCarouselContextPr
 export function useSpringCarousel<T extends ReactSpringCarouselItem>({
   items,
   withLoop = false,
-  draggingSlideTreshold = 50,
+  draggingSlideTreshold = 100,
   springConfig = config.default,
   shouldResizeOnWindowResize = true,
   withThumbs = false,
   enableThumbsWrapperScroll = true,
   carouselSlideAxis = 'x',
   thumbsSlideAxis = 'x',
-  thumbsMaxHeight = 0,
   thumbsWrapperRef,
-  prepareThumbsData
+  prepareThumbsData,
+  itemsPerSlide = 1,
+  initialActiveItem = 0
 }: TransformCarouselProps<T>) {
+  function getRepeatedPrevItems() {
+    const total = items.length
+    return items.slice(total - itemsPerSlide, total)
+  }
+  function getRepeatedNextItems() {
+    return items.slice(0, itemsPerSlide)
+  }
+
   const internalItems = withLoop
-    ? [items[items.length - 1], ...items, items[0]]
+    ? [...getRepeatedPrevItems(), ...items, ...getRepeatedNextItems()]
     : items
-  const activeItem = useRef(0)
+  const activeItem = useRef(initialActiveItem)
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
   const carouselTrackWrapperRef = useRef<HTMLDivElement | null>(null)
   const isDragging = useRef(false)
@@ -80,21 +89,19 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     withThumbs,
     items,
     thumbsSlideAxis,
-    thumbsMaxHeight,
     springConfig,
     thumbsWrapperRef,
     prepareThumbsData
   })
-
   const bindDrag = useDrag((props) => {
     const dragging = props.dragging
     const movement = props.movement[carouselSlideAxis === 'x' ? 0 : 1]
 
-    const currentSlidedValue = -(getWrapperDimension() * getCurrentActiveItem())
-
     if (getIsAnimating()) {
       return
     }
+
+    const currentSlidedValue = -(getSlideValue() * getCurrentActiveItem())
 
     if (dragging) {
       setCarouselStyles({ [carouselSlideAxis]: currentSlidedValue + movement })
@@ -104,9 +111,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
         ReactSpringCustomEvents['RCSJS:onDrag'],
         prepareDataForCustomEvent<RCSJSOnDrag>(props)
       )
-    }
 
-    if (props.last) {
       const prevItemTreshold = movement > draggingSlideTreshold
       const nextItemTreshold = movement < -draggingSlideTreshold
 
@@ -116,15 +121,21 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
         } else {
           slideToNextItem()
         }
+        props.cancel()
+        isDragging.current = false
       } else if (prevItemTreshold) {
         if (!withLoop && getCurrentActiveItem() === 0) {
           setCarouselStyles({ [carouselSlideAxis]: currentSlidedValue })
         } else {
           slideToPrevItem()
         }
-      } else {
-        setCarouselStyles({ [carouselSlideAxis]: currentSlidedValue })
+        props.cancel()
+        isDragging.current = false
       }
+    }
+
+    if (props.last && !getIsAnimating()) {
+      setCarouselStyles({ [carouselSlideAxis]: currentSlidedValue })
     }
   })
 
@@ -137,32 +148,34 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     }
   })
 
-  const getWrapperDimension = useCallback(() => {
+  useMount(() => {})
+
+  const getSlideValue = useCallback(() => {
     if (!carouselTrackWrapperRef.current) {
       return 0
     }
 
+    const carouselItem = carouselTrackWrapperRef.current
+      .firstChild as HTMLElement
+
     if (carouselSlideAxis === 'x') {
-      return carouselTrackWrapperRef.current.getBoundingClientRect().width
+      return carouselItem.getBoundingClientRect().width
     }
 
-    return carouselTrackWrapperRef.current.getBoundingClientRect().height
+    return carouselItem.getBoundingClientRect().height
   }, [carouselSlideAxis])
 
   function adjustCarouselWrapperPosition(ref: HTMLDivElement) {
     const positionProperty = carouselSlideAxis === 'x' ? 'left' : 'top'
-    const dimensionProperty = carouselSlideAxis === 'x' ? 'width' : 'height'
 
-    ref.style[positionProperty] = `-${
-      ref.getBoundingClientRect()[dimensionProperty]
-    }px`
+    ref.style[positionProperty] = `-${getSlideValue() * itemsPerSlide}px`
   }
 
   // @ts-ignore
   useMount(() => {
     function handleResize() {
       setCarouselStyles({
-        [carouselSlideAxis]: -(getWrapperDimension() * getCurrentActiveItem()),
+        [carouselSlideAxis]: -(getSlideValue() * getCurrentActiveItem()),
         immediate: true
       })
 
@@ -228,7 +241,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     isAnimating.current = true
 
     setCarouselStyles({
-      [carouselSlideAxis]: -(getWrapperDimension() * item),
+      [carouselSlideAxis]: -(getSlideValue() * item),
       config: {
         ...springConfig,
         duration: immediate ? 0 : undefined
@@ -254,10 +267,15 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     }
   }
 
+  function getLastItemIndex() {
+    return items.length - 1
+  }
+
   function slideToPrevItem() {
     if (
       (!withLoop && getCurrentActiveItem() === 0) ||
-      (getIsDragging() && getIsAnimating())
+      (getIsDragging() && getIsAnimating()) ||
+      (getCurrentActiveItem() === 0 && getIsAnimating())
     ) {
       return
     }
@@ -284,12 +302,12 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
         })
       } else {
         slideToItem({
-          item: internalItems.length - 2,
+          item: internalItems.length - itemsPerSlide,
           immediate: true,
           onRest: () => {
-            slideToItem({
-              item: internalItems.length - 3
-            })
+            // slideToItem({
+            //   item: itemsPerSlide
+            // })
           }
         })
       }
@@ -318,7 +336,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
       })
     )
 
-    if (withLoop && getCurrentActiveItem() === internalItems.length - 3) {
+    if (withLoop && getCurrentActiveItem() === getLastItemIndex()) {
       if (getIsDragging()) {
         slideToItem({
           item: activeItem.current + 1,
@@ -332,13 +350,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
         })
       } else {
         slideToItem({
-          item: -1,
-          immediate: true,
-          onRest: () => {
-            slideToItem({
-              item: 0
-            })
-          }
+          item: 0
         })
       }
 
@@ -420,7 +432,9 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
           style={{
             display: 'flex',
             flexDirection: carouselSlideAxis === 'x' ? 'row' : 'column',
-            position: 'relative',
+            position: 'absolute',
+            top: 0,
+            left: 0,
             width: '100%',
             height: '100%',
             ...carouselStyles
@@ -439,7 +453,8 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
             <div
               key={`${id}-${index}`}
               style={{
-                flex: '1 0 100%',
+                display: 'flex',
+                flex: `1 0 calc(100% / ${itemsPerSlide})`,
                 height: '100%'
               }}
             >
