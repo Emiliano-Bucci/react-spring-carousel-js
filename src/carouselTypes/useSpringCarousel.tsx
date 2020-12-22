@@ -59,10 +59,14 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
   function getRepeatedNextItems() {
     return items.slice(0, itemsPerSlide)
   }
+  function getItems() {
+    if (withLoop) {
+      return [...getRepeatedPrevItems(), ...items, ...getRepeatedNextItems()]
+    }
 
-  const internalItems = withLoop
-    ? [...getRepeatedPrevItems(), ...items, ...getRepeatedNextItems()]
-    : items
+    return items
+  }
+  const internalItems = getItems()
   const activeItem = useRef(initialActiveItem)
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
   const carouselTrackWrapperRef = useRef<HTMLDivElement | null>(null)
@@ -188,23 +192,18 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
 
     ref.style[positionProperty] = `-${getSlideValue() * itemsPerSlide}px`
   }
-
   function setActiveItem(newItem: number) {
     activeItem.current = newItem
   }
-
   function getCurrentActiveItem() {
     return activeItem.current
   }
-
   function getIsAnimating() {
     return isAnimating.current
   }
-
   function getIsDragging() {
     return isDragging.current
   }
-
   function getPrevItem() {
     const currentActiveItem = getCurrentActiveItem()
 
@@ -214,7 +213,6 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
 
     return currentActiveItem - 1
   }
-
   function getNextItem() {
     const currentActiveItem = getCurrentActiveItem()
 
@@ -223,6 +221,29 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     }
 
     return currentActiveItem + 1
+  }
+  function getIsNextItem(id: string) {
+    const itemIndex = findItemIndex(id)
+    const activeItem = getCurrentActiveItem()
+
+    if (withLoop && activeItem === items.length - 1) {
+      return itemIndex === 0
+    }
+
+    return itemIndex === activeItem + 1
+  }
+  function getIsPrevItem(id: string) {
+    const itemIndex = findItemIndex(id)
+    const activeItem = getCurrentActiveItem()
+
+    if (withLoop && activeItem === 0) {
+      return itemIndex === items.length - 1
+    }
+
+    return itemIndex === activeItem - 1
+  }
+  function findItemIndex(id: string) {
+    return items.findIndex((item) => item.id === id)
   }
 
   function slideToItem({
@@ -241,9 +262,9 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     setCarouselStyles({
       [carouselSlideAxis]: -(getSlideValue() * item),
       config: {
-        ...springConfig,
-        duration: immediate ? 0 : undefined
+        ...springConfig
       },
+      immediate,
       onRest: () => {
         isDragging.current = false
         isAnimating.current = false
@@ -265,8 +286,13 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     }
   }
 
-  function getLastItemIndex() {
-    return items.length - 1
+  function getWrapperFromValue(element: HTMLDivElement) {
+    const values = element.style.transform.split(/\w+\(|\);?/)
+    return Number(
+      values[1]
+        .split(/,\s?/g)
+        [carouselSlideAxis === 'x' ? 0 : 1].replace('px', '')
+    )
   }
 
   function slideToPrevItem() {
@@ -298,15 +324,24 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
           }
         })
       } else {
-        slideToItem({
-          item: items.length,
-          immediate: true,
-          onRest: () => {
-            slideToItem({
-              item: items.length - 1
-            })
+        let fromValue = 0
+
+        if (carouselTrackWrapperRef.current!.style.transform !== 'none') {
+          fromValue = getWrapperFromValue(carouselTrackWrapperRef.current!)
+        }
+
+        setCarouselStyles({
+          from: {
+            [carouselSlideAxis]: -(
+              Math.abs(fromValue) +
+              getSlideValue() * items.length
+            )
+          },
+          to: {
+            [carouselSlideAxis]: -(getSlideValue() * (items.length - 1))
           }
         })
+        setActiveItem(items.length - 1)
       }
     } else {
       slideToItem({
@@ -314,7 +349,6 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
       })
     }
   }
-
   function slideToNextItem() {
     if (
       (!withLoop && getCurrentActiveItem() === internalItems.length - 1) ||
@@ -332,7 +366,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
       })
     )
 
-    if (withLoop && getCurrentActiveItem() === getLastItemIndex()) {
+    if (withLoop && getCurrentActiveItem() === items.length - 1) {
       if (getIsDragging()) {
         slideToItem({
           item: activeItem.current + 1,
@@ -345,43 +379,23 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
           }
         })
       } else {
-        slideToItem({
-          item: -1,
-          immediate: true,
-          onRest: () => slideToItem({ item: 0 })
+        setCarouselStyles({
+          from: {
+            [carouselSlideAxis]:
+              getWrapperFromValue(carouselTrackWrapperRef.current!) +
+              getSlideValue() * items.length
+          },
+          to: {
+            [carouselSlideAxis]: 0
+          }
         })
+        setActiveItem(0)
       }
     } else {
       slideToItem({
         item: getNextItem()
       })
     }
-  }
-
-  function findItemIndex(id: string) {
-    return items.findIndex((item) => item.id === id)
-  }
-
-  function getIsNextItem(id: string) {
-    const itemIndex = findItemIndex(id)
-    const activeItem = getCurrentActiveItem()
-
-    if (withLoop && activeItem === items.length - 1) {
-      return itemIndex === 0
-    }
-
-    return itemIndex === activeItem + 1
-  }
-
-  function getIsPrevItem(id: string) {
-    const itemIndex = findItemIndex(id)
-    const activeItem = getCurrentActiveItem()
-
-    if (withLoop && activeItem === 0) {
-      return itemIndex === items.length - 1
-    }
-
-    return itemIndex === activeItem - 1
   }
 
   const contextProps: TransformCarouselContextProps = {
@@ -428,11 +442,11 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
           style={{
             display: 'flex',
             flexDirection: carouselSlideAxis === 'x' ? 'row' : 'column',
-            position: 'absolute',
             top: 0,
             left: 0,
             width: '100%',
             height: '100%',
+            position: 'relative',
             ...carouselStyles
           }}
           ref={(ref) => {
@@ -445,18 +459,23 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
             }
           }}
         >
-          {internalItems.map(({ id, renderItem }, index) => (
-            <div
-              key={`${id}-${index}`}
-              style={{
-                display: 'flex',
-                flex: `1 0 calc(100% / ${itemsPerSlide})`,
-                height: '100%'
-              }}
-            >
-              {renderItem}
-            </div>
-          ))}
+          {internalItems.map(({ id, renderItem }, index) => {
+            const itemWidth = `calc(100% / ${itemsPerSlide})`
+            return (
+              <div
+                key={`${id}-${index}`}
+                style={{
+                  display: 'flex',
+                  position: 'absolute',
+                  width: itemWidth,
+                  height: '100%',
+                  left: `calc(${index * (100 / itemsPerSlide)}%)`
+                }}
+              >
+                {renderItem}
+              </div>
+            )
+          })}
         </animated.div>
       </div>
     </TransformCarouselContext.Provider>

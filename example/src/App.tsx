@@ -1,18 +1,24 @@
-import styled from '@emotion/styled'
-import React from 'react'
+import React, { HTMLAttributes } from 'react'
 import { useSpringCarousel } from 'react-spring-carousel-js'
 
-const Item = styled.div`
-  flex: 1;
-  padding: 8px 24px;
-
-  :not(:last-of-type) {
-    margin-right: 32px;
-  }
-
-  cursor: grab;
-  user-select: none;
-`
+const Item = ({
+  children,
+  ...rest
+}: { children: React.ReactNode } & HTMLAttributes<HTMLDivElement>) => {
+  return (
+    <div
+      style={{
+        flex: 1,
+        padding: '8x 24px',
+        cursor: 'grab',
+        userSelect: 'none',
+        ...rest?.style
+      }}
+    >
+      {children}
+    </div>
+  )
+}
 
 const App = () => {
   const {
@@ -22,7 +28,7 @@ const App = () => {
     slideToItem
   } = useSpringCarousel({
     withLoop: true,
-    itemsPerSlide: 7,
+    itemsPerSlide: 3,
     items: [
       {
         id: 'item-1',
@@ -127,7 +133,7 @@ const App = () => {
         renderItem: (
           <Item
             style={{
-              background: 'yellow'
+              background: 'black'
             }}
           >
             Item 5
@@ -143,128 +149,6 @@ const App = () => {
             }}
           >
             THUMB 5
-          </div>
-        )
-      },
-      {
-        id: 'item-3a',
-        renderItem: (
-          <Item
-            style={{
-              background: 'green'
-            }}
-          >
-            Item 6
-          </Item>
-        ),
-        renderThumb: (
-          <div
-            style={{
-              height: 100,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 6
-          </div>
-        )
-      },
-      {
-        id: 'item-1s',
-        renderItem: (
-          <Item
-            style={{
-              background: 'red'
-            }}
-          >
-            Item 7
-          </Item>
-        ),
-        renderThumb: (
-          <div
-            onClick={() => slideToItem('item-2')}
-            style={{
-              height: 100,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 7
-          </div>
-        )
-      },
-      {
-        id: 'item-2s',
-        renderItem: (
-          <Item
-            style={{
-              background: 'yellow'
-            }}
-          >
-            Item 8
-          </Item>
-        ),
-        renderThumb: (
-          <div
-            style={{
-              height: 100,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 8
-          </div>
-        )
-      },
-      {
-        id: 'item-3s',
-        renderItem: (
-          <Item
-            style={{
-              background: 'green'
-            }}
-          >
-            Item 9
-          </Item>
-        ),
-        renderThumb: (
-          <div
-            style={{
-              height: 100,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 9
-          </div>
-        )
-      },
-      {
-        id: 'item-1d',
-        renderItem: (
-          <Item
-            style={{
-              background: 'red'
-            }}
-          >
-            Item 10
-          </Item>
-        ),
-        renderThumb: (
-          <div
-            onClick={() => slideToItem('item-2')}
-            style={{
-              height: 100,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 10
           </div>
         )
       }
