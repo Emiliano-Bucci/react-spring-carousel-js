@@ -67,7 +67,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     return items
   }
   const internalItems = getItems()
-  const activeItem = useRef(initialActiveItem)
+  const activeItem = useRef(0)
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
   const carouselTrackWrapperRef = useRef<HTMLDivElement | null>(null)
   const isDragging = useRef(false)
@@ -150,6 +150,16 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
         'You set shouldResizeOnWindowResize={false}; be aware that the carousel could behave in a strange way if you also use the fullscreen functionality.'
       )
     }
+
+    if (initialActiveItem < 0) {
+      console.warn('The initialActiveItem cannot be less than 0')
+    }
+
+    if (initialActiveItem > items.length) {
+      console.warn(
+        'The initialActiveItem cannot be greater than the total length of the items you provide.'
+      )
+    }
   })
 
   // @ts-ignore
@@ -169,6 +179,16 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
       window.addEventListener('resize', handleResize)
 
       return () => window.removeEventListener('resize', handleResize)
+    }
+  })
+
+  useMount(() => {
+    if (initialActiveItem > 0 && initialActiveItem <= items.length) {
+      slideToItem({
+        item: initialActiveItem,
+        immediate: true
+      })
+      setActiveItem(initialActiveItem)
     }
   })
 
