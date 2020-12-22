@@ -69,12 +69,6 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
   const isDragging = useRef(false)
   const isAnimating = useRef(false)
 
-  // @ts-ignore
-  const [carouselStyles, setCarouselStyles] = useSpring(() => ({
-    [carouselSlideAxis]: 0,
-    config: springConfig
-  }))
-
   // Custom modules
   const { emitCustomEvent, useListenToCustomEvent } = useCustomEventsModule()
   const {
@@ -93,6 +87,12 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     thumbsWrapperRef,
     prepareThumbsData
   })
+
+  // @ts-ignore
+  const [carouselStyles, setCarouselStyles] = useSpring(() => ({
+    [carouselSlideAxis]: 0,
+    config: springConfig
+  }))
   const bindDrag = useDrag((props) => {
     const dragging = props.dragging
     const movement = props.movement[carouselSlideAxis === 'x' ? 0 : 1]
@@ -148,7 +148,25 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     }
   })
 
-  useMount(() => {})
+  // @ts-ignore
+  useMount(() => {
+    function handleResize() {
+      setCarouselStyles({
+        [carouselSlideAxis]: -(getSlideValue() * getCurrentActiveItem()),
+        immediate: true
+      })
+
+      if (withLoop) {
+        adjustCarouselWrapperPosition(carouselTrackWrapperRef.current!)
+      }
+    }
+
+    if (shouldResizeOnWindowResize) {
+      window.addEventListener('resize', handleResize)
+
+      return () => window.removeEventListener('resize', handleResize)
+    }
+  })
 
   const getSlideValue = useCallback(() => {
     if (!carouselTrackWrapperRef.current) {
@@ -170,26 +188,6 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
 
     ref.style[positionProperty] = `-${getSlideValue() * itemsPerSlide}px`
   }
-
-  // @ts-ignore
-  useMount(() => {
-    function handleResize() {
-      setCarouselStyles({
-        [carouselSlideAxis]: -(getSlideValue() * getCurrentActiveItem()),
-        immediate: true
-      })
-
-      if (withLoop) {
-        adjustCarouselWrapperPosition(carouselTrackWrapperRef.current!)
-      }
-    }
-
-    if (shouldResizeOnWindowResize) {
-      window.addEventListener('resize', handleResize)
-
-      return () => window.removeEventListener('resize', handleResize)
-    }
-  })
 
   function setActiveItem(newItem: number) {
     activeItem.current = newItem

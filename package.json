@@ -64,8 +64,6 @@
     "dist"
   ],
   "dependencies": {
-    "@emotion/react": "^11.1.2",
-    "@emotion/styled": "^11.0.0",
     "react-spring": "9.0.0-rc.3",
     "react-use-gesture": "^8.0.1",
     "replace-in-file": "^6.1.0",

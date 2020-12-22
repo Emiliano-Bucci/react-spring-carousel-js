@@ -22,7 +22,7 @@ const App = () => {
     slideToItem
   } = useSpringCarousel({
     withLoop: true,
-    itemsPerSlide: 3,
+    itemsPerSlide: 7,
     items: [
       {
         id: 'item-1',
@@ -265,127 +265,6 @@ const App = () => {
             }}
           >
             THUMB 10
-          </div>
-        )
-      },
-      {
-        id: 'item-2d',
-        renderItem: (
-          <Item
-            style={{
-              background: 'yellow'
-            }}
-          >
-            Item 11
-          </Item>
-        ),
-        renderThumb: (
-          <div
-            style={{
-              height: 100,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 11
-          </div>
-        )
-      },
-      {
-        id: 'item-3d',
-        renderItem: (
-          <Item
-            style={{
-              background: 'green'
-            }}
-          >
-            Item 12
-          </Item>
-        ),
-        renderThumb: (
-          <div
-            style={{
-              height: 100,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 12
-          </div>
-        )
-      },
-      {
-        id: 'item-1q',
-        renderItem: (
-          <Item
-            style={{
-              background: 'red'
-            }}
-          >
-            Item 13
-          </Item>
-        ),
-        renderThumb: (
-          <div
-            onClick={() => slideToItem('item-2')}
-            style={{
-              height: 100,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 13
-          </div>
-        )
-      },
-      {
-        id: 'item-2q',
-        renderItem: (
-          <Item
-            style={{
-              background: 'yellow'
-            }}
-          >
-            Item 14
-          </Item>
-        ),
-        renderThumb: (
-          <div
-            style={{
-              height: 100,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 14
-          </div>
-        )
-      },
-      {
-        id: 'item-3q',
-        renderItem: (
-          <Item
-            style={{
-              background: 'green'
-            }}
-          >
-            Item 15
-          </Item>
-        ),
-        renderThumb: (
-          <div
-            style={{
-              height: 100,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 15
           </div>
         )
       }
