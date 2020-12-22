@@ -274,8 +274,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
   function slideToPrevItem() {
     if (
       (!withLoop && getCurrentActiveItem() === 0) ||
-      (getIsDragging() && getIsAnimating()) ||
-      (getCurrentActiveItem() === 0 && getIsAnimating())
+      (getIsDragging() && getIsAnimating())
     ) {
       return
     }
@@ -295,28 +294,27 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
           item: activeItem.current - 1,
           onRest: () => {
             slideToItem({
-              item: internalItems.length - 3,
+              item: items.length - 1,
               immediate: true
             })
           }
         })
       } else {
         slideToItem({
-          item: internalItems.length - itemsPerSlide,
+          item: items.length,
           immediate: true,
           onRest: () => {
-            // slideToItem({
-            //   item: itemsPerSlide
-            // })
+            slideToItem({
+              item: items.length - 1
+            })
           }
         })
       }
-      return
+    } else {
+      slideToItem({
+        item: getPrevItem()
+      })
     }
-
-    slideToItem({
-      item: getPrevItem()
-    })
   }
 
   function slideToNextItem() {
@@ -350,16 +348,16 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
         })
       } else {
         slideToItem({
-          item: 0
+          item: -1,
+          immediate: true,
+          onRest: () => slideToItem({ item: 0 })
         })
       }
-
-      return
+    } else {
+      slideToItem({
+        item: getNextItem()
+      })
     }
-
-    slideToItem({
-      item: getNextItem()
-    })
   }
 
   function findItemIndex(id: string) {
