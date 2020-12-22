@@ -446,7 +446,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
             left: 0,
             width: '100%',
             height: '100%',
-            position: 'relative',
+            position: 'absolute',
             ...carouselStyles
           }}
           ref={(ref) => {
@@ -460,16 +460,13 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
           }}
         >
           {internalItems.map(({ id, renderItem }, index) => {
-            const itemWidth = `calc(100% / ${itemsPerSlide})`
             return (
               <div
                 key={`${id}-${index}`}
                 style={{
                   display: 'flex',
-                  position: 'absolute',
-                  width: itemWidth,
-                  height: '100%',
-                  left: `calc(${index * (100 / itemsPerSlide)}%)`
+                  flex: `1 0 calc(100% / ${itemsPerSlide})`,
+                  height: '100%'
                 }}
               >
                 {renderItem}
