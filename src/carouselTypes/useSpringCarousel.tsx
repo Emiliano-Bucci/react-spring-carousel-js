@@ -50,7 +50,8 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
   thumbsWrapperRef,
   prepareThumbsData,
   itemsPerSlide = 1,
-  initialActiveItem = 0
+  initialActiveItem = 0,
+  initialStartingPosition = 'left'
 }: TransformCarouselProps<T>) {
   function getRepeatedPrevItems() {
     const total = items.length
@@ -152,7 +153,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     }
 
     if (initialActiveItem < 0) {
-      console.warn('The initialActiveItem cannot be less than 0')
+      console.warn('The initialActiveItem cannot be less than 0.')
     }
 
     if (initialActiveItem > items.length) {
@@ -210,7 +211,27 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
   function adjustCarouselWrapperPosition(ref: HTMLDivElement) {
     const positionProperty = carouselSlideAxis === 'x' ? 'left' : 'top'
 
-    ref.style[positionProperty] = `-${getSlideValue() * itemsPerSlide}px`
+    switch (initialStartingPosition) {
+      default:
+      case 'left': {
+        ref.style[positionProperty] = `-${getSlideValue() * itemsPerSlide}px`
+        break
+      }
+
+      case 'center': {
+        ref.style[positionProperty] = `-${
+          getSlideValue() * Math.floor(itemsPerSlide / 1.5)
+        }px`
+        break
+      }
+
+      case 'right': {
+        ref.style[positionProperty] = `-${
+          getSlideValue() * Math.floor(itemsPerSlide / 3)
+        }px`
+        break
+      }
+    }
   }
   function setActiveItem(newItem: number) {
     activeItem.current = newItem
@@ -267,6 +288,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
   }
 
   function slideToItem({
+    from,
     item,
     immediate = false,
     onRest = () => {}
@@ -280,7 +302,16 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     isAnimating.current = true
 
     setCarouselStyles({
-      [carouselSlideAxis]: -(getSlideValue() * item),
+      ...(from
+        ? {
+            from: {
+              [carouselSlideAxis]: from
+            }
+          }
+        : {}),
+      to: {
+        [carouselSlideAxis]: -(getSlideValue() * item)
+      },
       config: {
         ...springConfig
       },
@@ -290,14 +321,16 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
         isAnimating.current = false
         onRest()
 
-        emitCustomEvent(
-          ReactSpringCustomEvents['RCSJS:onSlideChange'],
-          prepareDataForCustomEvent<RCSJSOnSlideChange>({
-            prevItem: getPrevItem(),
-            currentItem: getCurrentActiveItem(),
-            nextItem: getNextItem()
-          })
-        )
+        if (!immediate) {
+          emitCustomEvent(
+            ReactSpringCustomEvents['RCSJS:onSlideChange'],
+            prepareDataForCustomEvent<RCSJSOnSlideChange>({
+              prevItem: getPrevItem(),
+              currentItem: getCurrentActiveItem(),
+              nextItem: getNextItem()
+            })
+          )
+        }
       }
     })
 
@@ -350,18 +383,10 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
           fromValue = getWrapperFromValue(carouselTrackWrapperRef.current!)
         }
 
-        setCarouselStyles({
-          from: {
-            [carouselSlideAxis]: -(
-              Math.abs(fromValue) +
-              getSlideValue() * items.length
-            )
-          },
-          to: {
-            [carouselSlideAxis]: -(getSlideValue() * (items.length - 1))
-          }
+        slideToItem({
+          from: -(Math.abs(fromValue) + getSlideValue() * items.length),
+          item: items.length - 1
         })
-        setActiveItem(items.length - 1)
       }
     } else {
       slideToItem({
@@ -399,17 +424,12 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
           }
         })
       } else {
-        setCarouselStyles({
-          from: {
-            [carouselSlideAxis]:
-              getWrapperFromValue(carouselTrackWrapperRef.current!) +
-              getSlideValue() * items.length
-          },
-          to: {
-            [carouselSlideAxis]: 0
-          }
+        slideToItem({
+          from:
+            getWrapperFromValue(carouselTrackWrapperRef.current!) +
+            getSlideValue() * items.length,
+          item: 0
         })
-        setActiveItem(0)
       }
     } else {
       slideToItem({

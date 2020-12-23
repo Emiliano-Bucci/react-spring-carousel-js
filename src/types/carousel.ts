@@ -20,6 +20,7 @@ export type TransformCarouselProps<T extends ReactSpringCarouselItem> = {
   thumbsWrapperRef?: React.MutableRefObject<HTMLDivElement | null>
   itemsPerSlide?: number
   initialActiveItem?: number
+  initialStartingPosition?: 'left' | 'center' | 'right'
   prepareThumbsData?(items: T[]): T[]
 }
 
@@ -39,6 +40,7 @@ export type TransformCarouselContextProps = {
 }
 
 export type SlideToItemFnProps = {
+  from?: number
   item: number
   newIndex?: number
   immediate?: boolean
