@@ -50,7 +50,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
   prepareThumbsData,
   itemsPerSlide = 1,
   initialActiveItem = 0,
-  initialStartingPosition = 'left'
+  initialStartingPosition = 'start'
 }: TransformCarouselProps<T>) {
   function getRepeatedPrevItems() {
     const total = items.length
@@ -213,6 +213,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
   function adjustCarouselWrapperPosition(ref: HTMLDivElement) {
     const positionProperty = carouselSlideAxis === 'x' ? 'left' : 'top'
 
+    console.log('here')
     switch (initialStartingPosition) {
       default:
       case 'left': {

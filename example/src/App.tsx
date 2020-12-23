@@ -27,8 +27,10 @@ const App = () => {
     slideToNextItem,
     slideToItem
   } = useSpringCarousel({
-    itemsPerSlide: 4,
-    initialStartingPosition: 'center',
+    withLoop: true,
+    itemsPerSlide: 3,
+    carouselSlideAxis: 'y',
+    initialStartingPosition: 'start',
     initialActiveItem: 0,
     items: [
       {
