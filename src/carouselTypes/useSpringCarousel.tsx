@@ -213,10 +213,9 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
   function adjustCarouselWrapperPosition(ref: HTMLDivElement) {
     const positionProperty = carouselSlideAxis === 'x' ? 'left' : 'top'
 
-    console.log('here')
     switch (initialStartingPosition) {
       default:
-      case 'left': {
+      case 'start': {
         ref.style[positionProperty] = `-${getSlideValue() * itemsPerSlide}px`
         break
       }
@@ -228,7 +227,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
         break
       }
 
-      case 'right': {
+      case 'end': {
         ref.style[positionProperty] = `-${
           getSlideValue() * Math.floor(itemsPerSlide / 3)
         }px`
