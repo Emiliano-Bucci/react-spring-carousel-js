@@ -142,6 +142,12 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
 
   // Perform some check on first mount
   useMount(() => {
+    if (itemsPerSlide > items.length) {
+      throw new Error(
+        `The itemsPerSlide prop can't be greater than the total length of the items you provide.`
+      )
+    }
+
     if (!shouldResizeOnWindowResize) {
       console.warn(
         'You set shouldResizeOnWindowResize={false}; be aware that the carousel could behave in a strange way if you also use the fullscreen functionality.'
