@@ -11,12 +11,11 @@ import { useFullscreenModule } from '../modules/useFullscreenModule'
 import { useThumbsModule } from '../modules/useThumbsModule'
 import {
   TransformCarouselProps,
-  RCSJSOnDrag,
-  RCSJSOnSlideChange,
-  RCSJSOnSlideStartChange,
+  OnDrag,
+  OnSlideChange,
+  OnSlideStartChange,
   TransformCarouselContextProps,
   ReactSpringCarouselItem,
-  ReactSpringCustomEvents,
   SlideToItemFnProps
 } from '../types'
 
@@ -112,10 +111,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
       setCarouselStyles({ [carouselSlideAxis]: currentSlidedValue + movement })
       isDragging.current = true
 
-      emitCustomEvent(
-        ReactSpringCustomEvents['RCSJS:onDrag'],
-        prepareDataForCustomEvent<RCSJSOnDrag>(props)
-      )
+      emitCustomEvent('onDrag', prepareDataForCustomEvent<OnDrag>(props))
 
       const prevItemTreshold = movement > draggingSlideTreshold
       const nextItemTreshold = movement < -draggingSlideTreshold
@@ -323,8 +319,8 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
 
         if (!immediate) {
           emitCustomEvent(
-            ReactSpringCustomEvents['RCSJS:onSlideChange'],
-            prepareDataForCustomEvent<RCSJSOnSlideChange>({
+            'onSlideChange',
+            prepareDataForCustomEvent<OnSlideChange>({
               prevItem: getPrevItem(),
               currentItem: getCurrentActiveItem(),
               nextItem: getNextItem()
@@ -357,8 +353,8 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     }
 
     emitCustomEvent(
-      ReactSpringCustomEvents['RCSJS:onSlideStartChange'],
-      prepareDataForCustomEvent<RCSJSOnSlideStartChange>({
+      'onSlideStartChange',
+      prepareDataForCustomEvent<OnSlideStartChange>({
         prevItem: getPrevItem(),
         currentItem: getCurrentActiveItem(),
         nextItem: getNextItem()
@@ -403,8 +399,8 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     }
 
     emitCustomEvent(
-      ReactSpringCustomEvents['RCSJS:onSlideStartChange'],
-      prepareDataForCustomEvent<RCSJSOnSlideStartChange>({
+      'onSlideStartChange',
+      prepareDataForCustomEvent<OnSlideStartChange>({
         prevItem: getPrevItem(),
         currentItem: getCurrentActiveItem(),
         nextItem: getNextItem()

@@ -6,10 +6,9 @@ import { useCustomEventsModule } from '../modules/useCustomEventsModule'
 import { useFullscreenModule } from '../modules/useFullscreenModule'
 import { useThumbsModule } from '../modules/useThumbsModule'
 import {
-  RCSJSOnSlideChange,
-  RCSJSOnSlideStartChange,
+  OnSlideChange,
+  OnSlideStartChange,
   ReactSpringCarouselItem,
-  ReactSpringCustomEvents,
   TransitionCarouselContextProps,
   TransitionCarouselProps
 } from '../types'
@@ -90,14 +89,14 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
         }
 
         onLeftSwipe && onLeftSwipe()
-        emitCustomEvent(ReactSpringCustomEvents['RCSJS:onLeftSwipe'])
+        emitCustomEvent('onLeftSwipe')
       } else if (prevItemTreshold) {
         if (!withLoop && isFirstItem) {
           return
         }
 
         onRightSwipe && onRightSwipe()
-        emitCustomEvent(ReactSpringCustomEvents['RCSJS:onRightSwipe'])
+        emitCustomEvent('onRightSwipe')
       }
     }
   })
@@ -110,8 +109,8 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     onRest: () => {
       isAnimating.current = false
       emitCustomEvent(
-        ReactSpringCustomEvents['RCSJS:onSlideChange'],
-        prepareDataForCustomEvent<RCSJSOnSlideChange>({
+        'onSlideChange',
+        prepareDataForCustomEvent<OnSlideChange>({
           prevItem: getPrevItem(),
           currentItem: activeItem,
           nextItem: getNextItem()
@@ -160,8 +159,8 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
 
     isAnimating.current = true
     emitCustomEvent(
-      ReactSpringCustomEvents['RCSJS:onSlideStartChange'],
-      prepareDataForCustomEvent<RCSJSOnSlideStartChange>({
+      'onSlideStartChange',
+      prepareDataForCustomEvent<OnSlideStartChange>({
         prevItem: getPrevItem(),
         currentItem: activeItem,
         nextItem: getNextItem()

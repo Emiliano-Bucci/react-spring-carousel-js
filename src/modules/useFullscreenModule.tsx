@@ -1,8 +1,8 @@
 import { useRef, MutableRefObject } from 'react'
 import { prepareDataForCustomEvent, useMount } from '../index.utils'
 import screenfull from 'screenfull'
-import { RCSJOnFullscreenChange, ReactSpringCustomEvents } from '../types'
 import { EmitCustomEvent } from './useCustomEventsModule'
+import { OnFullscreenChange } from '..'
 
 type FullscreenModule = {
   mainCarouselWrapperRef: MutableRefObject<HTMLDivElement | null>
@@ -64,8 +64,8 @@ export function useFullscreenModule({
       )
 
       emitCustomEvent(
-        ReactSpringCustomEvents['RCSJS:onFullscreenChange'],
-        prepareDataForCustomEvent<RCSJOnFullscreenChange>({
+        'onFullscreenChange',
+        prepareDataForCustomEvent<OnFullscreenChange>({
           isFullscreen: true
         })
       )
@@ -76,8 +76,8 @@ export function useFullscreenModule({
     screenfull.isEnabled && screenfull.exit()
 
     emitCustomEvent(
-      ReactSpringCustomEvents['RCSJS:onFullscreenChange'],
-      prepareDataForCustomEvent<RCSJOnFullscreenChange>({
+      'onFullscreenChange',
+      prepareDataForCustomEvent<OnFullscreenChange>({
         isFullscreen: false
       })
     )

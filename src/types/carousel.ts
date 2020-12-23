@@ -1,5 +1,5 @@
 import { SpringConfig, TransitionFrom, TransitionTo } from 'react-spring'
-import { ListenToCustomEvent } from '../modules/useCustomEventsModule'
+import { ListenToCustomEvent } from '.'
 
 export type ReactSpringCarouselItem = {
   id: string

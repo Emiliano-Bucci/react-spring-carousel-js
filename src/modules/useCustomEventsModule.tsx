@@ -1,15 +1,5 @@
 import { useEffect } from 'react'
-import { ReactSpringCustomEvents } from '../types'
-
-export type ListenToCustomEvent = <U>(
-  eventName: ReactSpringCustomEvents,
-  eventHandler: (data?: U | undefined) => void
-) => void
-
-export type EmitCustomEvent = <T>(
-  eventName: ReactSpringCustomEvents,
-  data?: T | undefined
-) => void
+import { EmitCustomEvent, ListenToCustomEvent } from '../types'
 
 export function useCustomEventsModule() {
   const targetElement =

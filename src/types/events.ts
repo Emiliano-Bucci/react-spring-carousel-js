@@ -6,32 +6,39 @@ import {
 } from 'react-use-gesture/dist/types'
 
 export enum ReactSpringCustomEvents {
-  'RCSJS:onSlideStartChange' = 'RCSJS:onSlideStartChange',
-  'RCSJS:onSlideChange' = 'RCSJS:onSlideChange',
-  'RCSJS:onDrag' = 'RCSJS:onDrag',
-  'RCSJS:onFullscreenChange' = 'RCSJS:onFullscreenChange',
-  'RCSJS:onLeftSwipe' = 'RCSJS:onLeftSwipe',
-  'RCSJS:onRightSwipe' = 'RCSJS:onRightSwipe'
+  'onSlideStartChange' = 'onSlideStartChange',
+  'onSlideChange' = 'onSlideChange',
+  'onDrag' = 'onDrag',
+  'onFullscreenChange' = 'onFullscreenChange',
+  'onLeftSwipe' = 'onLeftSwipe',
+  'onRightSwipe' = 'onRightSwipe'
 }
 
-export type RCSJSOnSlideStartChange = {
+export type OnSlideStartChange = {
   prevItem: number
   currentItem: number
   nextItem: number
 }
-export type RCSJSOnSlideChange = {
+export type OnSlideChange = {
   prevItem: number
   currentItem: number
   nextItem: number
 }
 
-export type RCSJSOnDrag = Omit<
-  FullGestureState<StateKey<GestureKey>>,
-  'event'
-> & {
+export type OnDrag = Omit<FullGestureState<StateKey<GestureKey>>, 'event'> & {
   event: EventTypes['drag']
 }
 
-export type RCSJOnFullscreenChange = {
+export type OnFullscreenChange = {
   isFullscreen: boolean
 }
+
+export type ListenToCustomEvent = <T>(
+  eventName: keyof typeof ReactSpringCustomEvents,
+  eventHandler: (data?: T | undefined) => void
+) => void
+
+export type EmitCustomEvent = <T>(
+  eventName: keyof typeof ReactSpringCustomEvents,
+  data?: T | undefined
+) => void
