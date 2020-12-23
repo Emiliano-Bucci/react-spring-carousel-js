@@ -1,8 +1,7 @@
 import { useRef, MutableRefObject } from 'react'
 import { prepareDataForCustomEvent, useMount } from '../index.utils'
 import screenfull from 'screenfull'
-import { EmitCustomEvent } from './useCustomEventsModule'
-import { OnFullscreenChange } from '..'
+import { EmitCustomEvent, OnFullscreenChange } from '..'
 
 type FullscreenModule = {
   mainCarouselWrapperRef: MutableRefObject<HTMLDivElement | null>
