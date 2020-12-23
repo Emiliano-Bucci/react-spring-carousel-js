@@ -57,7 +57,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     return items.slice(total - itemsPerSlide, total)
   }
   function getRepeatedNextItems() {
-    return items.slice(0, itemsPerSlide)
+    return items.slice(0, itemsPerSlide + 1)
   }
   function getItems() {
     if (withLoop) {
@@ -361,6 +361,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
       })
     )
 
+    console.log(getCurrentActiveItem())
     if (withLoop && getCurrentActiveItem() === 0) {
       if (getIsDragging()) {
         slideToItem({
