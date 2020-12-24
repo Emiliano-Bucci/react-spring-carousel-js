@@ -54,11 +54,12 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
 }: TransformCarouselProps<T>) {
   function getRepeatedPrevItems() {
     const total = items.length
-    return items.slice(total - itemsPerSlide, total)
+    return items.slice(total - itemsPerSlide - 1, total)
   }
   function getRepeatedNextItems() {
     return items.slice(0, itemsPerSlide + 1)
   }
+
   function getItems() {
     if (withLoop) {
       return [...getRepeatedPrevItems(), ...items, ...getRepeatedNextItems()]
@@ -216,20 +217,22 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     switch (initialStartingPosition) {
       default:
       case 'start': {
-        ref.style[positionProperty] = `-${getSlideValue() * itemsPerSlide}px`
+        ref.style[positionProperty] = `-${
+          getSlideValue() * itemsPerSlide + getSlideValue()
+        }px`
         break
       }
 
       case 'center': {
         ref.style[positionProperty] = `-${
-          getSlideValue() * Math.floor(itemsPerSlide / 1.5)
+          getSlideValue() * Math.floor(itemsPerSlide / 1.5) + getSlideValue()
         }px`
         break
       }
 
       case 'end': {
         ref.style[positionProperty] = `-${
-          getSlideValue() * Math.floor(itemsPerSlide / 3)
+          getSlideValue() * Math.floor(itemsPerSlide / 3) + getSlideValue()
         }px`
         break
       }
