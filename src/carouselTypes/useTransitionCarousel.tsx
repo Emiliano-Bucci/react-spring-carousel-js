@@ -66,7 +66,10 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     emitCustomEvent,
     mainCarouselWrapperRef
   })
-  const { thumbsFragment, handleThumbsScroll } = useThumbsModule({
+  const {
+    thumbsFragment: _thumbsFragment,
+    handleThumbsScroll
+  } = useThumbsModule({
     items,
     withThumbs,
     thumbsSlideAxis,
@@ -263,6 +266,12 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
       >
         {itemsFragment}
       </div>
+    </UseTransitionCarouselContext.Provider>
+  )
+
+  const thumbsFragment = (
+    <UseTransitionCarouselContext.Provider value={contextProps}>
+      {_thumbsFragment}
     </UseTransitionCarouselContext.Provider>
   )
 
