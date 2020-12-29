@@ -35,10 +35,10 @@ export type OnFullscreenChange = {
 
 export type ListenToCustomEvent = <T>(
   eventName: keyof typeof ReactSpringCustomEvents,
-  eventHandler: (data?: T | undefined) => void
+  eventHandler: (data: T) => void
 ) => void
 
 export type EmitCustomEvent = <T>(
   eventName: keyof typeof ReactSpringCustomEvents,
-  data?: T | undefined
+  data?: T
 ) => void

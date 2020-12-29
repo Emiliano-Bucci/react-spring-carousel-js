@@ -13,18 +13,20 @@ import {
   TransitionCarouselProps
 } from '../types'
 
-const FadingCarouselContext = createContext<TransitionCarouselContextProps>({
-  activeItem: 0,
-  slideToNextItem: () => {},
-  slideToPrevItem: () => {},
-  enterFullscreen: () => {},
-  exitFullscreen: () => {},
-  slideToItem: () => {},
-  getIsAnimating: () => false,
-  getIsPrevItem: () => false,
-  getIsNextItem: () => false,
-  useListenToCustomEvent: () => {}
-})
+const UseTransitionCarouselContext = createContext<TransitionCarouselContextProps>(
+  {
+    activeItem: 0,
+    slideToNextItem: () => {},
+    slideToPrevItem: () => {},
+    enterFullscreen: () => {},
+    exitFullscreen: () => {},
+    slideToItem: () => {},
+    getIsAnimating: () => false,
+    getIsPrevItem: () => false,
+    getIsNextItem: () => false,
+    useListenToCustomEvent: () => {}
+  }
+)
 
 export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
   items,
@@ -247,7 +249,7 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
   }
 
   const carouselFragment = (
-    <FadingCarouselContext.Provider value={contextProps}>
+    <UseTransitionCarouselContext.Provider value={contextProps}>
       <div
         ref={mainCarouselWrapperRef}
         {...bindSwipe()}
@@ -261,7 +263,7 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
       >
         {itemsFragment}
       </div>
-    </FadingCarouselContext.Provider>
+    </UseTransitionCarouselContext.Provider>
   )
 
   return {

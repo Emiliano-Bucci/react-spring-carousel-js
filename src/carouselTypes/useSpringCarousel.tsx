@@ -19,7 +19,7 @@ import {
   SlideToItemFnProps
 } from '../types'
 
-export const TransformCarouselContext = createContext<TransformCarouselContextProps>(
+export const UseSpringCarouselContext = createContext<TransformCarouselContextProps>(
   {
     getIsFullscreen: () => false,
     getIsPrevItem: () => false,
@@ -472,7 +472,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
   }
 
   const carouselFragment = (
-    <TransformCarouselContext.Provider value={contextProps}>
+    <UseSpringCarouselContext.Provider value={contextProps}>
       <div
         ref={mainCarouselWrapperRef}
         style={{
@@ -521,7 +521,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
           })}
         </animated.div>
       </div>
-    </TransformCarouselContext.Provider>
+    </UseSpringCarouselContext.Provider>
   )
 
   return {
