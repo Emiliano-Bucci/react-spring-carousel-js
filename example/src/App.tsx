@@ -25,7 +25,8 @@ const App = () => {
     carouselFragment,
     slideToPrevItem,
     slideToNextItem,
-    slideToItem
+    slideToItem,
+    useListenToCustomEvent
   } = useSpringCarousel({
     withLoop: true,
     items: [
@@ -152,6 +153,10 @@ const App = () => {
         )
       }
     ]
+  })
+
+  useListenToCustomEvent('onSlideChange', (data) => {
+    console.log(data)
   })
 
   return (

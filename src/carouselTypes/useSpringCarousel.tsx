@@ -1,5 +1,5 @@
 import React, { useRef, createContext, useCallback } from 'react'
-import { useSpring, config, animated } from 'react-spring'
+import { useSpring, config, animated, AnimationResult } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
 import {
   fixNegativeIndex,
@@ -321,20 +321,22 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
         ...springConfig
       },
       immediate,
-      onRest: () => {
-        isDragging.current = false
-        isAnimating.current = false
-        onRest()
+      onRest: (val: AnimationResult) => {
+        if (val.finished) {
+          isDragging.current = false
+          isAnimating.current = false
+          onRest()
 
-        if (!immediate) {
-          emitCustomEvent(
-            'onSlideChange',
-            prepareDataForCustomEvent<OnSlideChange>({
-              prevItem: getPrevItem(),
-              currentItem: getCurrentActiveItem(),
-              nextItem: getNextItem()
-            })
-          )
+          if (!immediate) {
+            emitCustomEvent(
+              'onSlideChange',
+              prepareDataForCustomEvent<OnSlideChange>({
+                prevItem: getPrevItem(),
+                currentItem: getCurrentActiveItem(),
+                nextItem: getNextItem()
+              })
+            )
+          }
         }
       }
     })
@@ -370,7 +372,6 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
       })
     )
 
-    console.log(getCurrentActiveItem())
     if (withLoop && getCurrentActiveItem() === 0) {
       if (getIsDragging()) {
         slideToItem({
