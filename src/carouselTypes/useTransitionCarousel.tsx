@@ -116,9 +116,7 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
       emitCustomEvent(
         'onSlideChange',
         prepareDataForCustomEvent<OnSlideChange>({
-          prevItem: getPrevItem(),
-          currentItem: activeItem,
-          nextItem: getNextItem()
+          currentItem: activeItem
         })
       )
     }
@@ -137,22 +135,6 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     </animated.div>
   ))
 
-  function getPrevItem() {
-    if (activeItem === 0) {
-      return items.length - 1
-    }
-
-    return activeItem
-  }
-
-  function getNextItem() {
-    if (activeItem === items.length - 1) {
-      return 0
-    }
-
-    return activeItem
-  }
-
   function slideToItem(item: string | number) {
     let itemIndex = 0
 
@@ -166,9 +148,7 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     emitCustomEvent(
       'onSlideStartChange',
       prepareDataForCustomEvent<OnSlideStartChange>({
-        prevItem: getPrevItem(),
-        currentItem: activeItem,
-        nextItem: getNextItem()
+        nextItem: itemIndex
       })
     )
     setActiveItem(itemIndex)

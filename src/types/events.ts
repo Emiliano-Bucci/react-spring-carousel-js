@@ -15,14 +15,10 @@ export enum ReactSpringCustomEvents {
 }
 
 export type OnSlideStartChange = {
-  prevItem: number
-  currentItem: number
   nextItem: number
 }
 export type OnSlideChange = {
-  prevItem: number
   currentItem: number
-  nextItem: number
 }
 
 export type OnDrag = Omit<FullGestureState<StateKey<GestureKey>>, 'event'> & {

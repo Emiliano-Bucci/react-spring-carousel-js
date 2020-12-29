@@ -304,6 +304,13 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     const nextItemIndex = fixNegativeIndex(item, items.length)
 
     if (!immediate) {
+      emitCustomEvent(
+        'onSlideStartChange',
+        prepareDataForCustomEvent<OnSlideStartChange>({
+          nextItem: nextItemIndex
+        })
+      )
+
       setActiveItem(nextItemIndex)
     }
 
@@ -334,9 +341,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
             emitCustomEvent(
               'onSlideChange',
               prepareDataForCustomEvent<OnSlideChange>({
-                prevItem: getPrevItem(),
-                currentItem: getCurrentActiveItem(),
-                nextItem: getNextItem()
+                currentItem: getCurrentActiveItem()
               })
             )
           }
@@ -365,15 +370,6 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     ) {
       return
     }
-
-    emitCustomEvent(
-      'onSlideStartChange',
-      prepareDataForCustomEvent<OnSlideStartChange>({
-        prevItem: getPrevItem(),
-        currentItem: getCurrentActiveItem(),
-        nextItem: getNextItem()
-      })
-    )
 
     if (withLoop && getCurrentActiveItem() === 0) {
       if (getIsDragging()) {
@@ -411,15 +407,6 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     ) {
       return
     }
-
-    emitCustomEvent(
-      'onSlideStartChange',
-      prepareDataForCustomEvent<OnSlideStartChange>({
-        prevItem: getPrevItem(),
-        currentItem: getCurrentActiveItem(),
-        nextItem: getNextItem()
-      })
-    )
 
     if (withLoop && getCurrentActiveItem() === items.length - 1) {
       if (getIsDragging()) {
