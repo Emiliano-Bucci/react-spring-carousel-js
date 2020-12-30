@@ -145,13 +145,13 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     }
 
     isAnimating.current = true
+    setActiveItem(itemIndex)
     emitCustomEvent(
       'onSlideStartChange',
       prepareDataForCustomEvent<OnSlideStartChange>({
         nextItem: itemIndex
       })
     )
-    setActiveItem(itemIndex)
 
     if (enableThumbsWrapperScroll && withThumbs) {
       handleThumbsScroll(itemIndex)

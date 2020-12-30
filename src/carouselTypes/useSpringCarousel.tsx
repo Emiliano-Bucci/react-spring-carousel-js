@@ -304,14 +304,13 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     const nextItemIndex = fixNegativeIndex(item, items.length)
 
     if (!immediate) {
+      setActiveItem(nextItemIndex)
       emitCustomEvent(
         'onSlideStartChange',
         prepareDataForCustomEvent<OnSlideStartChange>({
           nextItem: nextItemIndex
         })
       )
-
-      setActiveItem(nextItemIndex)
     }
 
     isAnimating.current = true
