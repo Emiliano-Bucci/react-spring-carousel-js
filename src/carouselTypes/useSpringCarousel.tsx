@@ -68,7 +68,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     return items
   }
   const internalItems = getItems()
-  const activeItem = useRef(0)
+  const activeItem = useRef(initialActiveItem)
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
   const carouselTrackWrapperRef = useRef<HTMLDivElement | null>(null)
   const isDragging = useRef(false)

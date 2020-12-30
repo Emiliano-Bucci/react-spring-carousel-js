@@ -40,20 +40,20 @@ const App = () => {
           >
             Item 1
           </Item>
-        ),
-        renderThumb: (
-          <div
-            onClick={() => slideToItem('item-2')}
-            style={{
-              height: 100,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 1
-          </div>
         )
+        // renderThumb: (
+        //   <div
+        //     onClick={() => slideToItem('item-2')}
+        //     style={{
+        //       height: 100,
+        //       padding: '8px 16px',
+        //       background: 'blue',
+        //       width: 160
+        //     }}
+        //   >
+        //     THUMB 1
+        //   </div>
+        // )
       },
       {
         id: 'item-2',

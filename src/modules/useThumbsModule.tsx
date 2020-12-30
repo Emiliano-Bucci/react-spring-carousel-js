@@ -33,6 +33,7 @@ export function useThumbsModule<T extends ReactSpringCarouselItem>({
 
   useMount(() => {
     if (withThumbs) {
+      console.log('jere')
       const missingThumbs = items.some((item) => !item.renderThumb)
 
       if (missingThumbs) {
