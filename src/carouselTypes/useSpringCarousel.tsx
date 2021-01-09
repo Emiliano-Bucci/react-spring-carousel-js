@@ -32,7 +32,11 @@ export const UseSpringCarouselContext = createContext<TransformCarouselContextPr
     exitFullscreen: () => {},
     slideToPrevItem: () => {},
     slideToNextItem: () => {},
-    useListenToCustomEvent: () => {}
+    useListenToCustomEvent: () => {},
+    getCurrentActiveItem: () => ({
+      id: '',
+      index: 0
+    })
   }
 )
 
@@ -446,6 +450,10 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     getIsActiveItem: (id) => findItemIndex(id) === getCurrentActiveItem(),
     slideToPrevItem,
     slideToNextItem,
+    getCurrentActiveItem: () => ({
+      id: items[getCurrentActiveItem()].id,
+      index: getCurrentActiveItem()
+    }),
     slideToItem: (item) => {
       let itemIndex = 0
 

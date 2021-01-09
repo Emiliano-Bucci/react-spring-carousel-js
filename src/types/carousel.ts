@@ -36,6 +36,10 @@ export type TransformCarouselContextProps = {
   exitFullscreen(): void
   slideToPrevItem(): void
   slideToNextItem(): void
+  getCurrentActiveItem(): {
+    id: string
+    index: number
+  }
   useListenToCustomEvent: ListenToCustomEvent
 }
 

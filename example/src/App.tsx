@@ -29,6 +29,8 @@ const App = () => {
     useListenToCustomEvent
   } = useSpringCarousel({
     withLoop: true,
+    itemsPerSlide: 3,
+    initialStartingPosition: 'center',
     items: [
       {
         id: 'item-1',
