@@ -16,7 +16,8 @@ import {
   OnSlideStartChange,
   TransformCarouselContextProps,
   ReactSpringCarouselItem,
-  SlideToItemFnProps
+  SlideToItemFnProps,
+  SlideActionType
 } from '../types'
 
 export const UseSpringCarouselContext = createContext<TransformCarouselContextProps>(
@@ -71,6 +72,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
 
     return items
   }
+  const slideActionType = useRef<SlideActionType>('next')
   const internalItems = getItems()
   const activeItem = useRef(initialActiveItem)
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
@@ -117,7 +119,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
 
     if (dragging) {
       setCarouselStyles({ [carouselSlideAxis]: currentSlidedValue + movement })
-      isDragging.current = true
+      setIsDragging(true)
 
       emitCustomEvent('onDrag', prepareDataForCustomEvent<OnDrag>(props))
 
@@ -131,7 +133,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
           slideToNextItem()
         }
         props.cancel()
-        isDragging.current = false
+        setIsDragging(false)
       } else if (prevItemTreshold) {
         if (!withLoop && getCurrentActiveItem() === 0) {
           setCarouselStyles({ [carouselSlideAxis]: currentSlidedValue })
@@ -139,7 +141,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
           slideToPrevItem()
         }
         props.cancel()
-        isDragging.current = false
+        setIsDragging(false)
       }
     }
 
@@ -203,6 +205,13 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     }
   })
 
+  function setSlideActionType(type: SlideActionType) {
+    slideActionType.current = type
+  }
+  function getSlideActionType() {
+    return slideActionType.current
+  }
+
   const getSlideValue = useCallback(() => {
     if (!carouselTrackWrapperRef.current) {
       return 0
@@ -253,6 +262,12 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
   }
   function getIsAnimating() {
     return isAnimating.current
+  }
+  function setIsAnimating(val: boolean) {
+    isAnimating.current = val
+  }
+  function setIsDragging(val: boolean) {
+    isDragging.current = val
   }
   function getIsDragging() {
     return isDragging.current
@@ -312,12 +327,13 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
       emitCustomEvent(
         'onSlideStartChange',
         prepareDataForCustomEvent<OnSlideStartChange>({
-          nextItem: nextItemIndex
+          nextItem: nextItemIndex,
+          slideActionType: getSlideActionType()
         })
       )
     }
 
-    isAnimating.current = true
+    setIsAnimating(true)
 
     setCarouselStyles({
       ...(from
@@ -336,15 +352,16 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
       immediate,
       onRest: (val: AnimationResult) => {
         if (val.finished) {
-          isDragging.current = false
-          isAnimating.current = false
+          setIsDragging(false)
+          setIsAnimating(false)
           onRest()
 
           if (!immediate) {
             emitCustomEvent(
               'onSlideChange',
               prepareDataForCustomEvent<OnSlideChange>({
-                currentItem: getCurrentActiveItem()
+                currentItem: getCurrentActiveItem(),
+                slideActionType: getSlideActionType()
               })
             )
           }
@@ -373,6 +390,8 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     ) {
       return
     }
+
+    setSlideActionType('prev')
 
     if (withLoop && getCurrentActiveItem() === 0) {
       if (getIsDragging()) {
@@ -410,6 +429,8 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     ) {
       return
     }
+
+    setSlideActionType('next')
 
     if (withLoop && getCurrentActiveItem() === items.length - 1) {
       if (getIsDragging()) {

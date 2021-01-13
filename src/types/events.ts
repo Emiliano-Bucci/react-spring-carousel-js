@@ -14,11 +14,15 @@ export enum ReactSpringCustomEvents {
   'onRightSwipe' = 'onRightSwipe'
 }
 
+export type SlideActionType = 'prev' | 'next'
+
 export type OnSlideStartChange = {
   nextItem: number
+  slideActionType: SlideActionType
 }
 export type OnSlideChange = {
   currentItem: number
+  slideActionType: SlideActionType
 }
 
 export type OnDrag = Omit<FullGestureState<StateKey<GestureKey>>, 'event'> & {

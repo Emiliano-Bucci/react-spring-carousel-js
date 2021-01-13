@@ -160,6 +160,9 @@ const App = () => {
   useListenToCustomEvent('onSlideStartChange', (data) => {
     console.log(data)
   })
+  useListenToCustomEvent('onSlideChange', (data) => {
+    console.log(data)
+  })
 
   return (
     <div
