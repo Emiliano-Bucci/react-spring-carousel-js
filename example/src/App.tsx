@@ -1,5 +1,5 @@
 import React, { HTMLAttributes } from 'react'
-import { useSpringCarousel } from 'react-spring-carousel-js'
+import { useTransitionCarousel } from 'react-spring-carousel-js'
 
 const Item = ({
   children,
@@ -27,10 +27,7 @@ const App = () => {
     slideToNextItem,
     slideToItem,
     useListenToCustomEvent
-  } = useSpringCarousel({
-    withLoop: true,
-    itemsPerSlide: 3,
-    initialStartingPosition: 'center',
+  } = useTransitionCarousel({
     items: [
       {
         id: 'item-1',
@@ -157,12 +154,9 @@ const App = () => {
     ]
   })
 
-  useListenToCustomEvent('onSlideStartChange', (data) => {
-    console.log(data)
+  useListenToCustomEvent('onSlideChange', () => {
+    console.log('slide change!')
   })
-  // useListenToCustomEvent('onSlideChange', (data) => {
-  //   console.log(data)
-  // })
 
   return (
     <div

@@ -112,16 +112,33 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
   const transitions = useTransition(activeItem, {
     config: springConfig,
     key: () => items[activeItem].id,
-    ...springAnimationPops,
-    onRest: () => {
-      setIsAnimating(false)
-      emitCustomEvent(
-        'onSlideChange',
-        prepareDataForCustomEvent<OnSlideChange>({
-          currentItem: activeItem,
-          slideActionType: getSlideActionType()
-        })
-      )
+    initial: springAnimationPops.initial,
+    from: {
+      ...springAnimationPops.from,
+      __internal: false
+    },
+    enter: {
+      ...springAnimationPops.enter,
+      __internal: true
+    },
+    leave: {
+      ...springAnimationPops.leave,
+      __internal: false
+    },
+    onStart: () => {
+      setIsAnimating(true)
+    },
+    onRest: (val) => {
+      if (val.finished && val.value.__internal) {
+        setIsAnimating(false)
+        emitCustomEvent(
+          'onSlideChange',
+          prepareDataForCustomEvent<OnSlideChange>({
+            currentItem: activeItem,
+            slideActionType: getSlideActionType()
+          })
+        )
+      }
     }
   })
   const itemsFragment = transitions((styles, item) => (
@@ -179,7 +196,6 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
       setSlideActionType('prev')
     }
 
-    setIsAnimating(true)
     setActiveItem(itemIndex)
 
     emitCustomEvent(
