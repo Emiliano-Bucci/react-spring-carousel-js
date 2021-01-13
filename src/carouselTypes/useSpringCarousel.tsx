@@ -458,6 +458,39 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
       })
     }
   }
+  function _slideToItem(item: number) {
+    let itemIndex = 0
+
+    if (typeof item === 'string') {
+      itemIndex = items.findIndex((_item) => _item.id === item)
+    } else {
+      itemIndex = item
+    }
+
+    if (itemIndex >= items.length) {
+      throw Error(
+        `The item you want to slide to doesn't exist. This could be due to the fact that 
+        you provide a wrong id or a higher numeric index.`
+      )
+    }
+
+    if (itemIndex === getCurrentActiveItem()) {
+      return
+    }
+
+    const currentItem = findItemIndex(items[getCurrentActiveItem()].id)
+    const newActiveItem = findItemIndex(items[itemIndex].id)
+
+    if (newActiveItem > currentItem) {
+      setSlideActionType('next')
+    } else {
+      setSlideActionType('prev')
+    }
+
+    slideToItem({
+      item: itemIndex
+    })
+  }
 
   const contextProps: TransformCarouselContextProps = {
     useListenToCustomEvent,
@@ -471,23 +504,11 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     getIsActiveItem: (id) => findItemIndex(id) === getCurrentActiveItem(),
     slideToPrevItem,
     slideToNextItem,
+    slideToItem: _slideToItem,
     getCurrentActiveItem: () => ({
       id: items[getCurrentActiveItem()].id,
       index: getCurrentActiveItem()
-    }),
-    slideToItem: (item) => {
-      let itemIndex = 0
-
-      if (typeof item === 'string') {
-        itemIndex = items.findIndex((_item) => _item.id === item)
-      } else {
-        itemIndex = item
-      }
-
-      slideToItem({
-        item: itemIndex
-      })
-    }
+    })
   }
 
   const carouselFragment = (

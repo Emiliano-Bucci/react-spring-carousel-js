@@ -10,7 +10,8 @@ import {
   OnSlideStartChange,
   ReactSpringCarouselItem,
   TransitionCarouselContextProps,
-  TransitionCarouselProps
+  TransitionCarouselProps,
+  SlideActionType
 } from '../types'
 
 const UseTransitionCarouselContext = createContext<TransitionCarouselContextProps>(
@@ -57,6 +58,7 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     }
   }
 }: TransitionCarouselProps<T>) {
+  const slideActionType = useRef<SlideActionType>('next')
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
   const isAnimating = useRef(false)
   const [activeItem, setActiveItem] = useState(0)
@@ -112,11 +114,12 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     key: () => items[activeItem].id,
     ...springAnimationPops,
     onRest: () => {
-      isAnimating.current = false
+      setIsAnimating(false)
       emitCustomEvent(
         'onSlideChange',
         prepareDataForCustomEvent<OnSlideChange>({
-          currentItem: activeItem
+          currentItem: activeItem,
+          slideActionType: getSlideActionType()
         })
       )
     }
@@ -135,6 +138,18 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     </animated.div>
   ))
 
+  function getIsAnimating() {
+    return isAnimating.current
+  }
+  function setIsAnimating(val: boolean) {
+    isAnimating.current = val
+  }
+  function setSlideActionType(type: SlideActionType) {
+    slideActionType.current = type
+  }
+  function getSlideActionType() {
+    return slideActionType.current
+  }
   function slideToItem(item: string | number) {
     let itemIndex = 0
 
@@ -144,12 +159,34 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
       itemIndex = item
     }
 
-    isAnimating.current = true
+    if (itemIndex >= items.length) {
+      throw Error(
+        `The item you want to slide to doesn't exist. This could be due to the fact that 
+        you provide a wrong id or a higher numeric index.`
+      )
+    }
+
+    if (itemIndex === activeItem) {
+      return
+    }
+
+    const currentItem = findItemIndex(items[activeItem].id)
+    const newActiveItem = findItemIndex(items[itemIndex].id)
+
+    if (newActiveItem > currentItem) {
+      setSlideActionType('next')
+    } else {
+      setSlideActionType('prev')
+    }
+
+    setIsAnimating(true)
     setActiveItem(itemIndex)
+
     emitCustomEvent(
       'onSlideStartChange',
       prepareDataForCustomEvent<OnSlideStartChange>({
-        nextItem: itemIndex
+        nextItem: itemIndex,
+        slideActionType: getSlideActionType()
       })
     )
 
@@ -167,9 +204,11 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
       } else {
         slideToItem(activeItem + 1)
       }
+      setSlideActionType('next')
     } else {
       if (!isLastItem) {
         slideToItem(activeItem + 1)
+        setSlideActionType('next')
       }
     }
   }
@@ -183,9 +222,11 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
       } else {
         slideToItem(activeItem - 1)
       }
+      setSlideActionType('prev')
     } else {
       if (!isFirstItem) {
         slideToItem(activeItem - 1)
+        setSlideActionType('prev')
       }
     }
   }
@@ -212,10 +253,6 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     }
 
     return itemIndex === activeItem - 1
-  }
-
-  function getIsAnimating() {
-    return isAnimating.current
   }
 
   const contextProps: TransitionCarouselContextProps = {

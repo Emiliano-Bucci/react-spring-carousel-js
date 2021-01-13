@@ -160,9 +160,9 @@ const App = () => {
   useListenToCustomEvent('onSlideStartChange', (data) => {
     console.log(data)
   })
-  useListenToCustomEvent('onSlideChange', (data) => {
-    console.log(data)
-  })
+  // useListenToCustomEvent('onSlideChange', (data) => {
+  //   console.log(data)
+  // })
 
   return (
     <div
@@ -173,6 +173,7 @@ const App = () => {
       }}
     >
       <button onClick={slideToPrevItem}>PREV</button>
+      <button onClick={() => slideToItem(5)}>start</button>
       <div
         style={{
           display: 'flex',
