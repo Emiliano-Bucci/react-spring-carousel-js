@@ -62,7 +62,9 @@ export type TransitionCarouselProps<T extends ReactSpringCarouselItem> = {
   items: T[]
   withThumbs?: boolean
   springConfig?: SpringConfig
-  springAnimationPops?: SpringAnimationProps<T>
+  toPrevItemSpringProps?: SpringAnimationProps<T>
+  toNextItemSpringProps?: SpringAnimationProps<T>
+  springAnimationProps?: SpringAnimationProps<T>
   withLoop?: boolean
   thumbsSlideAxis?: 'x' | 'y'
   thumbsMaxHeight?: number

@@ -38,21 +38,27 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
   enableThumbsWrapperScroll = true,
   draggingSlideTreshold = 50,
   prepareThumbsData,
-  springAnimationPops = {
+  toPrevItemSpringProps,
+  toNextItemSpringProps,
+  springAnimationProps = {
     initial: {
-      opacity: 1
+      opacity: 1,
+      transform: 'translateX(0%)'
     },
     from: {
       opacity: 0,
-      position: 'absolute'
+      position: 'absolute',
+      transform: 'translateX(0%) translateY(0%)'
     },
     enter: {
       opacity: 1,
-      position: 'relative'
+      position: 'relative',
+      transform: 'translateX(0%) translateY(0%)'
     },
     leave: {
       opacity: 0,
-      position: 'absolute'
+      position: 'absolute',
+      transform: 'translateX(0%) translateY(0%)'
     }
   }
 }: TransitionCarouselProps<T>) {
@@ -106,23 +112,67 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     }
   })
 
+  function getTransitionConfig() {
+    const slideActionType = getSlideActionType()
+
+    if (slideActionType === 'prev' && toPrevItemSpringProps) {
+      return {
+        initial: toPrevItemSpringProps.initial,
+        from: {
+          ...toPrevItemSpringProps.from,
+          __internal: false
+        },
+        enter: {
+          ...toPrevItemSpringProps.enter,
+          __internal: true
+        },
+        leave: {
+          ...toPrevItemSpringProps.leave,
+          __internal: false
+        }
+      }
+    }
+
+    if (slideActionType === 'next' && toNextItemSpringProps) {
+      return {
+        initial: toNextItemSpringProps.initial,
+        from: {
+          ...toNextItemSpringProps.from,
+          __internal: false
+        },
+        enter: {
+          ...toNextItemSpringProps.enter,
+          __internal: true
+        },
+        leave: {
+          ...toNextItemSpringProps.leave,
+          __internal: false
+        }
+      }
+    }
+
+    return {
+      initial: springAnimationProps.initial,
+      from: {
+        ...springAnimationProps.from,
+        __internal: false
+      },
+      enter: {
+        ...springAnimationProps.enter,
+        __internal: true
+      },
+      leave: {
+        ...springAnimationProps.leave,
+        __internal: false
+      }
+    }
+  }
+
   // @ts-ignore
   const transitions = useTransition(activeItem, {
     config: springConfig,
     key: () => items[activeItem].id,
-    initial: springAnimationPops.initial,
-    from: {
-      ...springAnimationPops.from,
-      __internal: false
-    },
-    enter: {
-      ...springAnimationPops.enter,
-      __internal: true
-    },
-    leave: {
-      ...springAnimationPops.leave,
-      __internal: false
-    },
+    ...getTransitionConfig(),
     onStart: () => {
       setIsAnimating(true)
     },
