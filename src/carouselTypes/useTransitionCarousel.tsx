@@ -42,23 +42,19 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
   toNextItemSpringProps,
   springAnimationProps = {
     initial: {
-      opacity: 1,
-      transform: 'translateX(0%)'
+      opacity: 1
     },
     from: {
       opacity: 0,
-      position: 'absolute',
-      transform: 'translateX(0%) translateY(0%)'
+      position: 'absolute'
     },
     enter: {
       opacity: 1,
-      position: 'relative',
-      transform: 'translateX(0%) translateY(0%)'
+      position: 'relative'
     },
     leave: {
       opacity: 0,
-      position: 'absolute',
-      transform: 'translateX(0%) translateY(0%)'
+      position: 'absolute'
     }
   }
 }: TransitionCarouselProps<T>) {

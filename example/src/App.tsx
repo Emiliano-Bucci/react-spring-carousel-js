@@ -28,6 +28,26 @@ const App = () => {
     slideToItem,
     useListenToCustomEvent
   } = useTransitionCarousel({
+    toPrevItemSpringProps: {
+      initial: {
+        opacity: 1
+      },
+      from: {
+        transform: 'translateX(-100%)',
+        opacity: 0,
+        position: 'absolute'
+      },
+      enter: {
+        transform: 'translateX(0%)',
+        opacity: 1,
+        position: 'relative'
+      },
+      leave: {
+        transform: 'translateX(100%)',
+        opacity: 0,
+        position: 'absolute'
+      }
+    },
     toNextItemSpringProps: {
       initial: {
         opacity: 1
