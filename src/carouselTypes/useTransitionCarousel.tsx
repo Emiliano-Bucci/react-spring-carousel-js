@@ -38,8 +38,6 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
   enableThumbsWrapperScroll = true,
   draggingSlideTreshold = 50,
   prepareThumbsData,
-  onLeftSwipe,
-  onRightSwipe,
   springAnimationPops = {
     initial: {
       opacity: 1
@@ -95,14 +93,14 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
           return
         }
 
-        onLeftSwipe && onLeftSwipe()
+        slideToNextItem()
         emitCustomEvent('onLeftSwipe')
       } else if (prevItemTreshold) {
         if (!withLoop && isFirstItem) {
           return
         }
 
-        onRightSwipe && onRightSwipe()
+        slideToPrevItem()
         emitCustomEvent('onRightSwipe')
       }
     }
