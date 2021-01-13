@@ -205,13 +205,6 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     }
   })
 
-  function setSlideActionType(type: SlideActionType) {
-    slideActionType.current = type
-  }
-  function getSlideActionType() {
-    return slideActionType.current
-  }
-
   const getSlideValue = useCallback(() => {
     if (!carouselTrackWrapperRef.current) {
       return 0
@@ -227,6 +220,12 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
     return carouselItem.getBoundingClientRect().height
   }, [carouselSlideAxis])
 
+  function setSlideActionType(type: SlideActionType) {
+    slideActionType.current = type
+  }
+  function getSlideActionType() {
+    return slideActionType.current
+  }
   function adjustCarouselWrapperPosition(ref: HTMLDivElement) {
     const positionProperty = carouselSlideAxis === 'x' ? 'left' : 'top'
 
@@ -313,7 +312,6 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
   function findItemIndex(id: string) {
     return items.findIndex((item) => item.id === id)
   }
-
   function slideToItem({
     from,
     item,
@@ -373,7 +371,6 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
       handleThumbsScroll(nextItemIndex)
     }
   }
-
   function getWrapperFromValue(element: HTMLDivElement) {
     const values = element.style.transform.split(/\w+\(|\);?/)
     return Number(
@@ -382,7 +379,6 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
         [carouselSlideAxis === 'x' ? 0 : 1].replace('px', '')
     )
   }
-
   function slideToPrevItem() {
     if (
       (!withLoop && getCurrentActiveItem() === 0) ||

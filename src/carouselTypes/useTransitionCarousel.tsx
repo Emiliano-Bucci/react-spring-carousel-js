@@ -210,7 +210,6 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
       handleThumbsScroll(itemIndex)
     }
   }
-
   function slideToNextItem() {
     const isLastItem = activeItem === items.length - 1
 
@@ -228,7 +227,6 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
       }
     }
   }
-
   function slideToPrevItem() {
     const isFirstItem = activeItem === 0
 
@@ -246,11 +244,9 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
       }
     }
   }
-
   function findItemIndex(id: string) {
     return items.findIndex((item) => item.id === id)
   }
-
   function getIsNextItem(id: string) {
     const itemIndex = findItemIndex(id)
 
@@ -260,7 +256,6 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
 
     return itemIndex === activeItem + 1
   }
-
   function getIsPrevItem(id: string) {
     const itemIndex = findItemIndex(id)
 
