@@ -1,5 +1,5 @@
 import React, { HTMLAttributes } from 'react'
-import { useTransitionCarousel } from 'react-spring-carousel-js'
+import { useSpringCarousel } from 'react-spring-carousel-js'
 
 const Item = ({
   children,
@@ -27,47 +27,48 @@ const App = () => {
     slideToNextItem,
     slideToItem,
     useListenToCustomEvent
-  } = useTransitionCarousel({
-    toPrevItemSpringProps: {
-      initial: {
-        opacity: 1
-      },
-      from: {
-        transform: 'translateX(-100%)',
-        opacity: 0,
-        position: 'absolute'
-      },
-      enter: {
-        transform: 'translateX(0%)',
-        opacity: 1,
-        position: 'relative'
-      },
-      leave: {
-        transform: 'translateX(100%)',
-        opacity: 0,
-        position: 'absolute'
-      }
-    },
-    toNextItemSpringProps: {
-      initial: {
-        opacity: 1
-      },
-      from: {
-        transform: 'translateX(100%)',
-        opacity: 0,
-        position: 'absolute'
-      },
-      enter: {
-        transform: 'translateX(0%)',
-        opacity: 1,
-        position: 'relative'
-      },
-      leave: {
-        transform: 'translateX(-100%)',
-        opacity: 0,
-        position: 'absolute'
-      }
-    },
+  } = useSpringCarousel({
+    withLoop: true,
+    // toPrevItemSpringProps: {
+    //   initial: {
+    //     opacity: 1
+    //   },
+    //   from: {
+    //     transform: 'translateX(-100%)',
+    //     opacity: 0,
+    //     position: 'absolute'
+    //   },
+    //   enter: {
+    //     transform: 'translateX(0%)',
+    //     opacity: 1,
+    //     position: 'relative'
+    //   },
+    //   leave: {
+    //     transform: 'translateX(100%)',
+    //     opacity: 0,
+    //     position: 'absolute'
+    //   }
+    // },
+    // toNextItemSpringProps: {
+    //   initial: {
+    //     opacity: 1
+    //   },
+    //   from: {
+    //     transform: 'translateX(100%)',
+    //     opacity: 0,
+    //     position: 'absolute'
+    //   },
+    //   enter: {
+    //     transform: 'translateX(0%)',
+    //     opacity: 1,
+    //     position: 'relative'
+    //   },
+    //   leave: {
+    //     transform: 'translateX(-100%)',
+    //     opacity: 0,
+    //     position: 'absolute'
+    //   }
+    // },
     items: [
       {
         id: 'item-1',
@@ -194,8 +195,8 @@ const App = () => {
     ]
   })
 
-  useListenToCustomEvent('onSlideChange', () => {
-    console.log('slide change!')
+  useListenToCustomEvent('onSlideChange', (data) => {
+    console.log('slide change!', data)
   })
 
   return (
@@ -207,7 +208,6 @@ const App = () => {
       }}
     >
       <button onClick={slideToPrevItem}>PREV</button>
-      <button onClick={() => slideToItem(5)}>start</button>
       <div
         style={{
           display: 'flex',

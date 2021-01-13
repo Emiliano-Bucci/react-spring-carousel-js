@@ -234,10 +234,19 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     const currentItem = findItemIndex(items[activeItem].id)
     const newActiveItem = findItemIndex(items[itemIndex].id)
 
-    if (newActiveItem > currentItem) {
-      setSlideActionType('next')
+    if (withLoop) {
+      if (currentItem === 0 && newActiveItem === items.length - 1) {
+        setSlideActionType('prev')
+      }
+      if (currentItem === items.length - 1 && newActiveItem === 0) {
+        setSlideActionType('next')
+      }
     } else {
-      setSlideActionType('prev')
+      if (newActiveItem > currentItem) {
+        setSlideActionType('next')
+      } else {
+        setSlideActionType('prev')
+      }
     }
 
     setActiveItem(itemIndex)
@@ -258,16 +267,16 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     const isLastItem = activeItem === items.length - 1
 
     if (withLoop) {
+      setSlideActionType('next')
       if (isLastItem) {
         slideToItem(0)
       } else {
         slideToItem(activeItem + 1)
       }
-      setSlideActionType('next')
     } else {
       if (!isLastItem) {
-        slideToItem(activeItem + 1)
         setSlideActionType('next')
+        slideToItem(activeItem + 1)
       }
     }
   }
@@ -275,16 +284,16 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
     const isFirstItem = activeItem === 0
 
     if (withLoop) {
+      setSlideActionType('prev')
       if (isFirstItem) {
         slideToItem(items.length - 1)
       } else {
         slideToItem(activeItem - 1)
       }
-      setSlideActionType('prev')
     } else {
       if (!isFirstItem) {
-        slideToItem(activeItem - 1)
         setSlideActionType('prev')
+        slideToItem(activeItem - 1)
       }
     }
   }
