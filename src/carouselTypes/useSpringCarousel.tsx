@@ -548,7 +548,8 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
                 style={{
                   display: 'flex',
                   flex: `1 0 calc(100% / ${itemsPerSlide})`,
-                  height: '100%'
+                  height: '100%',
+                  position: 'relative'
                 }}
               >
                 {renderItem}
