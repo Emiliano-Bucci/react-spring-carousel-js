@@ -192,7 +192,6 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
         ...styles,
         flex: '1 0 100%',
         width: '100%',
-        height: '100%',
         position: 'relative'
       }}
     >
