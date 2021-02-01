@@ -15,7 +15,6 @@ import {
   OnSlideChange,
   OnSlideStartChange,
   TransformCarouselContextProps,
-  ReactSpringCarouselItem,
   SlideToItemFnProps,
   SlideActionType
 } from '../types'
@@ -41,7 +40,7 @@ export const UseSpringCarouselContext = createContext<TransformCarouselContextPr
   }
 )
 
-export function useSpringCarousel<T extends ReactSpringCarouselItem>({
+export function useSpringCarousel({
   items,
   withLoop = false,
   draggingSlideTreshold = 100,
@@ -56,7 +55,7 @@ export function useSpringCarousel<T extends ReactSpringCarouselItem>({
   itemsPerSlide = 1,
   initialActiveItem = 0,
   initialStartingPosition = 'start'
-}: TransformCarouselProps<T>) {
+}: TransformCarouselProps) {
   function getRepeatedPrevItems() {
     const total = items.length
     return items.slice(total - itemsPerSlide - 1, total)

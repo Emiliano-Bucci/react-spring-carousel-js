@@ -2,28 +2,29 @@ import React, { useRef } from 'react'
 import { useSpring, SpringConfig, animated } from 'react-spring'
 import { fixNegativeIndex, useMount } from '../index.utils'
 import { TransformCarouselProps, ReactSpringCarouselItem } from '../types'
+import { ReactSpringThumbItem, PrepareThumbsData } from '../types/carousel'
 
 type OffsetDimension = 'offsetWidth' | 'offsetHeight'
 type OffsetDirection = 'offsetLeft' | 'offsetTop'
 type ScrollDirection = 'scrollLeft' | 'scrollTop'
 
-type Props<T extends ReactSpringCarouselItem> = {
-  items: T[]
+type Props = {
+  items: ReactSpringCarouselItem[]
   withThumbs: boolean
-  thumbsSlideAxis: TransformCarouselProps<T>['thumbsSlideAxis']
-  thumbsWrapperRef?: TransformCarouselProps<T>['thumbsWrapperRef']
+  thumbsSlideAxis: TransformCarouselProps['thumbsSlideAxis']
+  thumbsWrapperRef?: TransformCarouselProps['thumbsWrapperRef']
   springConfig: SpringConfig
-  prepareThumbsData?(items: T[]): T[]
+  prepareThumbsData?: PrepareThumbsData
 }
 
-export function useThumbsModule<T extends ReactSpringCarouselItem>({
+export function useThumbsModule({
   items,
   withThumbs,
   thumbsSlideAxis = 'x',
   springConfig,
   thumbsWrapperRef,
   prepareThumbsData
-}: Props<T>) {
+}: Props) {
   const internalThumbsWrapperRef = useRef<HTMLDivElement | null>(null)
   // @ts-ignore
   const [thumbListStyles, setThumbListStyles] = useSpring(() => ({
@@ -33,7 +34,6 @@ export function useThumbsModule<T extends ReactSpringCarouselItem>({
 
   useMount(() => {
     if (withThumbs) {
-      console.log('jere')
       const missingThumbs = items.some((item) => !item.renderThumb)
 
       if (missingThumbs) {
@@ -170,11 +170,20 @@ export function useThumbsModule<T extends ReactSpringCarouselItem>({
   }
 
   function handlePrepareThumbsDate() {
-    if (prepareThumbsData) {
-      return prepareThumbsData(items)
+    function getPreparedItems(
+      _items: ReactSpringCarouselItem[]
+    ): ReactSpringThumbItem[] {
+      return _items.map((i) => ({
+        id: i.id,
+        renderThumb: i.renderThumb
+      }))
     }
 
-    return items
+    if (prepareThumbsData) {
+      return prepareThumbsData(getPreparedItems(items))
+    }
+
+    return getPreparedItems(items)
   }
 
   function getScrollDirectionSpringValue() {

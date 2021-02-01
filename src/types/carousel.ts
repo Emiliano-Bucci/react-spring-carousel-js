@@ -1,15 +1,20 @@
 import { SpringConfig, TransitionFrom, TransitionTo } from 'react-spring'
 import { ListenToCustomEvent } from '.'
 
+export type ReactSpringThumbItem = {
+  id: string
+  renderThumb: React.ReactNode
+}
+
 export type ReactSpringCarouselItem = {
   id: string
   renderItem: React.ReactNode
   renderThumb?: React.ReactNode
 }
 
-export type TransformCarouselProps<T extends ReactSpringCarouselItem> = {
+export type TransformCarouselProps = {
   withLoop?: boolean
-  items: T[]
+  items: ReactSpringCarouselItem[]
   draggingSlideTreshold?: number
   springConfig?: SpringConfig
   shouldResizeOnWindowResize?: boolean
@@ -21,8 +26,12 @@ export type TransformCarouselProps<T extends ReactSpringCarouselItem> = {
   itemsPerSlide?: number
   initialActiveItem?: number
   initialStartingPosition?: 'start' | 'center' | 'end'
-  prepareThumbsData?(items: T[]): T[]
+  prepareThumbsData?: PrepareThumbsData
 }
+
+export type PrepareThumbsData = (
+  items: ReactSpringThumbItem[]
+) => ReactSpringThumbItem[]
 
 export type TransformCarouselContextProps = {
   getIsFullscreen(): boolean
@@ -51,26 +60,26 @@ export type SlideToItemFnProps = {
   onRest?(): void
 }
 
-export type SpringAnimationProps<Item> = {
-  initial: TransitionFrom<Item>
-  from: TransitionFrom<Item>
-  enter: TransitionTo<Item>
-  leave: TransitionTo<Item>
+export type SpringAnimationProps = {
+  initial: TransitionFrom<ReactSpringCarouselItem>
+  from: TransitionFrom<ReactSpringCarouselItem>
+  enter: TransitionTo<ReactSpringCarouselItem>
+  leave: TransitionTo<ReactSpringCarouselItem>
 }
 
-export type TransitionCarouselProps<T extends ReactSpringCarouselItem> = {
-  items: T[]
+export type TransitionCarouselProps = {
+  items: ReactSpringCarouselItem[]
   withThumbs?: boolean
   springConfig?: SpringConfig
-  toPrevItemSpringProps?: SpringAnimationProps<T>
-  toNextItemSpringProps?: SpringAnimationProps<T>
-  springAnimationProps?: SpringAnimationProps<T>
+  toPrevItemSpringProps?: SpringAnimationProps
+  toNextItemSpringProps?: SpringAnimationProps
+  springAnimationProps?: SpringAnimationProps
   withLoop?: boolean
   thumbsSlideAxis?: 'x' | 'y'
   thumbsMaxHeight?: number
   enableThumbsWrapperScroll?: boolean
   draggingSlideTreshold?: number
-  prepareThumbsData?(): T[]
+  prepareThumbsData?: PrepareThumbsData
 }
 
 export type TransitionCarouselContextProps = {

@@ -192,7 +192,16 @@ const App = () => {
           </div>
         )
       }
-    ]
+    ],
+    prepareThumbsData: (items) => {
+      return [
+        ...items,
+        {
+          id: 'aaa',
+          renderThumb: <div>asda</div>
+        }
+      ]
+    }
   })
 
   useListenToCustomEvent('onSlideChange', (data) => {

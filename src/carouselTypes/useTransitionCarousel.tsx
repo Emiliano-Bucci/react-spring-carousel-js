@@ -8,7 +8,6 @@ import { useThumbsModule } from '../modules/useThumbsModule'
 import {
   OnSlideChange,
   OnSlideStartChange,
-  ReactSpringCarouselItem,
   TransitionCarouselContextProps,
   TransitionCarouselProps,
   SlideActionType
@@ -29,7 +28,7 @@ const UseTransitionCarouselContext = createContext<TransitionCarouselContextProp
   }
 )
 
-export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
+export function useTransitionCarousel({
   items,
   withLoop = false,
   withThumbs = false,
@@ -57,7 +56,7 @@ export function useTransitionCarousel<T extends ReactSpringCarouselItem>({
       position: 'absolute'
     }
   }
-}: TransitionCarouselProps<T>) {
+}: TransitionCarouselProps) {
   const slideActionType = useRef<SlideActionType>('next')
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
   const isAnimating = useRef(false)
