@@ -15,37 +15,39 @@ export function useFullscreenModule({
   const isFullscreen = useRef(false)
 
   useMount(() => {
-    const _carouselwrapperRef = mainCarouselWrapperRef.current
-
-    function handleFullscreenChange(event: Event) {
-      if (
-        document.fullscreenElement &&
-        event.target === mainCarouselWrapperRef.current &&
-        !getIsFullscreen()
-      ) {
+    function handleFullscreenChange() {
+      if (document.fullscreenElement) {
         setIsFullscreen(true)
+        emitCustomEvent(
+          'onFullscreenChange',
+          prepareDataForCustomEvent<OnFullscreenChange>({
+            isFullscreen: true
+          })
+        )
       }
 
-      if (
-        !document.fullscreenElement &&
-        event.target === mainCarouselWrapperRef.current &&
-        getIsFullscreen()
-      ) {
+      if (!document.fullscreenElement) {
         setIsFullscreen(false)
+        emitCustomEvent(
+          'onFullscreenChange',
+          prepareDataForCustomEvent<OnFullscreenChange>({
+            isFullscreen: false
+          })
+        )
       }
     }
 
-    _carouselwrapperRef!.addEventListener(
-      'fullscreenchange',
-      handleFullscreenChange
-    )
+    if (screenfull.isEnabled) {
+      screenfull.on('change', handleFullscreenChange)
 
-    return () => {
-      _carouselwrapperRef!.removeEventListener(
-        'fullscreenchange',
-        handleFullscreenChange
-      )
+      return () => {
+        if (screenfull.isEnabled) {
+          screenfull.off('change', handleFullscreenChange)
+        }
+      }
     }
+
+    return () => {}
   })
 
   function setIsFullscreen(_isFullscreen: boolean) {
@@ -61,25 +63,11 @@ export function useFullscreenModule({
       screenfull.request(
         (elementRef || mainCarouselWrapperRef.current) as Element
       )
-
-      emitCustomEvent(
-        'onFullscreenChange',
-        prepareDataForCustomEvent<OnFullscreenChange>({
-          isFullscreen: true
-        })
-      )
     }
   }
 
   function exitFullscreen() {
     screenfull.isEnabled && screenfull.exit()
-
-    emitCustomEvent(
-      'onFullscreenChange',
-      prepareDataForCustomEvent<OnFullscreenChange>({
-        isFullscreen: false
-      })
-    )
   }
 
   return {
