@@ -6,11 +6,13 @@ import { EmitCustomEvent, OnFullscreenChange } from '..'
 type FullscreenModule = {
   mainCarouselWrapperRef: MutableRefObject<HTMLDivElement | null>
   emitCustomEvent: EmitCustomEvent
+  handleResize(): void
 }
 
 export function useFullscreenModule({
   mainCarouselWrapperRef,
-  emitCustomEvent
+  emitCustomEvent,
+  handleResize
 }: FullscreenModule) {
   const isFullscreen = useRef(false)
 
@@ -63,11 +65,13 @@ export function useFullscreenModule({
       screenfull.request(
         (elementRef || mainCarouselWrapperRef.current) as Element
       )
+      handleResize()
     }
   }
 
   function exitFullscreen() {
     screenfull.isEnabled && screenfull.exit()
+    handleResize()
   }
 
   return {
