@@ -79,6 +79,29 @@ export function useSpringCarousel({
   const isDragging = useRef(false)
   const isAnimating = useRef(false)
 
+  // Custom modules
+  const { emitCustomEvent, useListenToCustomEvent } = useCustomEventsModule()
+  const {
+    enterFullscreen,
+    exitFullscreen,
+    getIsFullscreen
+  } = useFullscreenModule({
+    mainCarouselWrapperRef,
+    emitCustomEvent,
+    handleResize
+  })
+  const {
+    thumbsFragment: _thumbsFragment,
+    handleThumbsScroll
+  } = useThumbsModule({
+    withThumbs,
+    items,
+    thumbsSlideAxis,
+    springConfig,
+    thumbsWrapperRef,
+    prepareThumbsData
+  })
+
   // @ts-ignore
   const [carouselStyles, setCarouselStyles] = useSpring(() => ({
     [carouselSlideAxis]: 0,
@@ -127,90 +150,6 @@ export function useSpringCarousel({
     }
   })
 
-  const getSlideValue = useCallback(() => {
-    if (!carouselTrackWrapperRef.current) {
-      return 0
-    }
-
-    const carouselItem = carouselTrackWrapperRef.current
-      .firstChild as HTMLElement
-
-    if (carouselSlideAxis === 'x') {
-      return carouselItem.getBoundingClientRect().width
-    }
-
-    return carouselItem.getBoundingClientRect().height
-  }, [carouselSlideAxis])
-  const adjustCarouselWrapperPosition = useCallback(
-    (ref: HTMLDivElement) => {
-      const positionProperty = carouselSlideAxis === 'x' ? 'left' : 'top'
-
-      switch (initialStartingPosition) {
-        default:
-        case 'start': {
-          ref.style[positionProperty] = `-${
-            getSlideValue() * itemsPerSlide + getSlideValue()
-          }px`
-          break
-        }
-
-        case 'center': {
-          ref.style[positionProperty] = `-${
-            getSlideValue() * Math.floor(itemsPerSlide / 1.5) + getSlideValue()
-          }px`
-          break
-        }
-
-        case 'end': {
-          ref.style[positionProperty] = `-${
-            getSlideValue() * Math.floor(itemsPerSlide / 3) + getSlideValue()
-          }px`
-          break
-        }
-      }
-    },
-    [carouselSlideAxis, getSlideValue, initialStartingPosition, itemsPerSlide]
-  )
-  const handleResize = useCallback(() => {
-    setCarouselStyles({
-      [carouselSlideAxis]: -(getSlideValue() * getCurrentActiveItem()),
-      immediate: true
-    })
-
-    if (withLoop) {
-      adjustCarouselWrapperPosition(carouselTrackWrapperRef.current!)
-    }
-  }, [
-    adjustCarouselWrapperPosition,
-    carouselSlideAxis,
-    getSlideValue,
-    setCarouselStyles,
-    withLoop
-  ])
-
-  // Custom modules
-  const { emitCustomEvent, useListenToCustomEvent } = useCustomEventsModule()
-  const {
-    enterFullscreen,
-    exitFullscreen,
-    getIsFullscreen
-  } = useFullscreenModule({
-    mainCarouselWrapperRef,
-    emitCustomEvent,
-    handleResize
-  })
-  const {
-    thumbsFragment: _thumbsFragment,
-    handleThumbsScroll
-  } = useThumbsModule({
-    withThumbs,
-    items,
-    thumbsSlideAxis,
-    springConfig,
-    thumbsWrapperRef,
-    prepareThumbsData
-  })
-
   // Perform some check on first mount
   useMount(() => {
     if (itemsPerSlide > items.length) {
@@ -235,6 +174,7 @@ export function useSpringCarousel({
       )
     }
   })
+
   // @ts-ignore
   useMount(() => {
     if (shouldResizeOnWindowResize) {
@@ -243,6 +183,7 @@ export function useSpringCarousel({
       return () => window.removeEventListener('resize', handleResize)
     }
   })
+
   useMount(() => {
     if (initialActiveItem > 0 && initialActiveItem <= items.length) {
       slideToItem({
@@ -253,13 +194,63 @@ export function useSpringCarousel({
     }
   })
 
+  const getSlideValue = useCallback(() => {
+    if (!carouselTrackWrapperRef.current) {
+      return 0
+    }
+
+    const carouselItem = carouselTrackWrapperRef.current
+      .firstChild as HTMLElement
+
+    if (carouselSlideAxis === 'x') {
+      return carouselItem.getBoundingClientRect().width
+    }
+
+    return carouselItem.getBoundingClientRect().height
+  }, [carouselSlideAxis])
+  function handleResize() {
+    setCarouselStyles({
+      [carouselSlideAxis]: -(getSlideValue() * getCurrentActiveItem()),
+      immediate: true
+    })
+
+    if (withLoop) {
+      adjustCarouselWrapperPosition(carouselTrackWrapperRef.current!)
+    }
+  }
   function setSlideActionType(type: SlideActionType) {
     slideActionType.current = type
   }
   function getSlideActionType() {
     return slideActionType.current
   }
+  function adjustCarouselWrapperPosition(ref: HTMLDivElement) {
+    const positionProperty = carouselSlideAxis === 'x' ? 'left' : 'top'
 
+    switch (initialStartingPosition) {
+      default:
+      case 'start': {
+        ref.style[positionProperty] = `-${
+          getSlideValue() * itemsPerSlide + getSlideValue()
+        }px`
+        break
+      }
+
+      case 'center': {
+        ref.style[positionProperty] = `-${
+          getSlideValue() * Math.floor(itemsPerSlide / 1.5) + getSlideValue()
+        }px`
+        break
+      }
+
+      case 'end': {
+        ref.style[positionProperty] = `-${
+          getSlideValue() * Math.floor(itemsPerSlide / 3) + getSlideValue()
+        }px`
+        break
+      }
+    }
+  }
   function setActiveItem(newItem: number) {
     activeItem.current = newItem
   }

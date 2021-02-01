@@ -26,7 +26,8 @@ const App = () => {
     slideToPrevItem,
     slideToNextItem,
     slideToItem,
-    useListenToCustomEvent
+    useListenToCustomEvent,
+    enterFullscreen
   } = useSpringCarousel({
     withLoop: true,
     // toPrevItemSpringProps: {
@@ -213,7 +214,8 @@ const App = () => {
       style={{
         display: 'flex',
         padding: 24,
-        background: 'orange'
+        background: 'orange',
+        touchAction: 'none'
       }}
     >
       <button onClick={slideToPrevItem}>PREV</button>
@@ -225,9 +227,10 @@ const App = () => {
           overflow: 'hidden'
         }}
       >
-        <div style={{ margin: '0 32px', flex: 1 }}>{carouselFragment}</div>
+        <div style={{ flex: 1 }}>{carouselFragment}</div>
       </div>
       <button onClick={slideToNextItem}>NEXT</button>
+      <button onClick={() => enterFullscreen()}>fullscreen</button>
     </div>
   )
 }

@@ -65,8 +65,7 @@ export function useTransitionCarousel({
   const { emitCustomEvent, useListenToCustomEvent } = useCustomEventsModule()
   const { enterFullscreen, exitFullscreen } = useFullscreenModule({
     emitCustomEvent,
-    mainCarouselWrapperRef,
-    handleResize: () => {}
+    mainCarouselWrapperRef
   })
   const {
     thumbsFragment: _thumbsFragment,
