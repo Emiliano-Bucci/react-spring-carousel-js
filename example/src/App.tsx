@@ -205,8 +205,8 @@ const App = () => {
     }
   })
 
-  useListenToCustomEvent('onSlideChange', (data) => {
-    console.log('slide change!', data)
+  useListenToCustomEvent('onFullscreenChange', (data) => {
+    console.log('onFullscreenChange', data)
   })
 
   return (

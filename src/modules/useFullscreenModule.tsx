@@ -1,5 +1,5 @@
-import { useRef, MutableRefObject } from 'react'
-import { prepareDataForCustomEvent, useMount } from '../index.utils'
+import { useRef, MutableRefObject, useEffect } from 'react'
+import { prepareDataForCustomEvent } from '../index.utils'
 import screenfull from 'screenfull'
 import { EmitCustomEvent, OnFullscreenChange } from '..'
 
@@ -16,7 +16,8 @@ export function useFullscreenModule({
 }: FullscreenModule) {
   const isFullscreen = useRef(false)
 
-  useMount(() => {
+  // @ts-ignore
+  useEffect(() => {
     function handleFullscreenChange() {
       if (document.fullscreenElement) {
         setIsFullscreen(true)
@@ -51,8 +52,6 @@ export function useFullscreenModule({
         }
       }
     }
-
-    return () => {}
   })
 
   function setIsFullscreen(_isFullscreen: boolean) {
