@@ -51,7 +51,7 @@ const Item: React.FC<HTMLAttributes<HTMLDivElement>> = ({
   )
 }
 
-function MyApp() {
+const App = () => {
   const [, setActiveItem] = useState(0)
   const {
     carouselFragment,
@@ -77,7 +77,7 @@ function MyApp() {
     setActiveItem(data.nextItem)
   })
   useListenToCustomEvent('onSlideChange', (data) => {
-    console.log('onSlideChange', data)
+    console.log('onDrag', data)
   })
 
   return (
@@ -104,17 +104,6 @@ function MyApp() {
       <button onClick={() => enterFullscreen()}>fullscreen</button>
     </div>
   )
-}
-
-const App = () => {
-  const [render, setRender] = useState(true)
-
-  return render ? (
-    <>
-      <button onClick={() => setRender(false)}>change</button>
-      <MyApp />
-    </>
-  ) : null
 }
 
 export default App

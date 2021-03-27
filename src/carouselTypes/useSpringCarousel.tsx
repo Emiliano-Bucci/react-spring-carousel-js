@@ -1,4 +1,4 @@
-import React, { useRef, createContext, useCallback } from 'react'
+import React, { useRef, createContext, useCallback, useContext } from 'react'
 import { useSpring, config, animated, AnimationResult } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
 import {
@@ -19,26 +19,20 @@ import {
   SlideActionType
 } from '../types'
 
-export const UseSpringCarouselContext = createContext<TransformCarouselContextProps>(
-  {
-    getIsFullscreen: () => false,
-    getIsPrevItem: () => false,
-    getIsNextItem: () => false,
-    slideToItem: () => {},
-    getIsAnimating: () => false,
-    getIsDragging: () => false,
-    getIsActiveItem: () => false,
-    enterFullscreen: () => {},
-    exitFullscreen: () => {},
-    slideToPrevItem: () => {},
-    slideToNextItem: () => {},
-    useListenToCustomEvent: () => {},
-    getCurrentActiveItem: () => ({
-      id: '',
-      index: 0
-    })
+const UseSpringCarouselContext = createContext<
+  TransformCarouselContextProps | undefined
+>(undefined)
+
+export function useSpringCarouselContext() {
+  const context = useContext(UseSpringCarouselContext)
+
+  if (!context) {
+    throw new Error(`useSpringCarouselContext isn't being used within the useSringCarousel context; 
+    use the context only inside a component that is rendered within the Carousel.`)
   }
-)
+
+  return context
+}
 
 export function useSpringCarousel({
   items,

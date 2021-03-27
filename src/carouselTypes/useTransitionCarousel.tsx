@@ -1,4 +1,4 @@
-import React, { createContext, useRef, useState } from 'react'
+import React, { createContext, useRef, useState, useContext } from 'react'
 import { useTransition, animated, config } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
 import { prepareDataForCustomEvent } from '../index.utils'
@@ -13,20 +13,20 @@ import {
   SlideActionType
 } from '../types'
 
-const UseTransitionCarouselContext = createContext<TransitionCarouselContextProps>(
-  {
-    activeItem: 0,
-    slideToNextItem: () => {},
-    slideToPrevItem: () => {},
-    enterFullscreen: () => {},
-    exitFullscreen: () => {},
-    slideToItem: () => {},
-    getIsAnimating: () => false,
-    getIsPrevItem: () => false,
-    getIsNextItem: () => false,
-    useListenToCustomEvent: () => {}
+const UseTransitionCarouselContext = createContext<
+  TransitionCarouselContextProps | undefined
+>(undefined)
+
+export function useTransitionCarouselContext() {
+  const context = useContext(UseTransitionCarouselContext)
+
+  if (!context) {
+    throw new Error(`useTransitionCarouselContext isn't being used within the useTransitionCarousel context; 
+    use the context only inside a component that is rendered within the Carousel.`)
   }
-)
+
+  return context
+}
 
 export function useTransitionCarousel({
   items,
@@ -249,7 +249,6 @@ export function useTransitionCarousel({
     }
 
     setActiveItem(itemIndex)
-
     emitCustomEvent(
       'onSlideStartChange',
       prepareDataForCustomEvent<OnSlideStartChange>({
