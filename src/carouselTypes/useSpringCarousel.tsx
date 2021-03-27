@@ -179,8 +179,9 @@ export function useSpringCarousel({
   useMount(() => {
     if (shouldResizeOnWindowResize) {
       window.addEventListener('resize', handleResize)
-
-      return () => window.removeEventListener('resize', handleResize)
+      return () => {
+        window.removeEventListener('resize', handleResize)
+      }
     }
   })
 
@@ -330,7 +331,6 @@ export function useSpringCarousel({
     }
 
     setIsAnimating(true)
-
     setCarouselStyles({
       ...(from
         ? {

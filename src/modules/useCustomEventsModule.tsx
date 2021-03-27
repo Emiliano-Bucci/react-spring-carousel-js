@@ -1,16 +1,19 @@
-import { useEffect } from 'react'
+import { useRef } from 'react'
+import { useMount } from '../index.utils'
 import { EmitCustomEvent, ListenToCustomEvent } from '../types'
 
 export function useCustomEventsModule() {
-  const targetElement =
-    typeof window !== 'undefined' ? document.createElement('div') : null
+  const _targetElement = useRef(
+    typeof window !== 'undefined' && document.createElement('div')
+  )
 
   const useListenToCustomEvent: ListenToCustomEvent = (
     eventName,
     eventHandler
   ) => {
-    // @ts-ignore
-    useEffect(() => {
+    useMount(() => {
+      const targetElement = _targetElement.current
+
       function handleEvent(event: CustomEvent) {
         eventHandler(event.detail)
       }
@@ -26,9 +29,9 @@ export function useCustomEventsModule() {
   }
 
   const emitCustomEvent: EmitCustomEvent = (eventName, data) => {
-    if (targetElement) {
+    if (_targetElement.current) {
       const event = new CustomEvent(eventName, data)
-      targetElement.dispatchEvent(event)
+      _targetElement.current.dispatchEvent(event)
     }
   }
 

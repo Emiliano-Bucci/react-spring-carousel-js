@@ -1,10 +1,41 @@
-import React, { HTMLAttributes } from 'react'
-import { useSpringCarousel } from 'react-spring-carousel-js'
+import React, { HTMLAttributes, useState } from 'react'
+import { OnSlideStartChange, useSpringCarousel } from 'react-spring-carousel-js'
 
-const Item = ({
+const items = [
+  {
+    id: 'item-1',
+    label: 'Item 1',
+    style: {
+      background: 'red'
+    }
+  },
+  {
+    id: 'item-2',
+    label: 'Item 2',
+    style: {
+      background: 'purple'
+    }
+  },
+  {
+    id: 'item-3',
+    label: 'Item 3',
+    style: {
+      background: 'green'
+    }
+  },
+  {
+    id: 'item-4',
+    label: 'Item 4',
+    style: {
+      background: 'blue'
+    }
+  }
+]
+
+const Item: React.FC<HTMLAttributes<HTMLDivElement>> = ({
   children,
   ...rest
-}: { children: React.ReactNode } & HTMLAttributes<HTMLDivElement>) => {
+}) => {
   return (
     <div
       style={{
@@ -20,193 +51,33 @@ const Item = ({
   )
 }
 
-const App = () => {
+function MyApp() {
+  const [, setActiveItem] = useState(0)
   const {
     carouselFragment,
     slideToPrevItem,
     slideToNextItem,
-    slideToItem,
+    // slideToItem,
     useListenToCustomEvent,
     enterFullscreen
   } = useSpringCarousel({
     withLoop: true,
-    // toPrevItemSpringProps: {
-    //   initial: {
-    //     opacity: 1
-    //   },
-    //   from: {
-    //     transform: 'translateX(-100%)',
-    //     opacity: 0,
-    //     position: 'absolute'
-    //   },
-    //   enter: {
-    //     transform: 'translateX(0%)',
-    //     opacity: 1,
-    //     position: 'relative'
-    //   },
-    //   leave: {
-    //     transform: 'translateX(100%)',
-    //     opacity: 0,
-    //     position: 'absolute'
-    //   }
-    // },
-    // toNextItemSpringProps: {
-    //   initial: {
-    //     opacity: 1
-    //   },
-    //   from: {
-    //     transform: 'translateX(100%)',
-    //     opacity: 0,
-    //     position: 'absolute'
-    //   },
-    //   enter: {
-    //     transform: 'translateX(0%)',
-    //     opacity: 1,
-    //     position: 'relative'
-    //   },
-    //   leave: {
-    //     transform: 'translateX(-100%)',
-    //     opacity: 0,
-    //     position: 'absolute'
-    //   }
-    // },
-    items: [
-      {
-        id: 'item-1',
-        renderItem: (
-          <Item
-            style={{
-              background: 'red'
-            }}
-          >
-            Item 1
-          </Item>
-        )
-        // renderThumb: (
-        //   <div
-        //     onClick={() => slideToItem('item-2')}
-        //     style={{
-        //       height: 100,
-        //       padding: '8px 16px',
-        //       background: 'blue',
-        //       width: 160
-        //     }}
-        //   >
-        //     THUMB 1
-        //   </div>
-        // )
-      },
-      {
-        id: 'item-2',
-        renderItem: (
-          <Item
-            style={{
-              background: 'yellow'
-            }}
-          >
-            Item 2
-          </Item>
-        ),
-        renderThumb: (
-          <div
-            style={{
-              height: 100,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 2
-          </div>
-        )
-      },
-      {
-        id: 'item-3',
-        renderItem: (
-          <Item
-            style={{
-              background: 'green'
-            }}
-          >
-            Item 3
-          </Item>
-        ),
-        renderThumb: (
-          <div
-            style={{
-              height: 100,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 3
-          </div>
-        )
-      },
-      {
-        id: 'item-1a',
-        renderItem: (
-          <Item
-            style={{
-              background: 'red'
-            }}
-          >
-            Item 4
-          </Item>
-        ),
-        renderThumb: (
-          <div
-            onClick={() => slideToItem('item-2')}
-            style={{
-              height: 100,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 4
-          </div>
-        )
-      },
-      {
-        id: 'item-2a',
-        renderItem: (
-          <Item
-            style={{
-              background: 'black'
-            }}
-          >
-            Item 5
-          </Item>
-        ),
-        renderThumb: (
-          <div
-            style={{
-              height: 100,
-              padding: '8px 16px',
-              background: 'blue',
-              width: 160
-            }}
-          >
-            THUMB 5
-          </div>
-        )
-      }
-    ],
-    prepareThumbsData: (items) => {
-      return [
-        ...items,
-        {
-          id: 'aaa',
-          renderThumb: <div>asda</div>
-        }
-      ]
-    }
+    items: items.map((item) => ({
+      id: item.id,
+      renderItem: (
+        <Item key={item.id} style={item.style}>
+          {item.label}
+        </Item>
+      )
+    }))
   })
 
-  useListenToCustomEvent('onFullscreenChange', (data) => {
-    console.log('onFullscreenChange', data)
+  useListenToCustomEvent<OnSlideStartChange>('onSlideStartChange', (data) => {
+    console.log('onSlideStartChange', data)
+    setActiveItem(data.nextItem)
+  })
+  useListenToCustomEvent('onSlideChange', (data) => {
+    console.log('onSlideChange', data)
   })
 
   return (
@@ -233,6 +104,17 @@ const App = () => {
       <button onClick={() => enterFullscreen()}>fullscreen</button>
     </div>
   )
+}
+
+const App = () => {
+  const [render, setRender] = useState(true)
+
+  return render ? (
+    <>
+      <button onClick={() => setRender(false)}>change</button>
+      <MyApp />
+    </>
+  ) : null
 }
 
 export default App

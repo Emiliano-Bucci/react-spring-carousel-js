@@ -1,14 +1,21 @@
 import { useRef, useEffect } from 'react'
 
-export function useMount(callback: () => void) {
+type Callback = () => void | (() => void)
+
+export function useMount(callback: Callback) {
   const isMounted = useRef(false)
 
   useEffect(() => {
     if (!isMounted.current) {
-      callback()
+      const clean = callback()
       isMounted.current = true
+
+      return () => {
+        clean && clean()
+      }
     }
-  }, [callback])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 }
 
 export function prepareDataForCustomEvent<T>(data: T) {
