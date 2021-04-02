@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import { useSpring, SpringConfig, animated } from 'react-spring'
 import { fixNegativeIndex, useMount } from '../index.utils'
-import { TransformCarouselProps, ReactSpringCarouselItem } from '../types'
+import { UseSpringCarouselProps, ReactSpringCarouselItem } from '../types'
 import { ReactSpringThumbItem, PrepareThumbsData } from '../types/carousel'
 
 type OffsetDimension = 'offsetWidth' | 'offsetHeight'
@@ -11,8 +11,8 @@ type ScrollDirection = 'scrollLeft' | 'scrollTop'
 type Props = {
   items: ReactSpringCarouselItem[]
   withThumbs: boolean
-  thumbsSlideAxis: TransformCarouselProps['thumbsSlideAxis']
-  thumbsWrapperRef?: TransformCarouselProps['thumbsWrapperRef']
+  thumbsSlideAxis: UseSpringCarouselProps['thumbsSlideAxis']
+  thumbsWrapperRef?: UseSpringCarouselProps['thumbsWrapperRef']
   springConfig: SpringConfig
   prepareThumbsData?: PrepareThumbsData
 }
@@ -26,7 +26,6 @@ export function useThumbsModule({
   prepareThumbsData
 }: Props) {
   const internalThumbsWrapperRef = useRef<HTMLDivElement | null>(null)
-  // @ts-ignore
   const [thumbListStyles, setThumbListStyles] = useSpring(() => ({
     [thumbsSlideAxis]: 0,
     config: springConfig
@@ -156,7 +155,7 @@ export function useThumbsModule({
             offsetDimension
           })
         },
-        onChange: (val: unknown) => {
+        onChange: (val) => {
           if (thumbsSlideAxis === 'x') {
             // @ts-ignore
             internalThumbsWrapperRef!.current!.scrollLeft = val.x

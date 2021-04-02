@@ -10,7 +10,7 @@ import { useCustomEventsModule } from '../modules/useCustomEventsModule'
 import { useFullscreenModule } from '../modules/useFullscreenModule'
 import { useThumbsModule } from '../modules/useThumbsModule'
 import {
-  TransformCarouselProps,
+  UseSpringCarouselProps,
   OnDrag,
   OnSlideChange,
   OnSlideStartChange,
@@ -48,8 +48,9 @@ export function useSpringCarousel({
   prepareThumbsData,
   itemsPerSlide = 1,
   initialActiveItem = 0,
-  initialStartingPosition = 'start'
-}: TransformCarouselProps) {
+  initialStartingPosition = 'start',
+  disableGestures = false
+}: UseSpringCarouselProps) {
   function getRepeatedPrevItems() {
     const total = items.length
     return items.slice(total - itemsPerSlide - 1, total)
@@ -96,61 +97,67 @@ export function useSpringCarousel({
     prepareThumbsData
   })
 
-  // @ts-ignore
   const [carouselStyles, setCarouselStyles] = useSpring(() => ({
     [carouselSlideAxis]: 0,
     config: springConfig
   }))
-  const bindDrag = useDrag((props) => {
-    const dragging = props.dragging
-    const movement = props.movement[carouselSlideAxis === 'x' ? 0 : 1]
+  const bindDrag = useDrag(
+    (props) => {
+      const dragging = props.dragging
+      const movement = props.movement[carouselSlideAxis === 'x' ? 0 : 1]
 
-    if (getIsAnimating()) {
-      return
-    }
-
-    const currentSlidedValue = -(getSlideValue() * getCurrentActiveItem())
-
-    if (dragging) {
-      setCarouselStyles.current[0].start({
-        [carouselSlideAxis]: currentSlidedValue + movement
-      })
-      setIsDragging(true)
-
-      emitCustomEvent('onDrag', prepareDataForCustomEvent<OnDrag>(props))
-
-      const prevItemTreshold = movement > draggingSlideTreshold
-      const nextItemTreshold = movement < -draggingSlideTreshold
-
-      if (nextItemTreshold) {
-        if (!withLoop && getCurrentActiveItem() === internalItems.length - 1) {
-          setCarouselStyles.current[0].start({
-            [carouselSlideAxis]: currentSlidedValue
-          })
-        } else {
-          slideToNextItem()
-        }
-        props.cancel()
-        setIsDragging(false)
-      } else if (prevItemTreshold) {
-        if (!withLoop && getCurrentActiveItem() === 0) {
-          setCarouselStyles.current[0].start({
-            [carouselSlideAxis]: currentSlidedValue
-          })
-        } else {
-          slideToPrevItem()
-        }
-        props.cancel()
-        setIsDragging(false)
+      if (getIsAnimating()) {
+        return
       }
-    }
 
-    if (props.last && !getIsAnimating()) {
-      setCarouselStyles.current[0].start({
-        [carouselSlideAxis]: currentSlidedValue
-      })
+      const currentSlidedValue = -(getSlideValue() * getCurrentActiveItem())
+
+      if (dragging) {
+        setCarouselStyles.current[0].start({
+          [carouselSlideAxis]: currentSlidedValue + movement
+        })
+        setIsDragging(true)
+        emitCustomEvent('onDrag', prepareDataForCustomEvent<OnDrag>(props))
+
+        const prevItemTreshold = movement > draggingSlideTreshold
+        const nextItemTreshold = movement < -draggingSlideTreshold
+
+        if (nextItemTreshold) {
+          if (
+            !withLoop &&
+            getCurrentActiveItem() === internalItems.length - 1
+          ) {
+            setCarouselStyles.current[0].start({
+              [carouselSlideAxis]: currentSlidedValue
+            })
+          } else {
+            slideToNextItem()
+          }
+          props.cancel()
+          setIsDragging(false)
+        } else if (prevItemTreshold) {
+          if (!withLoop && getCurrentActiveItem() === 0) {
+            setCarouselStyles.current[0].start({
+              [carouselSlideAxis]: currentSlidedValue
+            })
+          } else {
+            slideToPrevItem()
+          }
+          props.cancel()
+          setIsDragging(false)
+        }
+      }
+
+      if (props.last && !getIsAnimating()) {
+        setCarouselStyles.current[0].start({
+          [carouselSlideAxis]: currentSlidedValue
+        })
+      }
+    },
+    {
+      enabled: !disableGestures
     }
-  })
+  )
 
   // Perform some check on first mount
   useMount(() => {
@@ -177,7 +184,6 @@ export function useSpringCarousel({
     }
   })
 
-  // @ts-ignore
   useMount(() => {
     if (shouldResizeOnWindowResize) {
       window.addEventListener('resize', handleResize)

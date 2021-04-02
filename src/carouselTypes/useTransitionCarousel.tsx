@@ -9,7 +9,7 @@ import {
   OnSlideChange,
   OnSlideStartChange,
   TransitionCarouselContextProps,
-  TransitionCarouselProps,
+  UseTransitionCarouselProps,
   SlideActionType
 } from '../types'
 
@@ -39,6 +39,7 @@ export function useTransitionCarousel({
   prepareThumbsData,
   toPrevItemSpringProps,
   toNextItemSpringProps,
+  disableGestures = false,
   springAnimationProps = {
     initial: {
       opacity: 1
@@ -56,7 +57,7 @@ export function useTransitionCarousel({
       position: 'absolute'
     }
   }
-}: TransitionCarouselProps) {
+}: UseTransitionCarouselProps) {
   const slideActionType = useRef<SlideActionType>('next')
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
   const isAnimating = useRef(false)
@@ -78,41 +79,49 @@ export function useTransitionCarousel({
     prepareThumbsData
   })
 
-  const bindSwipe = useDrag(({ last, movement: [mx] }) => {
-    if (getIsAnimating()) {
-      return
-    }
-
-    if (last) {
-      const prevItemTreshold = mx > draggingSlideTreshold
-      const nextItemTreshold = mx < -draggingSlideTreshold
-      const isFirstItem = activeItem === 0
-      const isLastItem = activeItem === items.length - 1
-
-      if (nextItemTreshold) {
-        if (!withLoop && isLastItem) {
-          return
-        }
-
-        slideToNextItem()
-        emitCustomEvent('onLeftSwipe')
-      } else if (prevItemTreshold) {
-        if (!withLoop && isFirstItem) {
-          return
-        }
-
-        slideToPrevItem()
-        emitCustomEvent('onRightSwipe')
+  const bindSwipe = useDrag(
+    ({ last, movement: [mx] }) => {
+      if (getIsAnimating()) {
+        return
       }
+
+      if (last) {
+        const prevItemTreshold = mx > draggingSlideTreshold
+        const nextItemTreshold = mx < -draggingSlideTreshold
+        const isFirstItem = activeItem === 0
+        const isLastItem = activeItem === items.length - 1
+
+        if (nextItemTreshold) {
+          if (!withLoop && isLastItem) {
+            return
+          }
+
+          slideToNextItem()
+          emitCustomEvent('onLeftSwipe')
+        } else if (prevItemTreshold) {
+          if (!withLoop && isFirstItem) {
+            return
+          }
+
+          slideToPrevItem()
+          emitCustomEvent('onRightSwipe')
+        }
+      }
+    },
+    {
+      enabled: !disableGestures
     }
-  })
+  )
 
   function getTransitionConfig() {
     const slideActionType = getSlideActionType()
 
     if (slideActionType === 'prev' && toPrevItemSpringProps) {
       return {
-        initial: toPrevItemSpringProps.initial,
+        initial: {
+          ...springAnimationProps.initial,
+          __internal: false
+        },
         from: {
           ...toPrevItemSpringProps.from,
           __internal: false
@@ -130,7 +139,10 @@ export function useTransitionCarousel({
 
     if (slideActionType === 'next' && toNextItemSpringProps) {
       return {
-        initial: toNextItemSpringProps.initial,
+        initial: {
+          ...springAnimationProps.initial,
+          __internal: false
+        },
         from: {
           ...toNextItemSpringProps.from,
           __internal: false
@@ -147,7 +159,10 @@ export function useTransitionCarousel({
     }
 
     return {
-      initial: springAnimationProps.initial,
+      initial: {
+        ...springAnimationProps.initial,
+        __internal: false
+      },
       from: {
         ...springAnimationProps.from,
         __internal: false
@@ -163,7 +178,6 @@ export function useTransitionCarousel({
     }
   }
 
-  // @ts-ignore
   const transitions = useTransition(activeItem, {
     config: springConfig,
     key: () => items[activeItem].id,
@@ -184,7 +198,6 @@ export function useTransitionCarousel({
   })
   const itemsFragment = transitions((styles, item) => (
     <animated.div
-      // @ts-ignore
       style={{
         ...styles,
         flex: '1 0 100%',

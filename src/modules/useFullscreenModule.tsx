@@ -16,7 +16,6 @@ export function useFullscreenModule({
 }: FullscreenModule) {
   const isFullscreen = useRef(false)
 
-  // @ts-ignore
   useEffect(() => {
     function handleFullscreenChange() {
       if (document.fullscreenElement) {

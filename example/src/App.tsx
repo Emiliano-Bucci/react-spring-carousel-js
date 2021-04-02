@@ -1,4 +1,4 @@
-import React, { HTMLAttributes } from 'react'
+import React, { HTMLAttributes, useState } from 'react'
 import { useSpringCarousel } from 'react-spring-carousel-js'
 
 const items = [
@@ -52,8 +52,10 @@ const Item: React.FC<HTMLAttributes<HTMLDivElement>> = ({
 }
 
 const App = () => {
+  const [ok, setOk] = useState(true)
   const { carouselFragment } = useSpringCarousel({
     withLoop: true,
+    disableGestures: ok,
     items: items.map((item) => ({
       id: item.id,
       renderItem: (
@@ -74,6 +76,7 @@ const App = () => {
       }}
     >
       <div style={{ flex: 1 }}>{carouselFragment}</div>
+      <button onClick={() => setOk((p) => !p)}>TOGGLE</button>
     </div>
   )
 }

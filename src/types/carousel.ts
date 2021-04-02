@@ -12,7 +12,7 @@ export type ReactSpringCarouselItem = {
   renderThumb?: React.ReactNode
 }
 
-export type TransformCarouselProps = {
+export type UseSpringCarouselProps = {
   withLoop?: boolean
   items: ReactSpringCarouselItem[]
   draggingSlideTreshold?: number
@@ -27,6 +27,7 @@ export type TransformCarouselProps = {
   initialActiveItem?: number
   initialStartingPosition?: 'start' | 'center' | 'end'
   prepareThumbsData?: PrepareThumbsData
+  disableGestures?: boolean
 }
 
 export type PrepareThumbsData = (
@@ -67,7 +68,7 @@ export type SpringAnimationProps = {
   leave: TransitionTo<ReactSpringCarouselItem>
 }
 
-export type TransitionCarouselProps = {
+export type UseTransitionCarouselProps = {
   items: ReactSpringCarouselItem[]
   withThumbs?: boolean
   springConfig?: SpringConfig
@@ -80,6 +81,7 @@ export type TransitionCarouselProps = {
   enableThumbsWrapperScroll?: boolean
   draggingSlideTreshold?: number
   prepareThumbsData?: PrepareThumbsData
+  disableGestures?: boolean
 }
 
 export type TransitionCarouselContextProps = {
