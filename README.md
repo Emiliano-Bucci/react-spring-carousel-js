@@ -38,7 +38,7 @@ At it's most basic, to start you can do:
 ```tsx
 import { useSpringCarousel } from 'react-spring-carousel-js'
 
-const { carouselFragment, thumbsFragment } = useSpringCarousel({
+const { carouselFragment } = useSpringCarousel({
   items: [
     {
       id: 'item-1',
@@ -56,7 +56,6 @@ const { carouselFragment, thumbsFragment } = useSpringCarousel({
 return (
   <div>
     {carouselFragment}
-    {thumbsFragment}
   </div>
 )
 ```
@@ -83,6 +82,7 @@ You can provide this **options** to better customize the behavior and the aspect
 | initialActiveItem          | `number`                                        | `0`              | Set the initial active slide.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | itemsPerSlide              | `number`                                        | `1`              | Define the quantity of items to show per `slide`. It can't be greater than the maximum quantity of items provided.                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | initialStartingPosition    | `start` / `center` / `end`                      | `start`          | `Note: only works if withLoop={true}` Defines the starting position of the current active slide. Normally if you have 3 active items per `slide`, you'll see 1,2,3. If you set `initialStartingPosition='center'`, for example, you'll get the following order: 3,1,2.                                                                                                                                                                                                                                                                                                                 |
+| disableGestures | `boolean` | `false` | Disable the drag gesture programmatically.
 
 ## Options (API)
 
