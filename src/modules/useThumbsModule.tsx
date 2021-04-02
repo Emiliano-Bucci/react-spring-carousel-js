@@ -141,7 +141,7 @@ export function useThumbsModule({
         offsetDimension
       })
 
-      setThumbListStyles({
+      setThumbListStyles.current[0].start({
         from: {
           [thumbsSlideAxis]: getScrollFromValue({
             thumbWrapper,
@@ -189,11 +189,13 @@ export function useThumbsModule({
   function getScrollDirectionSpringValue() {
     if (thumbsSlideAxis === 'x') {
       return {
+        // @ts-ignore
         scrollLeft: thumbListStyles.x
       }
     }
 
     return {
+      // @ts-ignore
       scrollTop: thumbListStyles.y
     }
   }

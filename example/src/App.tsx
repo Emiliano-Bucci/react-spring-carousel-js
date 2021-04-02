@@ -1,5 +1,5 @@
-import React, { HTMLAttributes, useState } from 'react'
-import { OnSlideStartChange, useSpringCarousel } from 'react-spring-carousel-js'
+import React, { HTMLAttributes } from 'react'
+import { useSpringCarousel } from 'react-spring-carousel-js'
 
 const items = [
   {
@@ -52,15 +52,7 @@ const Item: React.FC<HTMLAttributes<HTMLDivElement>> = ({
 }
 
 const App = () => {
-  const [, setActiveItem] = useState(0)
-  const {
-    carouselFragment,
-    slideToPrevItem,
-    slideToNextItem,
-    // slideToItem,
-    useListenToCustomEvent,
-    enterFullscreen
-  } = useSpringCarousel({
+  const { carouselFragment } = useSpringCarousel({
     withLoop: true,
     items: items.map((item) => ({
       id: item.id,
@@ -72,36 +64,16 @@ const App = () => {
     }))
   })
 
-  useListenToCustomEvent<OnSlideStartChange>('onSlideStartChange', (data) => {
-    console.log('onSlideStartChange', data)
-    setActiveItem(data.nextItem)
-  })
-  useListenToCustomEvent('onSlideChange', (data) => {
-    console.log('onDrag', data)
-  })
-
   return (
     <div
       style={{
         display: 'flex',
-        padding: 24,
-        background: 'orange',
-        touchAction: 'none'
+        width: '100%',
+        height: '100vh',
+        overflow: 'hidden'
       }}
     >
-      <button onClick={slideToPrevItem}>PREV</button>
-      <div
-        style={{
-          display: 'flex',
-          width: '100%',
-          height: 500,
-          overflow: 'hidden'
-        }}
-      >
-        <div style={{ flex: 1 }}>{carouselFragment}</div>
-      </div>
-      <button onClick={slideToNextItem}>NEXT</button>
-      <button onClick={() => enterFullscreen()}>fullscreen</button>
+      <div style={{ flex: 1 }}>{carouselFragment}</div>
     </div>
   )
 }

@@ -112,7 +112,9 @@ export function useSpringCarousel({
     const currentSlidedValue = -(getSlideValue() * getCurrentActiveItem())
 
     if (dragging) {
-      setCarouselStyles({ [carouselSlideAxis]: currentSlidedValue + movement })
+      setCarouselStyles.current[0].start({
+        [carouselSlideAxis]: currentSlidedValue + movement
+      })
       setIsDragging(true)
 
       emitCustomEvent('onDrag', prepareDataForCustomEvent<OnDrag>(props))
@@ -122,7 +124,9 @@ export function useSpringCarousel({
 
       if (nextItemTreshold) {
         if (!withLoop && getCurrentActiveItem() === internalItems.length - 1) {
-          setCarouselStyles({ [carouselSlideAxis]: currentSlidedValue })
+          setCarouselStyles.current[0].start({
+            [carouselSlideAxis]: currentSlidedValue
+          })
         } else {
           slideToNextItem()
         }
@@ -130,7 +134,9 @@ export function useSpringCarousel({
         setIsDragging(false)
       } else if (prevItemTreshold) {
         if (!withLoop && getCurrentActiveItem() === 0) {
-          setCarouselStyles({ [carouselSlideAxis]: currentSlidedValue })
+          setCarouselStyles.current[0].start({
+            [carouselSlideAxis]: currentSlidedValue
+          })
         } else {
           slideToPrevItem()
         }
@@ -140,7 +146,9 @@ export function useSpringCarousel({
     }
 
     if (props.last && !getIsAnimating()) {
-      setCarouselStyles({ [carouselSlideAxis]: currentSlidedValue })
+      setCarouselStyles.current[0].start({
+        [carouselSlideAxis]: currentSlidedValue
+      })
     }
   })
 
@@ -204,7 +212,7 @@ export function useSpringCarousel({
     return carouselItem.getBoundingClientRect().height
   }, [carouselSlideAxis])
   function handleResize() {
-    setCarouselStyles({
+    setCarouselStyles.current[0].start({
       [carouselSlideAxis]: -(getSlideValue() * getCurrentActiveItem()),
       immediate: true
     })
@@ -315,6 +323,7 @@ export function useSpringCarousel({
 
     if (!immediate) {
       setActiveItem(nextItemIndex)
+      setIsAnimating(true)
       emitCustomEvent(
         'onSlideStartChange',
         prepareDataForCustomEvent<OnSlideStartChange>({
@@ -324,8 +333,7 @@ export function useSpringCarousel({
       )
     }
 
-    setIsAnimating(true)
-    setCarouselStyles({
+    setCarouselStyles.current[0].start({
       ...(from
         ? {
             from: {
