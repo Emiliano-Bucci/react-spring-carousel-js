@@ -5,40 +5,53 @@ import {
   StateKey
 } from 'react-use-gesture/dist/types'
 
-export enum ReactSpringCustomEvents {
-  'onSlideStartChange' = 'onSlideStartChange',
-  'onSlideChange' = 'onSlideChange',
-  'onDrag' = 'onDrag',
-  'onFullscreenChange' = 'onFullscreenChange',
-  'onLeftSwipe' = 'onLeftSwipe',
-  'onRightSwipe' = 'onRightSwipe'
-}
-
 export type SlideActionType = 'prev' | 'next'
 
-export type OnSlideStartChange = {
+type OnSlideStartChange = {
+  eventName: 'onSlideStartChange'
   nextItem: number
   slideActionType: SlideActionType
 }
-export type OnSlideChange = {
+type OnSlideChange = {
+  eventName: 'onSlideChange'
   currentItem: number
   slideActionType: SlideActionType
 }
 
-export type OnDrag = Omit<FullGestureState<StateKey<GestureKey>>, 'event'> & {
+type OnDrag = Omit<FullGestureState<StateKey<GestureKey>>, 'event'> & {
+  eventName: 'onDrag'
   event: EventTypes['drag']
 }
 
-export type OnFullscreenChange = {
+type OnFullscreenChange = {
+  eventName: 'onFullscreenChange'
   isFullscreen: boolean
 }
 
-export type ListenToCustomEvent = <T>(
-  eventName: keyof typeof ReactSpringCustomEvents,
-  eventHandler: (data: T) => void
+type OnLeftSwipe = {
+  eventName: 'onLeftSwipe'
+}
+
+type OnRightSwipe = {
+  eventName: 'onRightSwipe'
+}
+
+export type EmitObservableFn = (
+  data:
+    | OnSlideStartChange
+    | OnSlideChange
+    | OnDrag
+    | OnFullscreenChange
+    | OnLeftSwipe
+    | OnRightSwipe
 ) => void
 
-export type EmitCustomEvent = <T>(
-  eventName: keyof typeof ReactSpringCustomEvents,
-  data?: T
-) => void
+export type EventsObservableProps =
+  | OnSlideStartChange
+  | OnSlideChange
+  | OnDrag
+  | OnFullscreenChange
+  | OnLeftSwipe
+  | OnRightSwipe
+
+export type ObservableCallbackFn = (data: EventsObservableProps) => void

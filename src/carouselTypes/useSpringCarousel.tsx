@@ -1,26 +1,19 @@
 import React, { useRef, createContext, useCallback, useContext } from 'react'
 import { useSpring, config, animated, AnimationResult } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
-import {
-  fixNegativeIndex,
-  prepareDataForCustomEvent,
-  useMount
-} from '../index.utils'
+import { fixNegativeIndex, useMount } from '../index.utils'
 import { useCustomEventsModule } from '../modules/useCustomEventsModule'
 import { useFullscreenModule } from '../modules/useFullscreenModule'
 import { useThumbsModule } from '../modules/useThumbsModule'
 import {
   UseSpringCarouselProps,
-  OnDrag,
-  OnSlideChange,
-  OnSlideStartChange,
-  TransformCarouselContextProps,
+  UseSpringCarouselContextProps,
   SlideToItemFnProps,
   SlideActionType
 } from '../types'
 
 const UseSpringCarouselContext = createContext<
-  TransformCarouselContextProps | undefined
+  UseSpringCarouselContextProps | undefined
 >(undefined)
 
 export function useSpringCarouselContext() {
@@ -75,14 +68,14 @@ export function useSpringCarousel({
   const isAnimating = useRef(false)
 
   // Custom modules
-  const { emitCustomEvent, useListenToCustomEvent } = useCustomEventsModule()
+  const { useListenToCustomEvent, emitObservable } = useCustomEventsModule()
   const {
     enterFullscreen,
     exitFullscreen,
     getIsFullscreen
   } = useFullscreenModule({
     mainCarouselWrapperRef,
-    emitCustomEvent,
+    emitObservable,
     handleResize
   })
   const {
@@ -117,7 +110,10 @@ export function useSpringCarousel({
           [carouselSlideAxis]: currentSlidedValue + movement
         })
         setIsDragging(true)
-        emitCustomEvent('onDrag', prepareDataForCustomEvent<OnDrag>(props))
+        emitObservable({
+          eventName: 'onDrag',
+          ...props
+        })
 
         const prevItemTreshold = movement > draggingSlideTreshold
         const nextItemTreshold = movement < -draggingSlideTreshold
@@ -330,13 +326,11 @@ export function useSpringCarousel({
     if (!immediate) {
       setActiveItem(nextItemIndex)
       setIsAnimating(true)
-      emitCustomEvent(
-        'onSlideStartChange',
-        prepareDataForCustomEvent<OnSlideStartChange>({
-          nextItem: nextItemIndex,
-          slideActionType: getSlideActionType()
-        })
-      )
+      emitObservable({
+        eventName: 'onSlideStartChange',
+        nextItem: nextItemIndex,
+        slideActionType: getSlideActionType()
+      })
     }
 
     setCarouselStyles.current[0].start({
@@ -361,13 +355,11 @@ export function useSpringCarousel({
           onRest()
 
           if (!immediate) {
-            emitCustomEvent(
-              'onSlideChange',
-              prepareDataForCustomEvent<OnSlideChange>({
-                currentItem: getCurrentActiveItem(),
-                slideActionType: getSlideActionType()
-              })
-            )
+            emitObservable({
+              eventName: 'onSlideChange',
+              currentItem: getCurrentActiveItem(),
+              slideActionType: getSlideActionType()
+            })
           }
         }
       }
@@ -494,7 +486,7 @@ export function useSpringCarousel({
     })
   }
 
-  const contextProps: TransformCarouselContextProps = {
+  const contextProps: UseSpringCarouselContextProps = {
     useListenToCustomEvent,
     getIsFullscreen,
     enterFullscreen,

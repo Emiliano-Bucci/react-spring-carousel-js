@@ -18,14 +18,6 @@ export function useMount(callback: Callback) {
   }, [])
 }
 
-export function prepareDataForCustomEvent<T>(data: T) {
-  return {
-    detail: {
-      ...data
-    }
-  }
-}
-
 export function fixNegativeIndex(index: number, totalItems: number) {
   if (index === -1) {
     return totalItems - 1

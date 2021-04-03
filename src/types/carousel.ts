@@ -1,5 +1,5 @@
 import { SpringConfig, TransitionFrom, TransitionTo } from 'react-spring'
-import { ListenToCustomEvent } from '.'
+import { ObservableCallbackFn } from './events'
 
 export type ReactSpringThumbItem = {
   id: string
@@ -34,7 +34,7 @@ export type PrepareThumbsData = (
   items: ReactSpringThumbItem[]
 ) => ReactSpringThumbItem[]
 
-export type TransformCarouselContextProps = {
+export type UseSpringCarouselContextProps = {
   getIsFullscreen(): boolean
   getIsPrevItem(id: string): boolean
   getIsNextItem(id: string): boolean
@@ -50,7 +50,7 @@ export type TransformCarouselContextProps = {
     id: string
     index: number
   }
-  useListenToCustomEvent: ListenToCustomEvent
+  useListenToCustomEvent(fn: ObservableCallbackFn): void
 }
 
 export type SlideToItemFnProps = {
@@ -84,7 +84,7 @@ export type UseTransitionCarouselProps = {
   disableGestures?: boolean
 }
 
-export type TransitionCarouselContextProps = {
+export type UseTransitionCarouselContextProps = {
   activeItem: number
   slideToNextItem(): void
   slideToPrevItem(): void
@@ -94,5 +94,5 @@ export type TransitionCarouselContextProps = {
   getIsAnimating(): boolean
   getIsPrevItem(id: string): boolean
   getIsNextItem(id: string): boolean
-  useListenToCustomEvent: ListenToCustomEvent
+  useListenToCustomEvent(fn: ObservableCallbackFn): void
 }

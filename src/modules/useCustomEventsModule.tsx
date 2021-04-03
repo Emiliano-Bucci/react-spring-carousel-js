@@ -1,42 +1,27 @@
-import { useRef } from 'react'
+import { Subject } from 'rxjs'
 import { useMount } from '../index.utils'
-import { EmitCustomEvent, ListenToCustomEvent } from '../types'
+import {
+  EventsObservableProps,
+  ObservableCallbackFn,
+  EmitObservableFn
+} from '../types/events'
+
+const eventsObserver = new Subject<EventsObservableProps>()
 
 export function useCustomEventsModule() {
-  const _targetElement = useRef(
-    typeof window !== 'undefined' && document.createElement('div')
-  )
-
-  const useListenToCustomEvent: ListenToCustomEvent = (
-    eventName,
-    eventHandler
-  ) => {
+  function useListenToCustomEvent(fn: ObservableCallbackFn) {
     useMount(() => {
-      const targetElement = _targetElement.current
-
-      function handleEvent(event: CustomEvent) {
-        eventHandler(event.detail)
-      }
-
-      if (targetElement) {
-        targetElement.addEventListener(eventName, handleEvent, false)
-
-        return () => {
-          targetElement.removeEventListener(eventName, handleEvent, false)
-        }
-      }
+      const subscribe = eventsObserver.subscribe(fn)
+      return () => subscribe.unsubscribe()
     })
   }
 
-  const emitCustomEvent: EmitCustomEvent = (eventName, data) => {
-    if (_targetElement.current) {
-      const event = new CustomEvent(eventName, data)
-      _targetElement.current.dispatchEvent(event)
-    }
+  const emitObservable: EmitObservableFn = (data) => {
+    eventsObserver.next(data)
   }
 
   return {
-    emitCustomEvent,
-    useListenToCustomEvent
+    useListenToCustomEvent,
+    emitObservable
   }
 }

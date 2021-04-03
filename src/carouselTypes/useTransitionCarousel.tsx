@@ -1,20 +1,17 @@
 import React, { createContext, useRef, useState, useContext } from 'react'
 import { useTransition, animated, config } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
-import { prepareDataForCustomEvent } from '../index.utils'
 import { useCustomEventsModule } from '../modules/useCustomEventsModule'
 import { useFullscreenModule } from '../modules/useFullscreenModule'
 import { useThumbsModule } from '../modules/useThumbsModule'
 import {
-  OnSlideChange,
-  OnSlideStartChange,
-  TransitionCarouselContextProps,
+  UseTransitionCarouselContextProps,
   UseTransitionCarouselProps,
   SlideActionType
 } from '../types'
 
 const UseTransitionCarouselContext = createContext<
-  TransitionCarouselContextProps | undefined
+  UseTransitionCarouselContextProps | undefined
 >(undefined)
 
 export function useTransitionCarouselContext() {
@@ -63,9 +60,9 @@ export function useTransitionCarousel({
   const isAnimating = useRef(false)
   const [activeItem, setActiveItem] = useState(0)
 
-  const { emitCustomEvent, useListenToCustomEvent } = useCustomEventsModule()
+  const { emitObservable, useListenToCustomEvent } = useCustomEventsModule()
   const { enterFullscreen, exitFullscreen } = useFullscreenModule({
-    emitCustomEvent,
+    emitObservable,
     mainCarouselWrapperRef
   })
   const {
@@ -97,14 +94,18 @@ export function useTransitionCarousel({
           }
 
           slideToNextItem()
-          emitCustomEvent('onLeftSwipe')
+          emitObservable({
+            eventName: 'onLeftSwipe'
+          })
         } else if (prevItemTreshold) {
           if (!withLoop && isFirstItem) {
             return
           }
 
           slideToPrevItem()
-          emitCustomEvent('onRightSwipe')
+          emitObservable({
+            eventName: 'onRightSwipe'
+          })
         }
       }
     },
@@ -186,13 +187,11 @@ export function useTransitionCarousel({
     onRest: (val) => {
       if (val.finished && val.value.__internal) {
         setIsAnimating(false)
-        emitCustomEvent(
-          'onSlideChange',
-          prepareDataForCustomEvent<OnSlideChange>({
-            currentItem: activeItem,
-            slideActionType: getSlideActionType()
-          })
-        )
+        emitObservable({
+          eventName: 'onSlideChange',
+          currentItem: activeItem,
+          slideActionType: getSlideActionType()
+        })
       }
     }
   })
@@ -260,13 +259,11 @@ export function useTransitionCarousel({
     }
 
     setActiveItem(itemIndex)
-    emitCustomEvent(
-      'onSlideStartChange',
-      prepareDataForCustomEvent<OnSlideStartChange>({
-        nextItem: itemIndex,
-        slideActionType: getSlideActionType()
-      })
-    )
+    emitObservable({
+      eventName: 'onSlideChange',
+      currentItem: itemIndex,
+      slideActionType: getSlideActionType()
+    })
 
     if (enableThumbsWrapperScroll && withThumbs) {
       handleThumbsScroll(itemIndex)
@@ -328,7 +325,7 @@ export function useTransitionCarousel({
     return itemIndex === activeItem - 1
   }
 
-  const contextProps: TransitionCarouselContextProps = {
+  const contextProps: UseTransitionCarouselContextProps = {
     activeItem,
     slideToItem,
     slideToNextItem,
