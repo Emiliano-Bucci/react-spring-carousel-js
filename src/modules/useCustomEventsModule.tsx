@@ -1,5 +1,5 @@
+import { useEffect } from 'react'
 import { Subject } from 'rxjs'
-import { useMount } from '../index.utils'
 import {
   EventsObservableProps,
   ObservableCallbackFn,
@@ -10,10 +10,10 @@ const eventsObserver = new Subject<EventsObservableProps>()
 
 export function useCustomEventsModule() {
   function useListenToCustomEvent(fn: ObservableCallbackFn) {
-    useMount(() => {
+    useEffect(() => {
       const subscribe = eventsObserver.subscribe(fn)
       return () => subscribe.unsubscribe()
-    })
+    }, [fn])
   }
 
   const emitObservable: EmitObservableFn = (data) => {

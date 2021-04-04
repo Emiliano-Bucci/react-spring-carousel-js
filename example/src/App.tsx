@@ -1,7 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react'
-import React, { HTMLAttributes } from 'react'
-import { useSpringCarousel } from 'react-spring-carousel-js'
+import React, { HTMLAttributes, useState } from 'react'
+import {
+  useSpringCarousel,
+  useSpringCarouselContext
+} from 'react-spring-carousel-js'
 
 const items = [
   {
@@ -36,8 +39,26 @@ const items = [
 
 const Item: React.FC<HTMLAttributes<HTMLDivElement>> = ({
   children,
+  id,
   ...rest
 }) => {
+  const { useListenToCustomEvent, getIsActiveItem } = useSpringCarouselContext()
+  const [isActive, setIsActive] = useState(false)
+
+  useListenToCustomEvent((data) => {
+    if (data.eventName === 'onSlideStartChange') {
+      if (getIsActiveItem(id!) && !isActive) {
+        setIsActive(true)
+        console.log('set true')
+      }
+
+      if (!getIsActiveItem(id!) && isActive) {
+        setIsActive(false)
+        console.log('set false')
+      }
+    }
+  })
+
   return (
     <div
       css={css`
@@ -53,31 +74,22 @@ const Item: React.FC<HTMLAttributes<HTMLDivElement>> = ({
       {...rest}
     >
       {children}
+      {/* {isActive && <span>IS ACTIVE!</span>} */}
     </div>
   )
 }
 
 const App = () => {
-  const {
-    carouselFragment,
-    useListenToCustomEvent,
-    enterFullscreen
-  } = useSpringCarousel({
+  const { carouselFragment, slideToNextItem } = useSpringCarousel({
     withLoop: true,
     items: items.map((item) => ({
       id: item.id,
       renderItem: (
-        <Item key={item.id} css={item.style}>
+        <Item key={item.id} css={item.style} id={item.id}>
           {item.label}
         </Item>
       )
     }))
-  })
-
-  useListenToCustomEvent((data) => {
-    if (data.eventName === 'onFullscreenChange') {
-      console.log(data.isFullscreen)
-    }
   })
 
   return (
@@ -97,7 +109,7 @@ const App = () => {
       >
         {carouselFragment}
       </div>
-      <button onClick={() => enterFullscreen()}>ENTER FULLSCREEN</button>
+      <button onClick={slideToNextItem}>NEXT ITEM</button>
     </div>
   )
 }
