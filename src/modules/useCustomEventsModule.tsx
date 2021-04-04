@@ -8,18 +8,18 @@ import {
 
 const eventsObserver = new Subject<EventsObservableProps>()
 
+function useListenToCustomEvent(fn: ObservableCallbackFn) {
+  useEffect(() => {
+    const subscribe = eventsObserver.subscribe(fn)
+    return () => subscribe.unsubscribe()
+  }, [fn])
+}
+
+const emitObservable: EmitObservableFn = (data) => {
+  eventsObserver.next(data)
+}
+
 export function useCustomEventsModule() {
-  function useListenToCustomEvent(fn: ObservableCallbackFn) {
-    useEffect(() => {
-      const subscribe = eventsObserver.subscribe(fn)
-      return () => subscribe.unsubscribe()
-    }, [fn])
-  }
-
-  const emitObservable: EmitObservableFn = (data) => {
-    eventsObserver.next(data)
-  }
-
   return {
     useListenToCustomEvent,
     emitObservable
