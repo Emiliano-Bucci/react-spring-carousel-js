@@ -1,8 +1,9 @@
 {
-  "name": "test-lib",
+  "name": "test-lib-template",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/es/index.js",
   "scripts": {
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
@@ -45,6 +46,7 @@
     "rollup": "^2.45.1",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.30.0",
     "ts-jest": "^26.5.4",
     "typescript": "^4.2.4"

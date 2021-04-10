@@ -1,45 +1,55 @@
-import babel from "rollup-plugin-babel";
-import resolve from "@rollup/plugin-node-resolve";
-import external from "rollup-plugin-peer-deps-external";
-import rollupTS from "rollup-plugin-typescript2";
+import babel from 'rollup-plugin-babel'
+import resolve from '@rollup/plugin-node-resolve'
+import external from 'rollup-plugin-peer-deps-external'
+import rollupTS from 'rollup-plugin-typescript2'
+import { terser } from 'rollup-plugin-terser'
 
 const globals = {
-  react: "React",
-  "react-dom": "ReactDOM",
-  "react/jsx-runtime": "jsxRuntime",
-};
+  react: 'React',
+  'react-dom': 'ReactDOM',
+  'react/jsx-runtime': 'jsxRuntime',
+}
 
 export default {
-  input: "src/index.tsx",
+  input: 'src/index.tsx',
   output: [
     {
-      format: "cjs",
-      dir: "dist/cjs",
+      format: 'cjs',
+      dir: 'dist/cjs',
       sourcemap: true,
-      exports: "named",
+      exports: 'named',
     },
     {
-      format: "esm",
-      exports: "named",
-      dir: "dist/es",
+      format: 'esm',
+      exports: 'named',
+      dir: 'dist/es',
       sourcemap: true,
     },
     {
-      format: "umd",
-      exports: "named",
-      dir: "dist/umd",
+      format: 'umd',
+      exports: 'named',
+      dir: 'dist/umd',
       sourcemap: true,
-      name: "ReactSpringCarousel",
+      name: 'ReactSpringCarousel',
       globals,
     },
   ],
   plugins: [
-    babel({
-      exclude: "node_modules/**",
-      presets: ["@babel/preset-react"],
+    rollupTS({
+      tsconfigOverride: {
+        exclude: [
+          'node_modules',
+          'src/**/*.test.tsx',
+          'src/**/*.stories.tsx',
+        ],
+      },
     }),
-    rollupTS(),
+    babel({
+      exclude: 'node_modules/**',
+      presets: ['@babel/preset-react'],
+    }),
     external(),
     resolve(),
+    terser(),
   ],
-};
+}
