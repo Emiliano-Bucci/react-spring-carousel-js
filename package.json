@@ -4,13 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "build:lib": "rollup -c",
     "lint": "eslint --fix --config .eslintrc.js 'src/**/*.{ts,tsx,js}'",
     "prepare": "husky install",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "test": "NODE_ENV=test jest --watch"
   },
   "author": "Emiliano Bucci",
   "license": "MIT",
