@@ -7,7 +7,7 @@ import { useThumbsModule } from '../modules/useThumbsModule'
 import {
   UseTransitionCarouselContextProps,
   UseTransitionCarouselProps,
-  SlideActionType
+  SlideActionType,
 } from '../types'
 
 const UseTransitionCarouselContext = createContext<
@@ -39,41 +39,44 @@ export function useTransitionCarousel({
   disableGestures = false,
   springAnimationProps = {
     initial: {
-      opacity: 1
+      opacity: 1,
     },
     from: {
       opacity: 0,
-      position: 'absolute'
+      position: 'absolute',
     },
     enter: {
       opacity: 1,
-      position: 'relative'
+      position: 'relative',
     },
     leave: {
       opacity: 0,
-      position: 'absolute'
-    }
-  }
+      position: 'absolute',
+    },
+  },
 }: UseTransitionCarouselProps) {
   const slideActionType = useRef<SlideActionType>('next')
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
   const isAnimating = useRef(false)
   const [activeItem, setActiveItem] = useState(0)
 
-  const { emitObservable, useListenToCustomEvent } = useCustomEventsModule()
+  const {
+    emitObservable,
+    useListenToCustomEvent,
+  } = useCustomEventsModule()
   const { enterFullscreen, exitFullscreen } = useFullscreenModule({
     emitObservable,
-    mainCarouselWrapperRef
+    mainCarouselWrapperRef,
   })
   const {
     thumbsFragment: _thumbsFragment,
-    handleThumbsScroll
+    handleThumbsScroll,
   } = useThumbsModule({
     items,
     withThumbs,
     thumbsSlideAxis,
     springConfig,
-    prepareThumbsData
+    prepareThumbsData,
   })
 
   const bindSwipe = useDrag(
@@ -95,7 +98,7 @@ export function useTransitionCarousel({
 
           slideToNextItem()
           emitObservable({
-            eventName: 'onLeftSwipe'
+            eventName: 'onLeftSwipe',
           })
         } else if (prevItemTreshold) {
           if (!withLoop && isFirstItem) {
@@ -104,14 +107,14 @@ export function useTransitionCarousel({
 
           slideToPrevItem()
           emitObservable({
-            eventName: 'onRightSwipe'
+            eventName: 'onRightSwipe',
           })
         }
       }
     },
     {
-      enabled: !disableGestures
-    }
+      enabled: !disableGestures,
+    },
   )
 
   function getTransitionConfig() {
@@ -121,20 +124,20 @@ export function useTransitionCarousel({
       return {
         initial: {
           ...springAnimationProps.initial,
-          __internal: false
+          __internal: false,
         },
         from: {
           ...toPrevItemSpringProps.from,
-          __internal: false
+          __internal: false,
         },
         enter: {
           ...toPrevItemSpringProps.enter,
-          __internal: true
+          __internal: true,
         },
         leave: {
           ...toPrevItemSpringProps.leave,
-          __internal: false
-        }
+          __internal: false,
+        },
       }
     }
 
@@ -142,40 +145,40 @@ export function useTransitionCarousel({
       return {
         initial: {
           ...springAnimationProps.initial,
-          __internal: false
+          __internal: false,
         },
         from: {
           ...toNextItemSpringProps.from,
-          __internal: false
+          __internal: false,
         },
         enter: {
           ...toNextItemSpringProps.enter,
-          __internal: true
+          __internal: true,
         },
         leave: {
           ...toNextItemSpringProps.leave,
-          __internal: false
-        }
+          __internal: false,
+        },
       }
     }
 
     return {
       initial: {
         ...springAnimationProps.initial,
-        __internal: false
+        __internal: false,
       },
       from: {
         ...springAnimationProps.from,
-        __internal: false
+        __internal: false,
       },
       enter: {
         ...springAnimationProps.enter,
-        __internal: true
+        __internal: true,
       },
       leave: {
         ...springAnimationProps.leave,
-        __internal: false
-      }
+        __internal: false,
+      },
     }
   }
 
@@ -184,16 +187,16 @@ export function useTransitionCarousel({
     key: () => items[activeItem].id,
     ...getTransitionConfig(),
     onStart: () => setIsAnimating(true),
-    onRest: (val) => {
+    onRest: val => {
       if (val.finished && val.value.__internal) {
         setIsAnimating(false)
         emitObservable({
           eventName: 'onSlideChange',
           currentItem: activeItem,
-          slideActionType: getSlideActionType()
+          slideActionType: getSlideActionType(),
         })
       }
-    }
+    },
   })
   const itemsFragment = transitions((styles, item) => (
     <animated.div
@@ -201,7 +204,7 @@ export function useTransitionCarousel({
         ...styles,
         flex: '1 0 100%',
         width: '100%',
-        position: 'relative'
+        position: 'relative',
       }}
     >
       {item.renderItem}
@@ -224,7 +227,7 @@ export function useTransitionCarousel({
     let itemIndex = 0
 
     if (typeof item === 'string') {
-      itemIndex = items.findIndex((_item) => _item.id === item)
+      itemIndex = items.findIndex(_item => _item.id === item)
     } else {
       itemIndex = item
     }
@@ -232,7 +235,7 @@ export function useTransitionCarousel({
     if (itemIndex >= items.length) {
       throw Error(
         `The item you want to slide to doesn't exist. This could be due to the fact that 
-        you provide a wrong id or a higher numeric index.`
+        you provide a wrong id or a higher numeric index.`,
       )
     }
 
@@ -262,7 +265,7 @@ export function useTransitionCarousel({
     emitObservable({
       eventName: 'onSlideChange',
       currentItem: itemIndex,
-      slideActionType: getSlideActionType()
+      slideActionType: getSlideActionType(),
     })
 
     if (enableThumbsWrapperScroll && withThumbs) {
@@ -304,7 +307,7 @@ export function useTransitionCarousel({
     }
   }
   function findItemIndex(id: string) {
-    return items.findIndex((item) => item.id === id)
+    return items.findIndex(item => item.id === id)
   }
   function getIsNextItem(id: string) {
     const itemIndex = findItemIndex(id)
@@ -335,7 +338,7 @@ export function useTransitionCarousel({
     useListenToCustomEvent,
     getIsNextItem,
     getIsPrevItem,
-    getIsAnimating
+    getIsAnimating,
   }
 
   const carouselFragment = (
@@ -348,7 +351,7 @@ export function useTransitionCarousel({
           position: 'relative',
           width: '100%',
           height: '100%',
-          overflow: 'hidden'
+          overflow: 'hidden',
         }}
       >
         {itemsFragment}
@@ -365,6 +368,6 @@ export function useTransitionCarousel({
   return {
     carouselFragment,
     thumbsFragment,
-    ...contextProps
+    ...contextProps,
   }
 }

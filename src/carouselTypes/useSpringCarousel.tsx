@@ -1,5 +1,10 @@
 import { useRef, createContext, useCallback, useContext } from 'react'
-import { useSpring, config, animated, AnimationResult } from 'react-spring'
+import {
+  useSpring,
+  config,
+  animated,
+  AnimationResult,
+} from 'react-spring'
 import { useDrag } from 'react-use-gesture'
 import { useCustomEventsModule } from '../modules/useCustomEventsModule'
 import { useFullscreenModule } from '../modules/useFullscreenModule'
@@ -8,7 +13,7 @@ import {
   UseSpringCarouselProps,
   UseSpringCarouselContextProps,
   SlideToItemFnProps,
-  SlideActionType
+  SlideActionType,
 } from '../types'
 import { fixNegativeIndex, useMount } from '../utils'
 
@@ -42,7 +47,7 @@ export function useSpringCarousel({
   itemsPerSlide = 1,
   initialActiveItem = 0,
   initialStartingPosition = 'start',
-  disableGestures = false
+  disableGestures = false,
 }: UseSpringCarouselProps) {
   function getRepeatedPrevItems() {
     const total = items.length
@@ -54,7 +59,11 @@ export function useSpringCarousel({
 
   function getItems() {
     if (withLoop) {
-      return [...getRepeatedPrevItems(), ...items, ...getRepeatedNextItems()]
+      return [
+        ...getRepeatedPrevItems(),
+        ...items,
+        ...getRepeatedNextItems(),
+      ]
     }
 
     return items
@@ -68,51 +77,57 @@ export function useSpringCarousel({
   const isAnimating = useRef(false)
 
   // Custom modules
-  const { useListenToCustomEvent, emitObservable } = useCustomEventsModule()
+  const {
+    useListenToCustomEvent,
+    emitObservable,
+  } = useCustomEventsModule()
   const {
     enterFullscreen,
     exitFullscreen,
-    getIsFullscreen
+    getIsFullscreen,
   } = useFullscreenModule({
     mainCarouselWrapperRef,
     emitObservable,
-    handleResize
+    handleResize,
   })
   const {
     thumbsFragment: _thumbsFragment,
-    handleThumbsScroll
+    handleThumbsScroll,
   } = useThumbsModule({
     withThumbs,
     items,
     thumbsSlideAxis,
     springConfig,
     thumbsWrapperRef,
-    prepareThumbsData
+    prepareThumbsData,
   })
 
   const [carouselStyles, setCarouselStyles] = useSpring(() => ({
     [carouselSlideAxis]: 0,
-    config: springConfig
+    config: springConfig,
   }))
   const bindDrag = useDrag(
-    (props) => {
+    props => {
       const dragging = props.dragging
-      const movement = props.movement[carouselSlideAxis === 'x' ? 0 : 1]
+      const movement =
+        props.movement[carouselSlideAxis === 'x' ? 0 : 1]
 
       if (getIsAnimating()) {
         return
       }
 
-      const currentSlidedValue = -(getSlideValue() * getCurrentActiveItem())
+      const currentSlidedValue = -(
+        getSlideValue() * getCurrentActiveItem()
+      )
 
       if (dragging) {
         setCarouselStyles.current[0].start({
-          [carouselSlideAxis]: currentSlidedValue + movement
+          [carouselSlideAxis]: currentSlidedValue + movement,
         })
         setIsDragging(true)
         emitObservable({
           eventName: 'onDrag',
-          ...props
+          ...props,
         })
 
         const prevItemTreshold = movement > draggingSlideTreshold
@@ -124,7 +139,7 @@ export function useSpringCarousel({
             getCurrentActiveItem() === internalItems.length - 1
           ) {
             setCarouselStyles.current[0].start({
-              [carouselSlideAxis]: currentSlidedValue
+              [carouselSlideAxis]: currentSlidedValue,
             })
           } else {
             slideToNextItem()
@@ -134,7 +149,7 @@ export function useSpringCarousel({
         } else if (prevItemTreshold) {
           if (!withLoop && getCurrentActiveItem() === 0) {
             setCarouselStyles.current[0].start({
-              [carouselSlideAxis]: currentSlidedValue
+              [carouselSlideAxis]: currentSlidedValue,
             })
           } else {
             slideToPrevItem()
@@ -146,26 +161,26 @@ export function useSpringCarousel({
 
       if (props.last && !getIsAnimating()) {
         setCarouselStyles.current[0].start({
-          [carouselSlideAxis]: currentSlidedValue
+          [carouselSlideAxis]: currentSlidedValue,
         })
       }
     },
     {
-      enabled: !disableGestures
-    }
+      enabled: !disableGestures,
+    },
   )
 
   // Perform some check on first mount
   useMount(() => {
     if (itemsPerSlide > items.length) {
       throw new Error(
-        `The itemsPerSlide prop can't be greater than the total length of the items you provide.`
+        `The itemsPerSlide prop can't be greater than the total length of the items you provide.`,
       )
     }
 
     if (!shouldResizeOnWindowResize) {
       console.warn(
-        'You set shouldResizeOnWindowResize={false}; be aware that the carousel could behave in a strange way if you also use the fullscreen functionality.'
+        'You set shouldResizeOnWindowResize={false}; be aware that the carousel could behave in a strange way if you also use the fullscreen functionality.',
       )
     }
 
@@ -175,7 +190,7 @@ export function useSpringCarousel({
 
     if (initialActiveItem > items.length) {
       console.warn(
-        'The initialActiveItem cannot be greater than the total length of the items you provide.'
+        'The initialActiveItem cannot be greater than the total length of the items you provide.',
       )
     }
   })
@@ -193,7 +208,7 @@ export function useSpringCarousel({
     if (initialActiveItem > 0 && initialActiveItem <= items.length) {
       slideToItem({
         item: initialActiveItem,
-        immediate: true
+        immediate: true,
       })
       setActiveItem(initialActiveItem)
     }
@@ -215,8 +230,10 @@ export function useSpringCarousel({
   }, [carouselSlideAxis])
   function handleResize() {
     setCarouselStyles.current[0].start({
-      [carouselSlideAxis]: -(getSlideValue() * getCurrentActiveItem()),
-      immediate: true
+      [carouselSlideAxis]: -(
+        getSlideValue() * getCurrentActiveItem()
+      ),
+      immediate: true,
     })
 
     if (withLoop) {
@@ -230,7 +247,8 @@ export function useSpringCarousel({
     return slideActionType.current
   }
   function adjustCarouselWrapperPosition(ref: HTMLDivElement) {
-    const positionProperty = carouselSlideAxis === 'x' ? 'left' : 'top'
+    const positionProperty =
+      carouselSlideAxis === 'x' ? 'left' : 'top'
 
     switch (initialStartingPosition) {
       default:
@@ -243,14 +261,16 @@ export function useSpringCarousel({
 
       case 'center': {
         ref.style[positionProperty] = `-${
-          getSlideValue() * Math.floor(itemsPerSlide / 1.5) + getSlideValue()
+          getSlideValue() * Math.floor(itemsPerSlide / 1.5) +
+          getSlideValue()
         }px`
         break
       }
 
       case 'end': {
         ref.style[positionProperty] = `-${
-          getSlideValue() * Math.floor(itemsPerSlide / 3) + getSlideValue()
+          getSlideValue() * Math.floor(itemsPerSlide / 3) +
+          getSlideValue()
         }px`
         break
       }
@@ -313,13 +333,13 @@ export function useSpringCarousel({
     return itemIndex === activeItem - 1
   }
   function findItemIndex(id: string) {
-    return items.findIndex((item) => item.id === id)
+    return items.findIndex(item => item.id === id)
   }
   function slideToItem({
     from,
     item,
     immediate = false,
-    onRest = () => {}
+    onRest = () => {},
   }: SlideToItemFnProps) {
     const nextItemIndex = fixNegativeIndex(item, items.length)
 
@@ -329,7 +349,7 @@ export function useSpringCarousel({
       emitObservable({
         eventName: 'onSlideStartChange',
         nextItem: nextItemIndex,
-        slideActionType: getSlideActionType()
+        slideActionType: getSlideActionType(),
       })
     }
 
@@ -337,15 +357,15 @@ export function useSpringCarousel({
       ...(from
         ? {
             from: {
-              [carouselSlideAxis]: from
-            }
+              [carouselSlideAxis]: from,
+            },
           }
         : {}),
       to: {
-        [carouselSlideAxis]: -(getSlideValue() * item)
+        [carouselSlideAxis]: -(getSlideValue() * item),
       },
       config: {
-        ...springConfig
+        ...springConfig,
       },
       immediate,
       onRest: (val: AnimationResult) => {
@@ -358,11 +378,11 @@ export function useSpringCarousel({
             emitObservable({
               eventName: 'onSlideChange',
               currentItem: getCurrentActiveItem(),
-              slideActionType: getSlideActionType()
+              slideActionType: getSlideActionType(),
             })
           }
         }
-      }
+      },
     })
 
     if (enableThumbsWrapperScroll && withThumbs && !immediate) {
@@ -374,7 +394,7 @@ export function useSpringCarousel({
     return Number(
       values[1]
         .split(/,\s?/g)
-        [carouselSlideAxis === 'x' ? 0 : 1].replace('px', '')
+        [carouselSlideAxis === 'x' ? 0 : 1].replace('px', ''),
     )
   }
   function slideToPrevItem() {
@@ -394,31 +414,39 @@ export function useSpringCarousel({
           onRest: () => {
             slideToItem({
               item: items.length - 1,
-              immediate: true
+              immediate: true,
             })
-          }
+          },
         })
       } else {
         let fromValue = 0
 
-        if (carouselTrackWrapperRef.current!.style.transform !== 'none') {
-          fromValue = getWrapperFromValue(carouselTrackWrapperRef.current!)
+        if (
+          carouselTrackWrapperRef.current!.style.transform !== 'none'
+        ) {
+          fromValue = getWrapperFromValue(
+            carouselTrackWrapperRef.current!,
+          )
         }
 
         slideToItem({
-          from: -(Math.abs(fromValue) + getSlideValue() * items.length),
-          item: items.length - 1
+          from: -(
+            Math.abs(fromValue) +
+            getSlideValue() * items.length
+          ),
+          item: items.length - 1,
         })
       }
     } else {
       slideToItem({
-        item: getPrevItem()
+        item: getPrevItem(),
       })
     }
   }
   function slideToNextItem() {
     if (
-      (!withLoop && getCurrentActiveItem() === internalItems.length - 1) ||
+      (!withLoop &&
+        getCurrentActiveItem() === internalItems.length - 1) ||
       (getIsDragging() && getIsAnimating())
     ) {
       return
@@ -434,21 +462,21 @@ export function useSpringCarousel({
             setActiveItem(0)
             slideToItem({
               item: 0,
-              immediate: true
+              immediate: true,
             })
-          }
+          },
         })
       } else {
         slideToItem({
           from:
             getWrapperFromValue(carouselTrackWrapperRef.current!) +
             getSlideValue() * items.length,
-          item: 0
+          item: 0,
         })
       }
     } else {
       slideToItem({
-        item: getNextItem()
+        item: getNextItem(),
       })
     }
   }
@@ -456,7 +484,7 @@ export function useSpringCarousel({
     let itemIndex = 0
 
     if (typeof item === 'string') {
-      itemIndex = items.findIndex((_item) => _item.id === item)
+      itemIndex = items.findIndex(_item => _item.id === item)
     } else {
       itemIndex = item
     }
@@ -464,7 +492,7 @@ export function useSpringCarousel({
     if (itemIndex >= items.length) {
       throw Error(
         `The item you want to slide to doesn't exist. This could be due to the fact that 
-        you provide a wrong id or a higher numeric index.`
+        you provide a wrong id or a higher numeric index.`,
       )
     }
 
@@ -472,7 +500,9 @@ export function useSpringCarousel({
       return
     }
 
-    const currentItem = findItemIndex(items[getCurrentActiveItem()].id)
+    const currentItem = findItemIndex(
+      items[getCurrentActiveItem()].id,
+    )
     const newActiveItem = findItemIndex(items[itemIndex].id)
 
     if (newActiveItem > currentItem) {
@@ -482,7 +512,7 @@ export function useSpringCarousel({
     }
 
     slideToItem({
-      item: itemIndex
+      item: itemIndex,
     })
   }
 
@@ -495,14 +525,15 @@ export function useSpringCarousel({
     getIsDragging,
     getIsNextItem,
     getIsPrevItem,
-    getIsActiveItem: (id) => findItemIndex(id) === getCurrentActiveItem(),
+    getIsActiveItem: id =>
+      findItemIndex(id) === getCurrentActiveItem(),
     slideToPrevItem,
     slideToNextItem,
     slideToItem: _slideToItem,
     getCurrentActiveItem: () => ({
       id: items[getCurrentActiveItem()].id,
-      index: getCurrentActiveItem()
-    })
+      index: getCurrentActiveItem(),
+    }),
   }
 
   const carouselFragment = (
@@ -514,22 +545,23 @@ export function useSpringCarousel({
           position: 'relative',
           width: '100%',
           height: '100%',
-          overflow: 'hidden'
+          overflow: 'hidden',
         }}
       >
         <animated.div
           {...bindDrag()}
           style={{
             display: 'flex',
-            flexDirection: carouselSlideAxis === 'x' ? 'row' : 'column',
+            flexDirection:
+              carouselSlideAxis === 'x' ? 'row' : 'column',
             top: 0,
             left: 0,
             width: '100%',
             height: '100%',
             position: 'relative',
-            ...carouselStyles
+            ...carouselStyles,
           }}
-          ref={(ref) => {
+          ref={ref => {
             if (ref) {
               carouselTrackWrapperRef.current = ref
 
@@ -546,7 +578,7 @@ export function useSpringCarousel({
                 style={{
                   display: 'flex',
                   flex: `1 0 calc(100% / ${itemsPerSlide})`,
-                  position: 'relative'
+                  position: 'relative',
                 }}
               >
                 {renderItem}
@@ -567,6 +599,6 @@ export function useSpringCarousel({
   return {
     carouselFragment,
     thumbsFragment,
-    ...contextProps
+    ...contextProps,
   }
 }
