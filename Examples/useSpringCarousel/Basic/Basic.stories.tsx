@@ -1,7 +1,7 @@
-import { Basic } from './Basic'
+import { Basic as BasicExample } from './Basic'
 
-export const Primary = () => <Basic />
+export const Basic = () => <BasicExample />
 
 export default {
-  title: 'use spring carousel/Basic',
+  title: 'useSpringCarousel',
 }

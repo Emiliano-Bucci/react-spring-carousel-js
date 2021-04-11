@@ -1,12 +1,19 @@
 import { css } from '@emotion/react'
 
-export const SliderItem: React.FC = ({ children }) => {
+export const SliderItem: React.FC = ({ children, ...rest }) => {
   return (
     <div
       css={css`
-        border-radius: 8px;
-        background: red;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        font-size: 24px;
+        color: #fff;
+        min-height: 400px;
       `}
+      {...rest}
     >
       {children}
     </div>

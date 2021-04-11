@@ -540,6 +540,7 @@ export function useSpringCarousel({
     <UseSpringCarouselContext.Provider value={contextProps}>
       <div
         ref={mainCarouselWrapperRef}
+        data-testid="use-spring-carousel-wrapper"
         style={{
           display: 'flex',
           position: 'relative',
@@ -550,6 +551,7 @@ export function useSpringCarousel({
       >
         <animated.div
           {...bindDrag()}
+          data-testid="use-spring-carousel-animated-wrapper"
           style={{
             display: 'flex',
             flexDirection:
@@ -575,6 +577,7 @@ export function useSpringCarousel({
             return (
               <div
                 key={`${id}-${index}`}
+                data-testid="use-spring-carousel-item-wrapper"
                 style={{
                   display: 'flex',
                   flex: `1 0 calc(100% / ${itemsPerSlide})`,

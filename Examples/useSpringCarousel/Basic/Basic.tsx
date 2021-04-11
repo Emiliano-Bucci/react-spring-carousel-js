@@ -1,13 +1,14 @@
 import { useSpringCarousel } from '../../../src/carouselTypes'
 import { mockedItems } from '../mocked-data'
 import { SliderItem } from '../../components/SliderItem/SliderItem'
+import { SliderWrapper } from '../../components/SliderWrapper/SliderWrapper'
 
 export function Basic() {
   const { carouselFragment } = useSpringCarousel({
-    items: mockedItems.map(i => ({
-      id: i.id,
-      renderItem: <SliderItem>{i.label}</SliderItem>,
+    items: mockedItems.map(({ id, label, ...rest }) => ({
+      id,
+      renderItem: <SliderItem {...rest}>{label}</SliderItem>,
     })),
   })
-  return <div>{carouselFragment}</div>
+  return <SliderWrapper>{carouselFragment}</SliderWrapper>
 }
