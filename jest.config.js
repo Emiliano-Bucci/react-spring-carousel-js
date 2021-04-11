@@ -10,7 +10,7 @@ module.exports = {
   testPathIgnorePatterns: ['<rootDir>/node_modules/'],
   moduleFileExtensions: ['js', 'ts', 'tsx'],
   modulePaths: ['<rootDir>'],
-  setupFilesAfterEnv: ['<rootDir>/setupnrtTest.ts'],
+  setupFilesAfterEnv: ['<rootDir>/setuprtTest.ts'],
   testURL: 'http://localhost',
   moduleNameMapper: {
     '\\.svg': '<rootDir>/testMocks.ts',
