@@ -14,7 +14,8 @@
     "test": "NODE_ENV=test jest --watch",
     "check:tag:branch": "node --experimental-modules scripts/release.js",
     "release:test": "jest",
-    "release:lib": "npm run lint && npm run release:test && npm run check:tag:branch"
+    "push:tags": "git push --follow-tags",
+    "release:lib": "npm run lint && npm run release:test && npm run check:tag:branch && npm run push:tags && npm publish"
   },
   "author": "Emiliano Bucci",
   "license": "MIT",
