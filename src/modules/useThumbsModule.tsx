@@ -1,8 +1,8 @@
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 import { useSpring, SpringConfig, animated } from 'react-spring'
-import { fixNegativeIndex, useMount } from '../index.utils'
 import { UseSpringCarouselProps, ReactSpringCarouselItem } from '../types'
 import { ReactSpringThumbItem, PrepareThumbsData } from '../types/carousel'
+import { useMount, fixNegativeIndex } from '../utils'
 
 type OffsetDimension = 'offsetWidth' | 'offsetHeight'
 type OffsetDirection = 'offsetLeft' | 'offsetTop'

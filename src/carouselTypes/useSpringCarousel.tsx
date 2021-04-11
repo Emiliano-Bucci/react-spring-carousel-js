@@ -1,7 +1,6 @@
-import React, { useRef, createContext, useCallback, useContext } from 'react'
+import { useRef, createContext, useCallback, useContext } from 'react'
 import { useSpring, config, animated, AnimationResult } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
-import { fixNegativeIndex, useMount } from '../index.utils'
 import { useCustomEventsModule } from '../modules/useCustomEventsModule'
 import { useFullscreenModule } from '../modules/useFullscreenModule'
 import { useThumbsModule } from '../modules/useThumbsModule'
@@ -11,6 +10,7 @@ import {
   SlideToItemFnProps,
   SlideActionType
 } from '../types'
+import { fixNegativeIndex, useMount } from '../utils'
 
 const UseSpringCarouselContext = createContext<
   UseSpringCarouselContextProps | undefined

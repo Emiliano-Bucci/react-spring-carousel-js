@@ -1,4 +1,4 @@
-import React, { createContext, useRef, useState, useContext } from 'react'
+import { createContext, useRef, useState, useContext } from 'react'
 import { useTransition, animated, config } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
 import { useCustomEventsModule } from '../modules/useCustomEventsModule'
@@ -179,7 +179,7 @@ export function useTransitionCarousel({
     }
   }
 
-  const transitions = useTransition(activeItem, {
+  const transitions = useTransition(items[activeItem], {
     config: springConfig,
     key: () => items[activeItem].id,
     ...getTransitionConfig(),
@@ -204,7 +204,7 @@ export function useTransitionCarousel({
         position: 'relative'
       }}
     >
-      {items[item].renderItem}
+      {item.renderItem}
     </animated.div>
   ))
 
