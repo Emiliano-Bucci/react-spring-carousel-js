@@ -41,11 +41,7 @@ export default {
   plugins: [
     rollupTS({
       tsconfigOverride: {
-        exclude: [
-          'node_modules',
-          'src/**/*.test.tsx',
-          'src/**/*.stories.tsx',
-        ],
+        exclude: ['Examples', 'node_modules'],
       },
     }),
     babel({
