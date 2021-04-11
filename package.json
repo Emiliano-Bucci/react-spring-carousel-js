@@ -1,6 +1,6 @@
 {
   "name": "test-lib-template",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
