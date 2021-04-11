@@ -1,9 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Test Snapshot 1`] = `
-<div>
-  <div>
-    Example component
-  </div>
-</div>
-`;
