@@ -15,7 +15,7 @@
     "check:tag:branch": "node --experimental-modules scripts/release.js",
     "release:test": "jest",
     "push:tags": "git push --follow-tags",
-    "release:lib": "npm run lint && npm run release:test && npm run check:tag:branch && npm run push:tags && npm publish"
+    "release:lib": "npm run lint && npm run release:test && npm run check:tag:branch && npm run build:lib && npm run push:tags && npm publish"
   },
   "author": "Emiliano Bucci",
   "license": "MIT",
