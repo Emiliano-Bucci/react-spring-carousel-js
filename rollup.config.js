@@ -8,6 +8,10 @@ const globals = {
   react: 'React',
   'react-dom': 'ReactDOM',
   'react/jsx-runtime': 'jsxRuntime',
+  'react-spring': 'reactSpring',
+  'react-use-gesture': 'reactUseGesture',
+  rxjs: 'rxjs',
+  screenfull: 'screenfull',
 }
 
 export default {
