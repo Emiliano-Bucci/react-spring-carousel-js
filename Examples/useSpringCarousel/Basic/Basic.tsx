@@ -1,4 +1,4 @@
-import { useSpringCarousel } from '../../../carouselTypes'
+import { useSpringCarousel } from '../../../src/carouselTypes'
 import { mockedItems } from '../mocked-data'
 
 export function Basic() {

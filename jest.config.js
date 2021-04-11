@@ -6,7 +6,7 @@ module.exports = {
     },
   },
   roots: ['<rootDir>'],
-  testMatch: ['<rootDir>/src/**/**.test.{ts,tsx}'],
+  testMatch: ['<rootDir>/**/**.test.{ts,tsx}'],
   testPathIgnorePatterns: ['<rootDir>/node_modules/'],
   moduleFileExtensions: ['js', 'ts', 'tsx'],
   modulePaths: ['<rootDir>'],
