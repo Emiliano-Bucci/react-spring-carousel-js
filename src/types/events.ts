@@ -2,7 +2,7 @@ import {
   EventTypes,
   FullGestureState,
   GestureKey,
-  StateKey
+  StateKey,
 } from 'react-use-gesture/dist/types'
 
 export type SlideActionType = 'prev' | 'next'
@@ -18,7 +18,10 @@ type OnSlideChange = {
   slideActionType: SlideActionType
 }
 
-type OnDrag = Omit<FullGestureState<StateKey<GestureKey>>, 'event'> & {
+type OnDrag = Omit<
+  FullGestureState<StateKey<GestureKey>>,
+  'event'
+> & {
   eventName: 'onDrag'
   event: EventTypes['drag']
 }
@@ -43,7 +46,7 @@ export type EmitObservableFn = (
     | OnDrag
     | OnFullscreenChange
     | OnLeftSwipe
-    | OnRightSwipe
+    | OnRightSwipe,
 ) => void
 
 export type EventsObservableProps =
@@ -54,4 +57,6 @@ export type EventsObservableProps =
   | OnLeftSwipe
   | OnRightSwipe
 
-export type ObservableCallbackFn = (data: EventsObservableProps) => void
+export type ObservableCallbackFn = (
+  data: EventsObservableProps,
+) => void

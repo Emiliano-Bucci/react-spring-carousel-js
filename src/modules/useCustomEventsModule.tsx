@@ -3,7 +3,7 @@ import { Subject } from 'rxjs'
 import {
   EventsObservableProps,
   ObservableCallbackFn,
-  EmitObservableFn
+  EmitObservableFn,
 } from '../types/events'
 
 const eventsObserver = new Subject<EventsObservableProps>()
@@ -15,13 +15,13 @@ function useListenToCustomEvent(fn: ObservableCallbackFn) {
   }, [fn])
 }
 
-const emitObservable: EmitObservableFn = (data) => {
+const emitObservable: EmitObservableFn = data => {
   eventsObserver.next(data)
 }
 
 export function useCustomEventsModule() {
   return {
     useListenToCustomEvent,
-    emitObservable
+    emitObservable,
   }
 }

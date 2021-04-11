@@ -1,4 +1,8 @@
-import { SpringConfig, TransitionFrom, TransitionTo } from 'react-spring'
+import {
+  SpringConfig,
+  TransitionFrom,
+  TransitionTo,
+} from 'react-spring'
 import { ObservableCallbackFn } from './events'
 
 export type ReactSpringThumbItem = {
@@ -31,7 +35,7 @@ export type UseSpringCarouselProps = {
 }
 
 export type PrepareThumbsData = (
-  items: ReactSpringThumbItem[]
+  items: ReactSpringThumbItem[],
 ) => ReactSpringThumbItem[]
 
 export type UseSpringCarouselContextProps = {

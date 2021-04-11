@@ -11,7 +11,7 @@ type FullscreenModule = {
 export function useFullscreenModule({
   mainCarouselWrapperRef,
   emitObservable,
-  handleResize
+  handleResize,
 }: FullscreenModule) {
   const isFullscreen = useRef(false)
 
@@ -21,7 +21,7 @@ export function useFullscreenModule({
         setIsFullscreen(true)
         emitObservable({
           eventName: 'onFullscreenChange',
-          isFullscreen: true
+          isFullscreen: true,
         })
 
         handleResize && handleResize()
@@ -31,7 +31,7 @@ export function useFullscreenModule({
         setIsFullscreen(false)
         emitObservable({
           eventName: 'onFullscreenChange',
-          isFullscreen: false
+          isFullscreen: false,
         })
         handleResize && handleResize()
       }
@@ -59,7 +59,7 @@ export function useFullscreenModule({
   function enterFullscreen(elementRef?: HTMLElement) {
     if (screenfull.isEnabled) {
       screenfull.request(
-        (elementRef || mainCarouselWrapperRef.current) as Element
+        (elementRef || mainCarouselWrapperRef.current) as Element,
       )
     }
   }
@@ -71,6 +71,6 @@ export function useFullscreenModule({
   return {
     enterFullscreen,
     exitFullscreen,
-    getIsFullscreen
+    getIsFullscreen,
   }
 }
