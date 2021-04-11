@@ -1,8 +1,12 @@
 import { useRef } from 'react'
 import { useSpring, SpringConfig, animated } from 'react-spring'
-import { UseSpringCarouselProps, ReactSpringCarouselItem } from '../types'
-import { ReactSpringThumbItem, PrepareThumbsData } from '../types/carousel'
-import { useMount, fixNegativeIndex } from '../utils'
+import {
+  UseSpringCarouselProps,
+  ReactSpringCarouselItem,
+  ReactSpringThumbItem,
+  PrepareThumbsData,
+} from '../types'
+import { fixNegativeIndex, useMount } from '../utils'
 
 type OffsetDimension = 'offsetWidth' | 'offsetHeight'
 type OffsetDirection = 'offsetLeft' | 'offsetTop'
@@ -23,21 +27,21 @@ export function useThumbsModule({
   thumbsSlideAxis = 'x',
   springConfig,
   thumbsWrapperRef,
-  prepareThumbsData
+  prepareThumbsData,
 }: Props) {
   const internalThumbsWrapperRef = useRef<HTMLDivElement | null>(null)
   const [thumbListStyles, setThumbListStyles] = useSpring(() => ({
     [thumbsSlideAxis]: 0,
-    config: springConfig
+    config: springConfig,
   }))
 
   useMount(() => {
     if (withThumbs) {
-      const missingThumbs = items.some((item) => !item.renderThumb)
+      const missingThumbs = items.some(item => !item.renderThumb)
 
       if (missingThumbs) {
         throw new Error(
-          'The renderThumb property is missing in one or more items. You need to add the renderThumb property to every item of the carousel when the prop withThumbs={true} or eventually set withThumbs={false}.'
+          'The renderThumb property is missing in one or more items. You need to add the renderThumb property to every item of the carousel when the prop withThumbs={true} or eventually set withThumbs={false}.',
         )
       }
     }
@@ -56,23 +60,27 @@ export function useThumbsModule({
     }
     function getThumbNode() {
       return internalThumbsWrapperRef.current!.querySelector(
-        `#thumb-${items[fixNegativeIndex(activeItem, items.length)].id}`
+        `#thumb-${
+          items[fixNegativeIndex(activeItem, items.length)].id
+        }`,
       ) as HTMLElement
     }
     function getThumbOffsetPosition({
       thumbNode,
       offsetDirection,
-      offsetDimension
+      offsetDimension,
     }: {
       thumbNode: HTMLElement
       offsetDirection: OffsetDirection
       offsetDimension: OffsetDimension
     }) {
-      return thumbNode[offsetDirection] + thumbNode[offsetDimension] / 2
+      return (
+        thumbNode[offsetDirection] + thumbNode[offsetDimension] / 2
+      )
     }
     function getThumbScrollDimension({
       thumbWrapper,
-      offsetDimension
+      offsetDimension,
     }: {
       thumbWrapper: HTMLDivElement
       offsetDimension: OffsetDimension
@@ -81,7 +89,7 @@ export function useThumbsModule({
     }
     function getScrollFromValue({
       thumbWrapper,
-      scrollDirection
+      scrollDirection,
     }: {
       thumbWrapper: HTMLDivElement
       scrollDirection: ScrollDirection
@@ -92,7 +100,7 @@ export function useThumbsModule({
       thumbWrapper,
       thumbOffsetPosition,
       thumbScrollDimension,
-      offsetDimension
+      offsetDimension,
     }: {
       thumbWrapper: HTMLDivElement
       thumbOffsetPosition: number
@@ -105,10 +113,12 @@ export function useThumbsModule({
       if (
         activeItem === items.length - 1 ||
         thumbOffsetPosition - thumbScrollDimension >
-          thumbWrapper[scrollDimensionProperty] - thumbWrapper[offsetDimension]
+          thumbWrapper[scrollDimensionProperty] -
+            thumbWrapper[offsetDimension]
       ) {
         return (
-          thumbWrapper[scrollDimensionProperty] - thumbWrapper[offsetDimension]
+          thumbWrapper[scrollDimensionProperty] -
+          thumbWrapper[offsetDimension]
         )
       }
 
@@ -133,29 +143,29 @@ export function useThumbsModule({
       const thumbOffsetPosition = getThumbOffsetPosition({
         thumbNode,
         offsetDimension,
-        offsetDirection
+        offsetDirection,
       })
       const thumbScrollDimension = getThumbScrollDimension({
         thumbWrapper,
-        offsetDimension
+        offsetDimension,
       })
 
       setThumbListStyles.current[0].start({
         from: {
           [thumbsSlideAxis]: getScrollFromValue({
             thumbWrapper,
-            scrollDirection
-          })
+            scrollDirection,
+          }),
         },
         to: {
           [thumbsSlideAxis]: getScrollToValue({
             thumbWrapper,
             thumbOffsetPosition,
             thumbScrollDimension,
-            offsetDimension
-          })
+            offsetDimension,
+          }),
         },
-        onChange: (val) => {
+        onChange: val => {
           if (thumbsSlideAxis === 'x') {
             // @ts-ignore
             internalThumbsWrapperRef!.current!.scrollLeft = val.x
@@ -163,18 +173,18 @@ export function useThumbsModule({
             // @ts-ignore
             internalThumbsWrapperRef!.current!.scrollTop = val.y
           }
-        }
+        },
       })
     }
   }
 
   function handlePrepareThumbsDate() {
     function getPreparedItems(
-      _items: ReactSpringCarouselItem[]
+      _items: ReactSpringCarouselItem[],
     ): ReactSpringThumbItem[] {
-      return _items.map((i) => ({
+      return _items.map(i => ({
         id: i.id,
-        renderThumb: i.renderThumb
+        renderThumb: i.renderThumb,
       }))
     }
 
@@ -189,13 +199,13 @@ export function useThumbsModule({
     if (thumbsSlideAxis === 'x') {
       return {
         // @ts-ignore
-        scrollLeft: thumbListStyles.x
+        scrollLeft: thumbListStyles.x,
       }
     }
 
     return {
       // @ts-ignore
-      scrollTop: thumbListStyles.y
+      scrollTop: thumbListStyles.y,
     }
   }
 
@@ -212,8 +222,8 @@ export function useThumbsModule({
           ? { overflowX: 'auto' }
           : {
               overflowY: 'auto',
-              maxHeight: '100%'
-            })
+              maxHeight: '100%',
+            }),
       }}
     >
       {handlePrepareThumbsDate().map(({ id, renderThumb }) => {
@@ -230,6 +240,6 @@ export function useThumbsModule({
 
   return {
     thumbsFragment,
-    handleThumbsScroll
+    handleThumbsScroll,
   }
 }

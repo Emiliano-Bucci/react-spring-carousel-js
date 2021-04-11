@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Basic Snapshot 1`] = `
+<div>
+  <div>
+    <div
+      style="display: flex; position: relative; width: 100%; height: 100%; overflow: hidden;"
+    >
+      <div
+        style="display: flex; flex-direction: row; top: 0px; left: 0px; width: 100%; height: 100%; position: relative; transform: none;"
+      >
+        <div
+          style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
+        >
+          <div>
+            Item 1
+          </div>
+        </div>
+        <div
+          style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
+        >
+          <div>
+            Item 2
+          </div>
+        </div>
+        <div
+          style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
+        >
+          <div>
+            Item 3
+          </div>
+        </div>
+        <div
+          style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
+        >
+          <div>
+            Item 4
+          </div>
+        </div>
+        <div
+          style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
+        >
+          <div>
+            Item 5
+          </div>
+        </div>
+        <div
+          style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
+        >
+          <div>
+            Item 6
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
