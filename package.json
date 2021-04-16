@@ -1,6 +1,6 @@
 {
   "name": "react-spring-carousel-js",
-  "version": "1.4.12",
+  "version": "1.4.13",
   "description": "",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
