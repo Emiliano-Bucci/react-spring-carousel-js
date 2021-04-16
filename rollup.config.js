@@ -3,6 +3,7 @@ import resolve from '@rollup/plugin-node-resolve'
 import external from 'rollup-plugin-peer-deps-external'
 import rollupTS from 'rollup-plugin-typescript2'
 import { terser } from 'rollup-plugin-terser'
+import commonjs from '@rollup/plugin-commonjs'
 
 const globals = {
   react: 'React',
@@ -50,6 +51,7 @@ export default {
     }),
     external(),
     resolve(),
+    commonjs(),
     terser(),
   ],
 }
