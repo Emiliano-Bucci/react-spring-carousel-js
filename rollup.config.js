@@ -19,21 +19,9 @@ export default {
   input: 'src/index.tsx',
   output: [
     {
-      format: 'cjs',
-      dir: 'dist/cjs',
-      sourcemap: true,
-      exports: 'named',
-    },
-    {
-      format: 'esm',
-      exports: 'named',
-      dir: 'dist/es',
-      sourcemap: true,
-    },
-    {
       format: 'umd',
       exports: 'named',
-      dir: 'dist/umd',
+      dir: 'dist/',
       sourcemap: true,
       name: 'ReactSpringCarousel',
       globals,
