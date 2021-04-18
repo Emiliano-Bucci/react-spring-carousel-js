@@ -3,7 +3,7 @@
   "version": "1.6.0",
   "description": "",
   "main": "dist/index.js",
-  "types": "dist/types/index.d.ts",
+  "types": "dist/types",
   "scripts": {
     "start": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
