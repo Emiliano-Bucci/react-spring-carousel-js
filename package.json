@@ -24,7 +24,6 @@
     "dist"
   ],
   "dependencies": {
-    "react-query": "^3.13.10",
     "react-spring": "^9.1.0",
     "react-use-gesture": "^9.1.3",
     "rxjs": "^6.6.7",
