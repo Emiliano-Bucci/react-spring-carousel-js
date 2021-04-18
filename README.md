@@ -33,7 +33,7 @@ yarn add --save react-spring-carousel-js
 
 ## Usage
 
-At it's most basic, to start you can do:
+At it's most basic, to start using the carousel you can do:
 
 ```tsx
 import { useSpringCarousel } from 'react-spring-carousel-js'
@@ -43,24 +43,20 @@ const { carouselFragment } = useSpringCarousel({
     {
       id: 'item-1',
       renderItem: <ItemComponent />,
-      renderThumb: <ThumbComponent />
+      renderThumb: <ThumbComponent />,
     },
     {
       id: 'item-2',
       renderItem: <ItemComponent />,
-      renderThumb: <ThumbComponent />
-    }
-  ]
+      renderThumb: <ThumbComponent />,
+    },
+  ],
 })
 
-return (
-  <div>
-    {carouselFragment}
-  </div>
-)
+return <div>{carouselFragment}</div>
 ```
 
-As you can see, you don't have to call the component in the traditional way but instead the main **hook** return the **carousel fragment** (which is the carousel) and the **thumbs fragment** (which render the list of tumbs). It's up to you to decide **how** and **where** render boths, and they're not tied in any way, so basically you can customize the UI pretty much in any way you want to!
+As you can see, you don't have to call the component in the traditional way but instead the main **hook** return the **carousel fragment** (which is the carousel) and eventually the **thumbs fragment** (which will render the list of tumbs). It's up to you to decide **how** and **where** render boths, and they're not tied in any way, so basically you can customize the UI pretty much in any way you want to!
 
 ## Props
 
@@ -82,7 +78,7 @@ You can provide this **options** to better customize the behavior and the aspect
 | initialActiveItem          | `number`                                        | `0`              | Set the initial active slide.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | itemsPerSlide              | `number`                                        | `1`              | Define the quantity of items to show per `slide`. It can't be greater than the maximum quantity of items provided.                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | initialStartingPosition    | `start` / `center` / `end`                      | `start`          | `Note: only works if withLoop={true}` Defines the starting position of the current active slide. Normally if you have 3 active items per `slide`, you'll see 1,2,3. If you set `initialStartingPosition='center'`, for example, you'll get the following order: 3,1,2.                                                                                                                                                                                                                                                                                                                 |
-| disableGestures | `boolean` | `false` | Disable the drag gesture programmatically.
+| disableGestures            | `boolean`                                       | `false`          | Disable the drag gesture programmatically.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 ## Options (API)
 
