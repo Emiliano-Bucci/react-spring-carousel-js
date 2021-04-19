@@ -60,3 +60,7 @@ export type EventsObservableProps =
 export type ObservableCallbackFn = (
   data: EventsObservableProps,
 ) => void
+
+export type UseListenToCustomEvent = (
+  fn: ObservableCallbackFn,
+) => void

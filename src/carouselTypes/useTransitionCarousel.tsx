@@ -64,7 +64,11 @@ export function useTransitionCarousel({
     emitObservable,
     useListenToCustomEvent,
   } = useCustomEventsModule()
-  const { enterFullscreen, exitFullscreen } = useFullscreenModule({
+  const {
+    enterFullscreen,
+    exitFullscreen,
+    getIsFullscreen,
+  } = useFullscreenModule({
     emitObservable,
     mainCarouselWrapperRef,
   })
@@ -339,6 +343,14 @@ export function useTransitionCarousel({
     getIsNextItem,
     getIsPrevItem,
     getIsAnimating,
+    getIsFullscreen,
+    getIsActiveItem: id => {
+      return findItemIndex(id) === activeItem
+    },
+    getCurrentActiveItem: () => ({
+      id: items[activeItem].id,
+      index: activeItem,
+    }),
   }
 
   const carouselFragment = (

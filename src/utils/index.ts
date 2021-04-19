@@ -29,3 +29,7 @@ export function fixNegativeIndex(index: number, totalItems: number) {
 
   return index
 }
+
+export function getIsBrowser() {
+  return typeof window !== 'undefined'
+}

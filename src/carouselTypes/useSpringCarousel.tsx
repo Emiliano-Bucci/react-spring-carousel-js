@@ -16,6 +16,7 @@ import {
   SlideActionType,
 } from '../types'
 import { fixNegativeIndex, useMount } from '../utils'
+import { getIsBrowser } from '../utils/index'
 
 const UseSpringCarouselContext = createContext<
   UseSpringCarouselContextProps | undefined
@@ -75,6 +76,7 @@ export function useSpringCarousel({
   const carouselTrackWrapperRef = useRef<HTMLDivElement | null>(null)
   const isDragging = useRef(false)
   const isAnimating = useRef(false)
+  const windowIsHidden = useRef(false)
 
   // Custom modules
   const {
@@ -145,7 +147,6 @@ export function useSpringCarousel({
             slideToNextItem()
           }
           props.cancel()
-          setIsDragging(false)
         } else if (prevItemTreshold) {
           if (!withLoop && getCurrentActiveItem() === 0) {
             setCarouselStyles.current[0].start({
@@ -155,7 +156,6 @@ export function useSpringCarousel({
             slideToPrevItem()
           }
           props.cancel()
-          setIsDragging(false)
         }
       }
 
@@ -192,6 +192,30 @@ export function useSpringCarousel({
       console.warn(
         'The initialActiveItem cannot be greater than the total length of the items you provide.',
       )
+    }
+  })
+
+  useMount(() => {
+    function handleVisibilityChange() {
+      if (document.hidden) {
+        windowIsHidden.current = true
+      } else {
+        windowIsHidden.current = false
+      }
+    }
+
+    if (getIsBrowser()) {
+      document.addEventListener(
+        'visibilitychange',
+        handleVisibilityChange,
+      )
+
+      return () => {
+        document.removeEventListener(
+          'visibilitychange',
+          handleVisibilityChange,
+        )
+      }
     }
   })
 
@@ -258,7 +282,6 @@ export function useSpringCarousel({
         }px`
         break
       }
-
       case 'center': {
         ref.style[positionProperty] = `-${
           getSlideValue() * Math.floor(itemsPerSlide / 1.5) +
@@ -266,7 +289,6 @@ export function useSpringCarousel({
         }px`
         break
       }
-
       case 'end': {
         ref.style[positionProperty] = `-${
           getSlideValue() * Math.floor(itemsPerSlide / 3) +
@@ -390,6 +412,10 @@ export function useSpringCarousel({
     }
   }
   function getWrapperFromValue(element: HTMLDivElement) {
+    if (element.style.transform === 'none') {
+      return 0
+    }
+
     const values = element.style.transform.split(/\w+\(|\);?/)
     return Number(
       values[1]
@@ -400,7 +426,8 @@ export function useSpringCarousel({
   function slideToPrevItem() {
     if (
       (!withLoop && getCurrentActiveItem() === 0) ||
-      (getIsDragging() && getIsAnimating())
+      (getIsDragging() && getIsAnimating()) ||
+      windowIsHidden.current
     ) {
       return
     }
@@ -447,7 +474,8 @@ export function useSpringCarousel({
     if (
       (!withLoop &&
         getCurrentActiveItem() === internalItems.length - 1) ||
-      (getIsDragging() && getIsAnimating())
+      (getIsDragging() && getIsAnimating()) ||
+      windowIsHidden.current
     ) {
       return
     }
@@ -480,7 +508,7 @@ export function useSpringCarousel({
       })
     }
   }
-  function _slideToItem(item: number) {
+  function _slideToItem(item: string | number) {
     let itemIndex = 0
 
     if (typeof item === 'string') {
@@ -525,11 +553,12 @@ export function useSpringCarousel({
     getIsDragging,
     getIsNextItem,
     getIsPrevItem,
-    getIsActiveItem: id =>
-      findItemIndex(id) === getCurrentActiveItem(),
     slideToPrevItem,
     slideToNextItem,
     slideToItem: _slideToItem,
+    getIsActiveItem: id => {
+      return findItemIndex(id) === getCurrentActiveItem()
+    },
     getCurrentActiveItem: () => ({
       id: items[getCurrentActiveItem()].id,
       index: getCurrentActiveItem(),

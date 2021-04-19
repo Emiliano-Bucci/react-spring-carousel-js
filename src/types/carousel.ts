@@ -3,7 +3,7 @@ import {
   TransitionFrom,
   TransitionTo,
 } from 'react-spring'
-import { ObservableCallbackFn } from './events'
+import { UseListenToCustomEvent } from './events'
 
 export type ReactSpringThumbItem = {
   id: string
@@ -16,46 +16,30 @@ export type ReactSpringCarouselItem = {
   renderThumb?: React.ReactNode
 }
 
-export type UseSpringCarouselProps = {
+type BaseCarouselSharedProps = {
   withLoop?: boolean
-  items: ReactSpringCarouselItem[]
-  draggingSlideTreshold?: number
-  springConfig?: SpringConfig
-  shouldResizeOnWindowResize?: boolean
   withThumbs?: boolean
+  disableGestures?: boolean
   enableThumbsWrapperScroll?: boolean
-  carouselSlideAxis?: 'x' | 'y'
+  draggingSlideTreshold?: number
+  prepareThumbsData?: PrepareThumbsData
+  springConfig?: SpringConfig
+  items: ReactSpringCarouselItem[]
   thumbsSlideAxis?: 'x' | 'y'
+}
+
+export type UseSpringCarouselProps = BaseCarouselSharedProps & {
+  shouldResizeOnWindowResize?: boolean
+  carouselSlideAxis?: 'x' | 'y'
   thumbsWrapperRef?: React.MutableRefObject<HTMLDivElement | null>
   itemsPerSlide?: number
   initialActiveItem?: number
   initialStartingPosition?: 'start' | 'center' | 'end'
-  prepareThumbsData?: PrepareThumbsData
-  disableGestures?: boolean
 }
 
 export type PrepareThumbsData = (
   items: ReactSpringThumbItem[],
 ) => ReactSpringThumbItem[]
-
-export type UseSpringCarouselContextProps = {
-  getIsFullscreen(): boolean
-  getIsPrevItem(id: string): boolean
-  getIsNextItem(id: string): boolean
-  slideToItem(item: string | number): void
-  getIsAnimating(): boolean
-  getIsDragging(): boolean
-  getIsActiveItem(id: string): boolean
-  enterFullscreen(elementRef?: HTMLElement): void
-  exitFullscreen(): void
-  slideToPrevItem(): void
-  slideToNextItem(): void
-  getCurrentActiveItem(): {
-    id: string
-    index: number
-  }
-  useListenToCustomEvent(fn: ObservableCallbackFn): void
-}
 
 export type SlideToItemFnProps = {
   from?: number
@@ -72,31 +56,34 @@ export type SpringAnimationProps = {
   leave: TransitionTo<ReactSpringCarouselItem>
 }
 
-export type UseTransitionCarouselProps = {
-  items: ReactSpringCarouselItem[]
-  withThumbs?: boolean
-  springConfig?: SpringConfig
+export type UseTransitionCarouselProps = BaseCarouselSharedProps & {
   toPrevItemSpringProps?: SpringAnimationProps
   toNextItemSpringProps?: SpringAnimationProps
   springAnimationProps?: SpringAnimationProps
-  withLoop?: boolean
-  thumbsSlideAxis?: 'x' | 'y'
-  thumbsMaxHeight?: number
-  enableThumbsWrapperScroll?: boolean
-  draggingSlideTreshold?: number
-  prepareThumbsData?: PrepareThumbsData
-  disableGestures?: boolean
 }
 
-export type UseTransitionCarouselContextProps = {
-  activeItem: number
-  slideToNextItem(): void
-  slideToPrevItem(): void
-  enterFullscreen(elementRef?: HTMLElement): void
-  exitFullscreen(): void
-  slideToItem(item: string | number): void
-  getIsAnimating(): boolean
+type BaseContextSharedProps = {
+  getIsFullscreen(): boolean
   getIsPrevItem(id: string): boolean
   getIsNextItem(id: string): boolean
-  useListenToCustomEvent(fn: ObservableCallbackFn): void
+  enterFullscreen(elementRef?: HTMLElement): void
+  exitFullscreen(): void
+  slideToNextItem(): void
+  slideToPrevItem(): void
+  getIsAnimating(): boolean
+  slideToItem(item: string | number): void
+  getIsActiveItem(id: string): boolean
+  getCurrentActiveItem(): {
+    id: string
+    index: number
+  }
+  useListenToCustomEvent: UseListenToCustomEvent
+}
+
+export type UseSpringCarouselContextProps = BaseContextSharedProps & {
+  getIsDragging(): boolean
+}
+
+export type UseTransitionCarouselContextProps = BaseContextSharedProps & {
+  activeItem: number
 }
