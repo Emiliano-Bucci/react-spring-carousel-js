@@ -14,8 +14,7 @@
     "release:test": "jest",
     "push:tags": "git push --follow-tags",
     "release:lib": "npm run lint && npm run release:test && npm run check:tag:branch && npm run build:lib && npm run push:tags && npm publish",
-    "storybook": "start-storybook -p 6006",
-    "check:tree": "agadoo dist/index.es.js"
+    "storybook": "start-storybook -p 6006"
   },
   "author": "Emiliano Bucci",
   "license": "MIT",
@@ -49,7 +48,6 @@
     "@types/react-dom": "^17.0.3",
     "@typescript-eslint/eslint-plugin": "^4.21.0",
     "@typescript-eslint/parser": "^4.21.0",
-    "agadoo": "^2.0.0",
     "babel-loader": "^8.2.2",
     "babel-preset-react-app": "^10.0.0",
     "chalk": "^2.4.2",
