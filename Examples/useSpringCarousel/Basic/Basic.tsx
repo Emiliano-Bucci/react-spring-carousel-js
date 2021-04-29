@@ -1,4 +1,4 @@
-import { useSpringCarousel } from '../../../src/carouselTypes'
+import { useSpringCarousel } from '../../../src'
 import { mockedItems } from '../mocked-data'
 import { SliderItem } from '../../components/SliderItem/SliderItem'
 import { SliderWrapper } from '../../components/SliderWrapper/SliderWrapper'

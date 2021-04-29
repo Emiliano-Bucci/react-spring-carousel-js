@@ -1,14 +1,16 @@
 import { createContext, useRef, useState, useContext } from 'react'
 import { useTransition, animated, config } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
-import { useCustomEventsModule } from '../modules/useCustomEventsModule'
-import { useFullscreenModule } from '../modules/useFullscreenModule'
-import { useThumbsModule } from '../modules/useThumbsModule'
+import {
+  useCustomEventsModule,
+  useThumbsModule,
+  useFullscreenModule,
+} from './modules'
 import {
   UseTransitionCarouselContextProps,
   UseTransitionCarouselProps,
   SlideActionType,
-} from '../types'
+} from './types'
 
 const UseTransitionCarouselContext = createContext<
   UseTransitionCarouselContextProps | undefined
@@ -25,7 +27,7 @@ export function useTransitionCarouselContext() {
   return context
 }
 
-export function useTransitionCarousel({
+export default function useTransitionCarousel({
   items,
   withLoop = false,
   withThumbs = false,

@@ -1,6 +1,6 @@
 import { useRef, MutableRefObject, useEffect } from 'react'
 import screenfull from 'screenfull'
-import { EmitObservableFn } from '../types/events'
+import { EmitObservableFn } from '../types'
 
 type FullscreenModule = {
   mainCarouselWrapperRef: MutableRefObject<HTMLDivElement | null>

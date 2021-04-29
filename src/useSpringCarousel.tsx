@@ -6,17 +6,19 @@ import {
   AnimationResult,
 } from 'react-spring'
 import { useDrag } from 'react-use-gesture'
-import { useCustomEventsModule } from '../modules/useCustomEventsModule'
-import { useFullscreenModule } from '../modules/useFullscreenModule'
-import { useThumbsModule } from '../modules/useThumbsModule'
+import {
+  useCustomEventsModule,
+  useFullscreenModule,
+  useThumbsModule,
+} from './modules'
 import {
   UseSpringCarouselProps,
   UseSpringCarouselContextProps,
   SlideToItemFnProps,
   SlideActionType,
-} from '../types'
-import { fixNegativeIndex, useMount } from '../utils'
-import { getIsBrowser } from '../utils/index'
+} from './types'
+import { fixNegativeIndex, useMount } from './utils'
+import { getIsBrowser } from './utils'
 
 const UseSpringCarouselContext = createContext<
   UseSpringCarouselContextProps | undefined
@@ -33,7 +35,7 @@ export function useSpringCarouselContext() {
   return context
 }
 
-export function useSpringCarousel({
+export default function useSpringCarousel({
   items,
   withLoop = false,
   draggingSlideTreshold = 100,

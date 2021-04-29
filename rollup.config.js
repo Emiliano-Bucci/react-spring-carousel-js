@@ -21,9 +21,16 @@ export default {
   input: 'src/index.tsx',
   output: [
     {
+      file: pkg.main,
       format: 'umd',
       exports: 'named',
-      dir: 'dist/',
+      sourcemap: true,
+      name: 'ReactSpringCarousel',
+      globals,
+    },
+    {
+      file: pkg.module,
+      format: 'es',
       sourcemap: true,
       name: 'ReactSpringCarousel',
       globals,

@@ -4,7 +4,7 @@ import {
   EventsObservableProps,
   ObservableCallbackFn,
   EmitObservableFn,
-} from '../types/events'
+} from '../types'
 
 const eventsObserver = new Subject<EventsObservableProps>()
 
