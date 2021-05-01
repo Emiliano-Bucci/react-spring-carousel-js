@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Subject } from 'rxjs'
 import {
   EventsObservableProps,
@@ -6,20 +6,22 @@ import {
   EmitObservableFn,
 } from '../types'
 
-const eventsObserver = new Subject<EventsObservableProps>()
-
-function useListenToCustomEvent(fn: ObservableCallbackFn) {
-  useEffect(() => {
-    const subscribe = eventsObserver.subscribe(fn)
-    return () => subscribe.unsubscribe()
-  }, [fn])
-}
-
-const emitObservable: EmitObservableFn = data => {
-  eventsObserver.next(data)
-}
-
 export function useCustomEventsModule() {
+  const eventsObserverRef = useRef(
+    new Subject<EventsObservableProps>(),
+  )
+
+  function useListenToCustomEvent(fn: ObservableCallbackFn) {
+    useEffect(() => {
+      const subscribe = eventsObserverRef.current.subscribe(fn)
+      return () => subscribe.unsubscribe()
+    }, [fn])
+  }
+
+  const emitObservable: EmitObservableFn = data => {
+    eventsObserverRef.current.next(data)
+  }
+
   return {
     useListenToCustomEvent,
     emitObservable,
