@@ -1,7 +1,21 @@
 {
   "name": "react-spring-carousel-js",
   "version": "1.9.1",
-  "description": "",
+  "description": "A new Carousel experience for the web",
+  "homepage": "https://react-spring-carousel-js.emilianobucci.com",
+  "repository": "react-spring-carousel-js",
+  "author": "Emiliano Bucci",
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "react-spring",
+    "carousel",
+    "react-spring-carousel",
+    "slider",
+    "react-slider",
+    "react-spring-slider",
+    "animated"
+  ],
   "scripts": {
     "start": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
@@ -16,8 +30,6 @@
     "release:lib": "npm run lint && npm run release:test && npm run check:tag:branch && npm run build:lib && npm run push:tags && npm publish",
     "storybook": "start-storybook -p 6006"
   },
-  "author": "Emiliano Bucci",
-  "license": "MIT",
   "main": "dist/index.umd.js",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
