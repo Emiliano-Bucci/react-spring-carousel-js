@@ -42,13 +42,11 @@ const { carouselFragment } = useSpringCarousel({
   items: [
     {
       id: 'item-1',
-      renderItem: <ItemComponent />,
-      renderThumb: <ThumbComponent />,
+      renderItem: <div>Item 1</div>,
     },
     {
       id: 'item-2',
-      renderItem: <ItemComponent />,
-      renderThumb: <ThumbComponent />,
+      renderItem: <div>Item 2</div>,
     },
   ],
 })
