@@ -10,6 +10,7 @@
     "react",
     "react-spring",
     "carousel",
+    "react-carousel",
     "react-spring-carousel",
     "slider",
     "react-slider",
