@@ -3,7 +3,7 @@
   "version": "1.9.3",
   "description": "A new Carousel experience for the web",
   "homepage": "https://react-spring-carousel-js.emilianobucci.com",
-  "repository": "react-spring-carousel-js",
+  "repository": "https://github.com/Emiliano-Bucci/react-spring-carousel-js",
   "author": "Emiliano Bucci",
   "license": "MIT",
   "keywords": [
