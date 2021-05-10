@@ -148,7 +148,7 @@ export function useThumbsModule({
         offsetDimension,
       })
 
-      setThumbListStyles.current[0].start({
+      setThumbListStyles.start({
         from: {
           [thumbsSlideAxis]: getScrollFromValue({
             thumbWrapper,
