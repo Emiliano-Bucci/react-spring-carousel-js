@@ -5,6 +5,7 @@ module.exports = {
       babelConfig: true,
     },
   },
+  snapshotSerializers: ['@emotion/jest/serializer'],
   roots: ['<rootDir>'],
   testMatch: ['<rootDir>/**/**.test.{ts,tsx}'],
   testPathIgnorePatterns: ['<rootDir>/node_modules/'],
