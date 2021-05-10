@@ -100,19 +100,21 @@ export default function useSpringCarousel({
   }))
   const bindDrag = useDrag(
     props => {
-      const dragging = props.dragging
+      const isDragging = props.dragging
       const movement =
         props.movement[carouselSlideAxis === 'x' ? 0 : 1]
-
-      if (getIsAnimating()) {
-        return
-      }
 
       const currentSlidedValue = -(
         getSlideValue() * getCurrentActiveItem()
       )
 
-      if (dragging) {
+      function resetAnimation() {
+        setCarouselStyles.start({
+          [carouselSlideAxis]: currentSlidedValue,
+        })
+      }
+
+      if (isDragging) {
         setCarouselStyles.start({
           [carouselSlideAxis]: currentSlidedValue + movement,
         })
@@ -126,22 +128,15 @@ export default function useSpringCarousel({
         const nextItemTreshold = movement < -draggingSlideTreshold
 
         if (nextItemTreshold) {
-          if (
-            !withLoop &&
-            getCurrentActiveItem() === internalItems.length - 1
-          ) {
-            setCarouselStyles.start({
-              [carouselSlideAxis]: currentSlidedValue,
-            })
+          if (!withLoop && getIsLastItem()) {
+            resetAnimation()
           } else {
             slideToNextItem()
           }
           props.cancel()
         } else if (prevItemTreshold) {
-          if (!withLoop && getCurrentActiveItem() === 0) {
-            setCarouselStyles.start({
-              [carouselSlideAxis]: currentSlidedValue,
-            })
+          if (!withLoop && getIsFirstItem()) {
+            resetAnimation()
           } else {
             slideToPrevItem()
           }
@@ -150,9 +145,7 @@ export default function useSpringCarousel({
       }
 
       if (props.last && !getIsAnimating()) {
-        setCarouselStyles.start({
-          [carouselSlideAxis]: currentSlidedValue,
-        })
+        resetAnimation()
       }
     },
     {
@@ -391,19 +384,22 @@ export default function useSpringCarousel({
       })
     }
 
+    function getFromValue() {
+      if (from) {
+        return {
+          from: {
+            [carouselSlideAxis]: from,
+          },
+        }
+      }
+
+      return {}
+    }
+
     setCarouselStyles.start({
-      ...(from
-        ? {
-            from: {
-              [carouselSlideAxis]: from,
-            },
-          }
-        : {}),
+      ...getFromValue(),
       to: {
         [carouselSlideAxis]: -(getSlideValue() * to),
-      },
-      config: {
-        ...springConfig,
       },
       immediate,
       onRest: (val: AnimationResult) => {
@@ -525,7 +521,7 @@ export default function useSpringCarousel({
     }
 
     slideToItem({
-      item: itemIndex,
+      to: itemIndex,
     })
   }
 
