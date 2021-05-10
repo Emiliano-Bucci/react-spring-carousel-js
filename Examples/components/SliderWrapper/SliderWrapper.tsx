@@ -38,6 +38,7 @@ export const SliderWrapper: React.FC = ({ children }) => {
           #root {
             display: flex;
             flex: 1;
+            width: 100vw;
           }
 
           .sb-main-padded.sb-main-padded {

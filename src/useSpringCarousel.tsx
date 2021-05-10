@@ -52,21 +52,9 @@ export default function useSpringCarousel({
   initialStartingPosition = 'start',
   disableGestures = false,
 }: UseSpringCarouselProps) {
-  function getRepeatedPrevItems() {
-    const total = items.length
-    return items.slice(total - itemsPerSlide - 1, total)
-  }
-  function getRepeatedNextItems() {
-    return items.slice(0, itemsPerSlide + 1)
-  }
-
   function getItems() {
     if (withLoop) {
-      return [
-        ...getRepeatedPrevItems(),
-        ...items,
-        ...getRepeatedNextItems(),
-      ]
+      return [...items, ...items, ...items]
     }
 
     return items
@@ -174,15 +162,23 @@ export default function useSpringCarousel({
 
   // Perform some check on first mount
   useMount(() => {
+    if (!Number.isInteger(itemsPerSlide)) {
+      throw new Error(`itemsPerSlide should be an integer.`)
+    }
+
     if (itemsPerSlide > items.length) {
       throw new Error(
         `The itemsPerSlide prop can't be greater than the total length of the items you provide.`,
       )
     }
 
+    if (itemsPerSlide < 1) {
+      throw new Error(`The itemsPerSlide prop can't be less than 1.`)
+    }
+
     if (!shouldResizeOnWindowResize) {
       console.warn(
-        'You set shouldResizeOnWindowResize={false}; be aware that the carousel could behave in a strange way if you also use the fullscreen functionality.',
+        'You set shouldResizeOnWindowResize={false}; be aware that the carousel could behave in a strange way if you also use the fullscreen functionality or if you change the mobile orientation.',
       )
     }
 
@@ -276,28 +272,46 @@ export default function useSpringCarousel({
     const positionProperty =
       carouselSlideAxis === 'x' ? 'left' : 'top'
 
-    switch (initialStartingPosition) {
-      default:
-      case 'start': {
-        ref.style[positionProperty] = `-${
-          getSlideValue() * itemsPerSlide + getSlideValue()
-        }px`
-        break
+    function getDefaultPositionValue() {
+      return getSlideValue() * items.length
+    }
+    function setPosition(v: number) {
+      ref.style[positionProperty] = `-${v}px`
+    }
+    function setStartPosition() {
+      setPosition(getDefaultPositionValue())
+    }
+    function setCenterPosition() {
+      setPosition(
+        getDefaultPositionValue() -
+          getSlideValue() * Math.round((itemsPerSlide - 1) / 2),
+      )
+    }
+    function setEndPosition() {
+      setPosition(
+        getDefaultPositionValue() -
+          getSlideValue() * Math.round(itemsPerSlide - 1),
+      )
+    }
+
+    if (itemsPerSlide > 1) {
+      switch (initialStartingPosition) {
+        default:
+        case 'start': {
+          setStartPosition()
+          break
+        }
+        case 'center': {
+          setCenterPosition()
+          break
+        }
+        case 'end': {
+          setEndPosition()
+          break
+        }
       }
-      case 'center': {
-        ref.style[positionProperty] = `-${
-          getSlideValue() * Math.floor(itemsPerSlide / 1.5) +
-          getSlideValue()
-        }px`
-        break
-      }
-      case 'end': {
-        ref.style[positionProperty] = `-${
-          getSlideValue() * Math.floor(itemsPerSlide / 3) +
-          getSlideValue()
-        }px`
-        break
-      }
+    } else {
+      setStartPosition()
     }
   }
   function setActiveItem(newItem: number) {
