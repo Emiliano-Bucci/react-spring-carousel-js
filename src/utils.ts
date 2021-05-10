@@ -19,14 +19,21 @@ export function useMount(callback: Callback) {
 }
 
 export function fixNegativeIndex(index: number, totalItems: number) {
+  console.log({
+    index,
+    totalItems,
+  })
   if (index === -1) {
+    console.log('here 1')
     return totalItems - 1
   }
 
   if (index >= totalItems) {
+    console.log('here 2')
     return 0
   }
 
+  console.log('here 3')
   return index
 }
 

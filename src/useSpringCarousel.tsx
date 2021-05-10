@@ -113,7 +113,7 @@ export default function useSpringCarousel({
       )
 
       if (dragging) {
-        setCarouselStyles.current[0].start({
+        setCarouselStyles.start({
           [carouselSlideAxis]: currentSlidedValue + movement,
         })
         setIsDragging(true)
@@ -130,7 +130,7 @@ export default function useSpringCarousel({
             !withLoop &&
             getCurrentActiveItem() === internalItems.length - 1
           ) {
-            setCarouselStyles.current[0].start({
+            setCarouselStyles.start({
               [carouselSlideAxis]: currentSlidedValue,
             })
           } else {
@@ -139,7 +139,7 @@ export default function useSpringCarousel({
           props.cancel()
         } else if (prevItemTreshold) {
           if (!withLoop && getCurrentActiveItem() === 0) {
-            setCarouselStyles.current[0].start({
+            setCarouselStyles.start({
               [carouselSlideAxis]: currentSlidedValue,
             })
           } else {
@@ -150,7 +150,7 @@ export default function useSpringCarousel({
       }
 
       if (props.last && !getIsAnimating()) {
-        setCarouselStyles.current[0].start({
+        setCarouselStyles.start({
           [carouselSlideAxis]: currentSlidedValue,
         })
       }
@@ -229,7 +229,7 @@ export default function useSpringCarousel({
   useMount(() => {
     if (initialActiveItem > 0 && initialActiveItem <= items.length) {
       slideToItem({
-        item: initialActiveItem,
+        to: initialActiveItem,
         immediate: true,
       })
       setActiveItem(initialActiveItem)
@@ -251,7 +251,7 @@ export default function useSpringCarousel({
     return carouselItem.getBoundingClientRect().height
   }, [carouselSlideAxis])
   function handleResize() {
-    setCarouselStyles.current[0].start({
+    setCarouselStyles.start({
       [carouselSlideAxis]: -(
         getSlideValue() * getCurrentActiveItem()
       ),
@@ -375,11 +375,11 @@ export default function useSpringCarousel({
   }
   function slideToItem({
     from,
-    item,
+    to,
     immediate = false,
     onRest = () => {},
   }: SlideToItemFnProps) {
-    const nextItemIndex = fixNegativeIndex(item, items.length)
+    const nextItemIndex = fixNegativeIndex(to, items.length)
 
     if (!immediate) {
       setActiveItem(nextItemIndex)
@@ -391,7 +391,7 @@ export default function useSpringCarousel({
       })
     }
 
-    setCarouselStyles.current[0].start({
+    setCarouselStyles.start({
       ...(from
         ? {
             from: {
@@ -400,7 +400,7 @@ export default function useSpringCarousel({
           }
         : {}),
       to: {
-        [carouselSlideAxis]: -(getSlideValue() * item),
+        [carouselSlideAxis]: -(getSlideValue() * to),
       },
       config: {
         ...springConfig,
@@ -439,50 +439,34 @@ export default function useSpringCarousel({
         [carouselSlideAxis === 'x' ? 0 : 1].replace('px', ''),
     )
   }
+  function getIsFirstItem() {
+    return getCurrentActiveItem() === 0
+  }
+  function getIsLastItem() {
+    return getCurrentActiveItem() === items.length - 1
+  }
   function slideToPrevItem() {
     if (
       (!withLoop && getCurrentActiveItem() === 0) ||
-      (getIsDragging() && getIsAnimating()) ||
       windowIsHidden.current
     ) {
       return
     }
 
     setSlideActionType('prev')
-
-    if (withLoop && getCurrentActiveItem() === 0) {
-      if (getIsDragging()) {
-        slideToItem({
-          item: activeItem.current - 1,
-          onRest: () => {
-            slideToItem({
-              item: items.length - 1,
-              immediate: true,
-            })
-          },
-        })
-      } else {
-        let fromValue = 0
-
-        if (
-          carouselTrackWrapperRef.current!.style.transform !== 'none'
-        ) {
-          fromValue = getWrapperFromValue(
-            carouselTrackWrapperRef.current!,
-          )
-        }
-
-        slideToItem({
-          from: -(
-            Math.abs(fromValue) +
-            getSlideValue() * items.length
-          ),
-          item: items.length - 1,
-        })
-      }
+    if (getIsFirstItem()) {
+      slideToItem({
+        from: -(
+          Math.abs(
+            getWrapperFromValue(carouselTrackWrapperRef.current!),
+          ) +
+          getSlideValue() * items.length
+        ),
+        to: items.length - 1,
+      })
     } else {
       slideToItem({
-        item: getPrevItem(),
+        to: getPrevItem(),
       })
     }
   }
@@ -490,37 +474,22 @@ export default function useSpringCarousel({
     if (
       (!withLoop &&
         getCurrentActiveItem() === internalItems.length - 1) ||
-      (getIsDragging() && getIsAnimating()) ||
       windowIsHidden.current
     ) {
       return
     }
 
     setSlideActionType('next')
-
-    if (withLoop && getCurrentActiveItem() === items.length - 1) {
-      if (getIsDragging()) {
-        slideToItem({
-          item: activeItem.current + 1,
-          onRest: () => {
-            setActiveItem(0)
-            slideToItem({
-              item: 0,
-              immediate: true,
-            })
-          },
-        })
-      } else {
-        slideToItem({
-          from:
-            getWrapperFromValue(carouselTrackWrapperRef.current!) +
-            getSlideValue() * items.length,
-          item: 0,
-        })
-      }
+    if (getIsLastItem()) {
+      slideToItem({
+        from:
+          getWrapperFromValue(carouselTrackWrapperRef.current!) +
+          getSlideValue() * items.length,
+        to: 0,
+      })
     } else {
       slideToItem({
-        item: getNextItem(),
+        to: getNextItem(),
       })
     }
   }

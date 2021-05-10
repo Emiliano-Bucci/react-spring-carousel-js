@@ -42,7 +42,7 @@ export type PrepareThumbsData = (
 
 export type SlideToItemFnProps = {
   from?: number
-  item: number
+  to: number
   newIndex?: number
   immediate?: boolean
   onRest?(): void
