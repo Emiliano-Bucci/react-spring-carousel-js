@@ -6,7 +6,7 @@ import {
   ReactSpringThumbItem,
   PrepareThumbsData,
 } from '../types'
-import { fixNegativeIndex, useMount } from '../utils'
+import { useMount } from '../utils'
 
 type OffsetDimension = 'offsetWidth' | 'offsetHeight'
 type OffsetDirection = 'offsetLeft' | 'offsetTop'
@@ -60,9 +60,7 @@ export function useThumbsModule({
     }
     function getThumbNode() {
       return internalThumbsWrapperRef.current!.querySelector(
-        `#thumb-${
-          items[fixNegativeIndex(activeItem, items.length)].id
-        }`,
+        `#thumb-${items[activeItem].id}`,
       ) as HTMLElement
     }
     function getThumbOffsetPosition({

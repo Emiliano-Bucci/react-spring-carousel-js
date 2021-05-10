@@ -17,7 +17,7 @@ import {
   SlideToItemFnProps,
   SlideActionType,
 } from './types'
-import { fixNegativeIndex, useMount } from './utils'
+import { useMount } from './utils'
 import { getIsBrowser } from './utils'
 
 const UseSpringCarouselContext = createContext<
@@ -144,7 +144,7 @@ export default function useSpringCarousel({
         }
       }
 
-      if (props.last && !getIsAnimating()) {
+      if (props.last) {
         resetAnimation()
       }
     },
@@ -372,14 +372,12 @@ export default function useSpringCarousel({
     immediate = false,
     onRest = () => {},
   }: SlideToItemFnProps) {
-    const nextItemIndex = fixNegativeIndex(to, items.length)
-
     if (!immediate) {
-      setActiveItem(nextItemIndex)
+      setActiveItem(to)
       setIsAnimating(true)
       emitObservable({
         eventName: 'onSlideStartChange',
-        nextItem: nextItemIndex,
+        nextItem: to,
         slideActionType: getSlideActionType(),
       })
     }
@@ -420,7 +418,7 @@ export default function useSpringCarousel({
     })
 
     if (enableThumbsWrapperScroll && withThumbs && !immediate) {
-      handleThumbsScroll(nextItemIndex)
+      handleThumbsScroll(to)
     }
   }
   function getWrapperFromValue(element: HTMLDivElement) {
