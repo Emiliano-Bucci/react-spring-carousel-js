@@ -42,6 +42,7 @@ export default function useTransitionCarousel({
   springAnimationProps = {
     initial: {
       opacity: 1,
+      position: 'relative',
     },
     from: {
       opacity: 0,
@@ -130,19 +131,15 @@ export default function useTransitionCarousel({
       return {
         initial: {
           ...springAnimationProps.initial,
-          __internal: false,
         },
         from: {
           ...toPrevItemSpringProps.from,
-          __internal: false,
         },
         enter: {
           ...toPrevItemSpringProps.enter,
-          __internal: true,
         },
         leave: {
           ...toPrevItemSpringProps.leave,
-          __internal: false,
         },
       }
     }
@@ -151,19 +148,15 @@ export default function useTransitionCarousel({
       return {
         initial: {
           ...springAnimationProps.initial,
-          __internal: false,
         },
         from: {
           ...toNextItemSpringProps.from,
-          __internal: false,
         },
         enter: {
           ...toNextItemSpringProps.enter,
-          __internal: true,
         },
         leave: {
           ...toNextItemSpringProps.leave,
-          __internal: false,
         },
       }
     }
@@ -171,30 +164,41 @@ export default function useTransitionCarousel({
     return {
       initial: {
         ...springAnimationProps.initial,
-        __internal: false,
       },
       from: {
         ...springAnimationProps.from,
-        __internal: false,
       },
       enter: {
         ...springAnimationProps.enter,
-        __internal: true,
       },
       leave: {
         ...springAnimationProps.leave,
-        __internal: false,
       },
     }
   }
 
-  const transitions = useTransition(items[activeItem], {
+  const transitions = useTransition(activeItem, {
     config: springConfig,
-    key: () => items[activeItem].id,
     ...getTransitionConfig(),
+    initial: {
+      zIndex: 100,
+      opacity: 1,
+    },
+    from: {
+      opacity: 0,
+      zIndex: 100,
+    },
+    enter: {
+      opacity: 1,
+      zIndex: 100,
+    },
+    leave: {
+      opacity: 0,
+      zIndex: 1,
+    },
     onStart: () => setIsAnimating(true),
     onRest: val => {
-      if (val.finished && val.value.__internal) {
+      if (val.finished) {
         setIsAnimating(false)
         emitObservable({
           eventName: 'onSlideChange',
@@ -210,10 +214,11 @@ export default function useTransitionCarousel({
         ...styles,
         flex: '1 0 100%',
         width: '100%',
-        position: 'relative',
+        height: '100%',
+        position: 'absolute',
       }}
     >
-      {item.renderItem}
+      {items[item].renderItem}
     </animated.div>
   ))
 
