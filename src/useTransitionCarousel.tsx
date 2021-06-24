@@ -181,6 +181,7 @@ export default function useTransitionCarousel({
     config: springConfig,
     ...getTransitionConfig(),
     onStart: () => setIsAnimating(true),
+    keys: null,
     onRest: val => {
       if (val.finished) {
         setIsAnimating(false)
