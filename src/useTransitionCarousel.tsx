@@ -254,21 +254,6 @@ export default function useTransitionCarousel({
       setSlideActionType('prev')
     }
 
-    // if (withLoop) {
-    //   if (currentItem === 0 && newActiveItem === items.length - 1) {
-    //     setSlideActionType('prev')
-    //   }
-    //   if (currentItem === items.length - 1 && newActiveItem === 0) {
-    //     setSlideActionType('next')
-    //   }
-    // } else {
-    //   if (newActiveItem > currentItem) {
-    //     setSlideActionType('next')
-    //   } else {
-    //     setSlideActionType('prev')
-    //   }
-    // }
-
     setActiveItem(itemIndex)
 
     if (enableThumbsWrapperScroll && withThumbs) {
@@ -281,12 +266,27 @@ export default function useTransitionCarousel({
     if (withLoop) {
       setSlideActionType('next')
       if (isLastItem) {
+        emitObservable({
+          eventName: 'onSlideStartChange',
+          nextItem: 0,
+          slideActionType: getSlideActionType(),
+        })
         setActiveItem(0)
       } else {
+        emitObservable({
+          eventName: 'onSlideStartChange',
+          nextItem: activeItem + 1,
+          slideActionType: getSlideActionType(),
+        })
         setActiveItem(activeItem + 1)
       }
     } else {
       if (!isLastItem) {
+        emitObservable({
+          eventName: 'onSlideStartChange',
+          nextItem: activeItem + 1,
+          slideActionType: getSlideActionType(),
+        })
         setSlideActionType('next')
         setActiveItem(activeItem + 1)
       }
@@ -298,13 +298,28 @@ export default function useTransitionCarousel({
     if (withLoop) {
       setSlideActionType('prev')
       if (isFirstItem) {
+        emitObservable({
+          eventName: 'onSlideStartChange',
+          nextItem: items.length - 1,
+          slideActionType: getSlideActionType(),
+        })
         setActiveItem(items.length - 1)
       } else {
+        emitObservable({
+          eventName: 'onSlideStartChange',
+          nextItem: activeItem - 1,
+          slideActionType: getSlideActionType(),
+        })
         setActiveItem(activeItem - 1)
       }
     } else {
       if (!isFirstItem) {
         setSlideActionType('prev')
+        emitObservable({
+          eventName: 'onSlideStartChange',
+          nextItem: activeItem - 1,
+          slideActionType: getSlideActionType(),
+        })
         setActiveItem(activeItem - 1)
       }
     }
