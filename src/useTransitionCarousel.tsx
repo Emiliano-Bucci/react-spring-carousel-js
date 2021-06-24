@@ -248,20 +248,26 @@ export default function useTransitionCarousel({
       slideActionType: getSlideActionType(),
     })
 
-    if (withLoop) {
-      if (currentItem === 0 && newActiveItem === items.length - 1) {
-        setSlideActionType('prev')
-      }
-      if (currentItem === items.length - 1 && newActiveItem === 0) {
-        setSlideActionType('next')
-      }
+    if (newActiveItem > currentItem) {
+      setSlideActionType('next')
     } else {
-      if (newActiveItem > currentItem) {
-        setSlideActionType('next')
-      } else {
-        setSlideActionType('prev')
-      }
+      setSlideActionType('prev')
     }
+
+    // if (withLoop) {
+    //   if (currentItem === 0 && newActiveItem === items.length - 1) {
+    //     setSlideActionType('prev')
+    //   }
+    //   if (currentItem === items.length - 1 && newActiveItem === 0) {
+    //     setSlideActionType('next')
+    //   }
+    // } else {
+    //   if (newActiveItem > currentItem) {
+    //     setSlideActionType('next')
+    //   } else {
+    //     setSlideActionType('prev')
+    //   }
+    // }
 
     setActiveItem(itemIndex)
 
