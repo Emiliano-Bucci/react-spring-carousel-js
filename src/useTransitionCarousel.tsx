@@ -180,22 +180,6 @@ export default function useTransitionCarousel({
   const transitions = useTransition(activeItem, {
     config: springConfig,
     ...getTransitionConfig(),
-    initial: {
-      zIndex: 100,
-      opacity: 1,
-    },
-    from: {
-      opacity: 0,
-      zIndex: 100,
-    },
-    enter: {
-      opacity: 1,
-      zIndex: 100,
-    },
-    leave: {
-      opacity: 0,
-      zIndex: 1,
-    },
     onStart: () => setIsAnimating(true),
     onRest: val => {
       if (val.finished) {
@@ -257,6 +241,12 @@ export default function useTransitionCarousel({
     const currentItem = findItemIndex(items[activeItem].id)
     const newActiveItem = findItemIndex(items[itemIndex].id)
 
+    emitObservable({
+      eventName: 'onSlideStartChange',
+      nextItem: newActiveItem,
+      slideActionType: getSlideActionType(),
+    })
+
     if (withLoop) {
       if (currentItem === 0 && newActiveItem === items.length - 1) {
         setSlideActionType('prev')
@@ -273,11 +263,6 @@ export default function useTransitionCarousel({
     }
 
     setActiveItem(itemIndex)
-    emitObservable({
-      eventName: 'onSlideChange',
-      currentItem: itemIndex,
-      slideActionType: getSlideActionType(),
-    })
 
     if (enableThumbsWrapperScroll && withThumbs) {
       handleThumbsScroll(itemIndex)
@@ -289,14 +274,14 @@ export default function useTransitionCarousel({
     if (withLoop) {
       setSlideActionType('next')
       if (isLastItem) {
-        slideToItem(0)
+        setActiveItem(0)
       } else {
-        slideToItem(activeItem + 1)
+        setActiveItem(activeItem + 1)
       }
     } else {
       if (!isLastItem) {
         setSlideActionType('next')
-        slideToItem(activeItem + 1)
+        setActiveItem(activeItem + 1)
       }
     }
   }
@@ -306,14 +291,14 @@ export default function useTransitionCarousel({
     if (withLoop) {
       setSlideActionType('prev')
       if (isFirstItem) {
-        slideToItem(items.length - 1)
+        setActiveItem(items.length - 1)
       } else {
-        slideToItem(activeItem - 1)
+        setActiveItem(activeItem - 1)
       }
     } else {
       if (!isFirstItem) {
         setSlideActionType('prev')
-        slideToItem(activeItem - 1)
+        setActiveItem(activeItem - 1)
       }
     }
   }
