@@ -2,31 +2,32 @@ import babel from 'rollup-plugin-babel'
 import resolve from '@rollup/plugin-node-resolve'
 import external from 'rollup-plugin-peer-deps-external'
 import rollupTS from 'rollup-plugin-typescript2'
-import { terser } from 'rollup-plugin-terser'
+// import { terser } from 'rollup-plugin-terser'
 import commonjs from '@rollup/plugin-commonjs'
 import pkg from './package.json'
 import size from 'rollup-plugin-filesize'
 
-// const globals = {
-//   react: 'React',
-//   'react-dom': 'ReactDOM',
-//   'react/jsx-runtime': 'jsxRuntime',
-//   'react-spring': 'reactSpring',
-//   'react-use-gesture': 'reactUseGesture',
-//   rxjs: 'rxjs',
-//   screenfull: 'screenfull',
-// }
+const globals = {
+  react: 'React',
+  'react-dom': 'ReactDOM',
+  'react/jsx-runtime': 'jsxRuntime',
+  'react-spring': 'reactSpring',
+  'react-use-gesture': 'reactUseGesture',
+  rxjs: 'rxjs',
+  screenfull: 'screenfull',
+}
 
 export default [
   {
     input: 'src/useSpringCarousel.tsx',
     output: [
       {
-        format: 'cjs',
+        format: 'umd',
         exports: 'named',
         dir: 'dist/',
         sourcemap: true,
         name: 'ReactSpringCarousel',
+        globals,
       },
     ],
     external: [
@@ -46,7 +47,7 @@ export default [
       external(),
       resolve(),
       commonjs(),
-      terser(),
+      // terser(),
       size(),
     ],
   },
@@ -54,11 +55,12 @@ export default [
     input: 'src/useTransitionCarousel.tsx',
     output: [
       {
-        format: 'cjs',
+        format: 'umd',
         exports: 'named',
         dir: 'dist/',
         sourcemap: true,
         name: 'ReactSpringCarousel',
+        globals,
       },
     ],
     external: [
@@ -78,7 +80,7 @@ export default [
       external(),
       resolve(),
       commonjs(),
-      terser(),
+      // terser(),
       size(),
     ],
   },
