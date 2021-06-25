@@ -177,11 +177,11 @@ export default function useTransitionCarousel({
     }
   }
 
-  const transitions = useTransition(items[activeItem], {
+  const transitions = useTransition(activeItem, {
     config: springConfig,
     ...getTransitionConfig(),
     onStart: () => setIsAnimating(true),
-    key: null,
+    keys: null,
     onRest: val => {
       if (val.finished) {
         setIsAnimating(false)
@@ -203,7 +203,7 @@ export default function useTransitionCarousel({
         position: 'absolute',
       }}
     >
-      {item.renderItem}
+      {items[item].renderItem}
     </animated.div>
   ))
 
