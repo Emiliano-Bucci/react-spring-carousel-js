@@ -1,4 +1,10 @@
-import { useRef, createContext, useCallback, useContext } from 'react'
+import {
+  useRef,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+} from 'react'
 import {
   useSpring,
   config,
@@ -68,6 +74,98 @@ export default function useSpringCarousel({
   const isAnimating = useRef(false)
   const windowIsHidden = useRef(false)
 
+  const [carouselStyles, setCarouselStyles] = useSpring(() => ({
+    [carouselSlideAxis]: 0,
+    config: springConfig,
+  }))
+  const getSlideValue = useCallback(() => {
+    if (!carouselTrackWrapperRef.current) {
+      return 0
+    }
+
+    const carouselItem = carouselTrackWrapperRef.current
+      .firstChild as HTMLElement
+
+    if (carouselSlideAxis === 'x') {
+      return carouselItem.getBoundingClientRect().width
+    }
+
+    return carouselItem.getBoundingClientRect().height
+  }, [carouselSlideAxis])
+  const adjustCarouselWrapperPosition = useCallback(
+    (ref: HTMLDivElement) => {
+      const positionProperty =
+        carouselSlideAxis === 'x' ? 'left' : 'top'
+
+      function getDefaultPositionValue() {
+        return getSlideValue() * items.length
+      }
+      function setPosition(v: number) {
+        ref.style[positionProperty] = `-${v}px`
+      }
+      function setStartPosition() {
+        setPosition(getDefaultPositionValue())
+      }
+      function setCenterPosition() {
+        setPosition(
+          getDefaultPositionValue() -
+            getSlideValue() * Math.round((itemsPerSlide - 1) / 2),
+        )
+      }
+      function setEndPosition() {
+        setPosition(
+          getDefaultPositionValue() -
+            getSlideValue() * Math.round(itemsPerSlide - 1),
+        )
+      }
+
+      if (itemsPerSlide > 1) {
+        switch (initialStartingPosition) {
+          default:
+          case 'start': {
+            setStartPosition()
+            break
+          }
+          case 'center': {
+            setCenterPosition()
+            break
+          }
+          case 'end': {
+            setEndPosition()
+            break
+          }
+        }
+      } else {
+        setStartPosition()
+      }
+    },
+    [
+      carouselSlideAxis,
+      getSlideValue,
+      initialStartingPosition,
+      items.length,
+      itemsPerSlide,
+    ],
+  )
+  const handleResize = useCallback(() => {
+    setCarouselStyles.start({
+      [carouselSlideAxis]: -(
+        getSlideValue() * getCurrentActiveItem()
+      ),
+      immediate: true,
+    })
+
+    if (withLoop) {
+      adjustCarouselWrapperPosition(carouselTrackWrapperRef.current!)
+    }
+  }, [
+    adjustCarouselWrapperPosition,
+    carouselSlideAxis,
+    getSlideValue,
+    setCarouselStyles,
+    withLoop,
+  ])
+
   // Custom modules
   const {
     useListenToCustomEvent,
@@ -94,10 +192,6 @@ export default function useSpringCarousel({
     prepareThumbsData,
   })
 
-  const [carouselStyles, setCarouselStyles] = useSpring(() => ({
-    [carouselSlideAxis]: 0,
-    config: springConfig,
-  }))
   const bindDrag = useDrag(
     props => {
       const isDragging = props.dragging
@@ -210,14 +304,25 @@ export default function useSpringCarousel({
     }
   })
 
-  useMount(() => {
+  useEffect(() => {
     if (shouldResizeOnWindowResize) {
       window.addEventListener('resize', handleResize)
       return () => {
         window.removeEventListener('resize', handleResize)
       }
     }
-  })
+  }, [handleResize, shouldResizeOnWindowResize])
+
+  useEffect(() => {
+    if (carouselTrackWrapperRef.current) {
+      if (carouselSlideAxis === 'x') {
+        carouselTrackWrapperRef.current.style.top = '0px'
+      }
+      if (carouselSlideAxis === 'y') {
+        carouselTrackWrapperRef.current.style.left = '0px'
+      }
+    }
+  }, [carouselSlideAxis])
 
   useMount(() => {
     if (initialActiveItem > 0 && initialActiveItem <= items.length) {
@@ -229,84 +334,13 @@ export default function useSpringCarousel({
     }
   })
 
-  const getSlideValue = useCallback(() => {
-    if (!carouselTrackWrapperRef.current) {
-      return 0
-    }
-
-    const carouselItem = carouselTrackWrapperRef.current
-      .firstChild as HTMLElement
-
-    if (carouselSlideAxis === 'x') {
-      return carouselItem.getBoundingClientRect().width
-    }
-
-    return carouselItem.getBoundingClientRect().height
-  }, [carouselSlideAxis])
-  function handleResize() {
-    setCarouselStyles.start({
-      [carouselSlideAxis]: -(
-        getSlideValue() * getCurrentActiveItem()
-      ),
-      immediate: true,
-    })
-
-    if (withLoop) {
-      adjustCarouselWrapperPosition(carouselTrackWrapperRef.current!)
-    }
-  }
   function setSlideActionType(type: SlideActionType) {
     slideActionType.current = type
   }
   function getSlideActionType() {
     return slideActionType.current
   }
-  function adjustCarouselWrapperPosition(ref: HTMLDivElement) {
-    const positionProperty =
-      carouselSlideAxis === 'x' ? 'left' : 'top'
 
-    function getDefaultPositionValue() {
-      return getSlideValue() * items.length
-    }
-    function setPosition(v: number) {
-      ref.style[positionProperty] = `-${v}px`
-    }
-    function setStartPosition() {
-      setPosition(getDefaultPositionValue())
-    }
-    function setCenterPosition() {
-      setPosition(
-        getDefaultPositionValue() -
-          getSlideValue() * Math.round((itemsPerSlide - 1) / 2),
-      )
-    }
-    function setEndPosition() {
-      setPosition(
-        getDefaultPositionValue() -
-          getSlideValue() * Math.round(itemsPerSlide - 1),
-      )
-    }
-
-    if (itemsPerSlide > 1) {
-      switch (initialStartingPosition) {
-        default:
-        case 'start': {
-          setStartPosition()
-          break
-        }
-        case 'center': {
-          setCenterPosition()
-          break
-        }
-        case 'end': {
-          setEndPosition()
-          break
-        }
-      }
-    } else {
-      setStartPosition()
-    }
-  }
   function setActiveItem(newItem: number) {
     activeItem.current = newItem
   }
