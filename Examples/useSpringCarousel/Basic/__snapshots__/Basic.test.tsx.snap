@@ -1,147 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Basic example Snapshot 1`] = `
-.emotion-0 {
-  border-radius: 12px;
-  overflow: hidden;
-  background-color: #fff;
-  padding: 16px;
-  -webkit-flex: 1;
-  -ms-flex: 1;
-  flex: 1;
-  margin: 24px;
-  box-shadow: 0 6.7px 5.3px rgba(0, 0, 0, 0.0012),0 12.3px 17.9px rgba(0, 0, 0, 0.062),0 10px 20px rgba(0, 0, 0, 0.06);
-}
-
-.emotion-1 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  font-size: 24px;
-  color: #fff;
-  min-height: 200px;
-  background-color: #2c3e50;
-}
-
-.emotion-2 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  font-size: 24px;
-  color: #fff;
-  min-height: 200px;
-  background-color: #8e44ad;
-}
-
-.emotion-3 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  font-size: 24px;
-  color: #fff;
-  min-height: 200px;
-  background-color: #16a085;
-}
-
-.emotion-4 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  font-size: 24px;
-  color: #fff;
-  min-height: 200px;
-  background-color: #e67e22;
-}
-
-.emotion-5 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  font-size: 24px;
-  color: #fff;
-  min-height: 200px;
-  background-color: #95a5a6;
-}
-
-.emotion-6 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  font-size: 24px;
-  color: #fff;
-  min-height: 200px;
-  background-color: #c0392b;
-}
-
 <div>
   <div
-    class="emotion-0"
+    css="You have tried to stringify object returned from \`css\` function. It isn't supposed to be used directly (e.g. as value of the \`className\` prop), but rather handed to emotion so it can handle it (e.g. as value of \`css\` prop)."
   >
     <div
       data-testid="use-spring-carousel-wrapper"
@@ -156,7 +18,7 @@ exports[`Basic example Snapshot 1`] = `
           style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
         >
           <div
-            class="emotion-1"
+            css="You have tried to stringify object returned from \`css\` function. It isn't supposed to be used directly (e.g. as value of the \`className\` prop), but rather handed to emotion so it can handle it (e.g. as value of \`css\` prop)."
           >
             Item 1
           </div>
@@ -166,7 +28,7 @@ exports[`Basic example Snapshot 1`] = `
           style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
         >
           <div
-            class="emotion-2"
+            css="You have tried to stringify object returned from \`css\` function. It isn't supposed to be used directly (e.g. as value of the \`className\` prop), but rather handed to emotion so it can handle it (e.g. as value of \`css\` prop)."
           >
             Item 2
           </div>
@@ -176,7 +38,7 @@ exports[`Basic example Snapshot 1`] = `
           style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
         >
           <div
-            class="emotion-3"
+            css="You have tried to stringify object returned from \`css\` function. It isn't supposed to be used directly (e.g. as value of the \`className\` prop), but rather handed to emotion so it can handle it (e.g. as value of \`css\` prop)."
           >
             Item 3
           </div>
@@ -186,7 +48,7 @@ exports[`Basic example Snapshot 1`] = `
           style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
         >
           <div
-            class="emotion-4"
+            css="You have tried to stringify object returned from \`css\` function. It isn't supposed to be used directly (e.g. as value of the \`className\` prop), but rather handed to emotion so it can handle it (e.g. as value of \`css\` prop)."
           >
             Item 4
           </div>
@@ -196,7 +58,7 @@ exports[`Basic example Snapshot 1`] = `
           style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
         >
           <div
-            class="emotion-5"
+            css="You have tried to stringify object returned from \`css\` function. It isn't supposed to be used directly (e.g. as value of the \`className\` prop), but rather handed to emotion so it can handle it (e.g. as value of \`css\` prop)."
           >
             Item 5
           </div>
@@ -206,7 +68,7 @@ exports[`Basic example Snapshot 1`] = `
           style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
         >
           <div
-            class="emotion-6"
+            css="You have tried to stringify object returned from \`css\` function. It isn't supposed to be used directly (e.g. as value of the \`className\` prop), but rather handed to emotion so it can handle it (e.g. as value of \`css\` prop)."
           >
             Item 6
           </div>
