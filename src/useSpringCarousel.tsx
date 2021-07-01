@@ -610,7 +610,7 @@ export default function useSpringCarousel({
               : 'gridTemplateRows']: `repeat(${
               internalItems.length
             }, calc(calc(100% - ${
-              gutter * 2
+              gutter * (itemsPerSlide - 1)
             }px) / ${itemsPerSlide}))`,
             top: 0,
             left: 0,
