@@ -52,8 +52,7 @@ describe('Basic example', () => {
     )
 
     expect(carouselAnimatedWrapper).toHaveStyle({
-      display: 'flex',
-      flexDirection: 'row',
+      display: 'grid',
       top: 0,
       left: 0,
       width: '100%',
@@ -69,7 +68,6 @@ describe('Basic example', () => {
     items.forEach(i => {
       expect(i).toHaveStyle({
         display: 'flex',
-        flex: `1 0 calc(100% / 1)`,
         position: 'relative',
       })
     })

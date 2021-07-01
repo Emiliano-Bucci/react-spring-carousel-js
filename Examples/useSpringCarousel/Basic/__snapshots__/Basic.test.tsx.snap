@@ -11,11 +11,12 @@ exports[`Basic example Snapshot 1`] = `
     >
       <div
         data-testid="use-spring-carousel-animated-wrapper"
-        style="display: flex; flex-direction: row; top: 0px; left: 0px; width: 100%; height: 100%; position: relative; transform: none;"
+        style="display: grid; grid-template-columns: repeat(6, calc(calc(100% - 48px) / 3)); top: 0px; left: 0px; width: 100%; height: 100%; position: relative; transform: none;"
       >
         <div
+          class="use-spring-carousel-item"
           data-testid="use-spring-carousel-item-wrapper"
-          style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
+          style="display: flex; position: relative;"
         >
           <div
             css="You have tried to stringify object returned from \`css\` function. It isn't supposed to be used directly (e.g. as value of the \`className\` prop), but rather handed to emotion so it can handle it (e.g. as value of \`css\` prop)."
@@ -24,8 +25,9 @@ exports[`Basic example Snapshot 1`] = `
           </div>
         </div>
         <div
+          class="use-spring-carousel-item"
           data-testid="use-spring-carousel-item-wrapper"
-          style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
+          style="display: flex; position: relative;"
         >
           <div
             css="You have tried to stringify object returned from \`css\` function. It isn't supposed to be used directly (e.g. as value of the \`className\` prop), but rather handed to emotion so it can handle it (e.g. as value of \`css\` prop)."
@@ -34,8 +36,9 @@ exports[`Basic example Snapshot 1`] = `
           </div>
         </div>
         <div
+          class="use-spring-carousel-item"
           data-testid="use-spring-carousel-item-wrapper"
-          style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
+          style="display: flex; position: relative;"
         >
           <div
             css="You have tried to stringify object returned from \`css\` function. It isn't supposed to be used directly (e.g. as value of the \`className\` prop), but rather handed to emotion so it can handle it (e.g. as value of \`css\` prop)."
@@ -44,8 +47,9 @@ exports[`Basic example Snapshot 1`] = `
           </div>
         </div>
         <div
+          class="use-spring-carousel-item"
           data-testid="use-spring-carousel-item-wrapper"
-          style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
+          style="display: flex; position: relative;"
         >
           <div
             css="You have tried to stringify object returned from \`css\` function. It isn't supposed to be used directly (e.g. as value of the \`className\` prop), but rather handed to emotion so it can handle it (e.g. as value of \`css\` prop)."
@@ -54,8 +58,9 @@ exports[`Basic example Snapshot 1`] = `
           </div>
         </div>
         <div
+          class="use-spring-carousel-item"
           data-testid="use-spring-carousel-item-wrapper"
-          style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
+          style="display: flex; position: relative;"
         >
           <div
             css="You have tried to stringify object returned from \`css\` function. It isn't supposed to be used directly (e.g. as value of the \`className\` prop), but rather handed to emotion so it can handle it (e.g. as value of \`css\` prop)."
@@ -64,8 +69,9 @@ exports[`Basic example Snapshot 1`] = `
           </div>
         </div>
         <div
+          class="use-spring-carousel-item"
           data-testid="use-spring-carousel-item-wrapper"
-          style="display: flex; flex: 1 0 calc(100% / 1); position: relative;"
+          style="display: flex; position: relative;"
         >
           <div
             css="You have tried to stringify object returned from \`css\` function. It isn't supposed to be used directly (e.g. as value of the \`className\` prop), but rather handed to emotion so it can handle it (e.g. as value of \`css\` prop)."
