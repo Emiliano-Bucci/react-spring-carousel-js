@@ -57,6 +57,7 @@ export default function useSpringCarousel({
   initialActiveItem = 0,
   initialStartingPosition = 'start',
   disableGestures = false,
+  gutter = 0,
 }: UseSpringCarouselProps) {
   function getItems() {
     if (withLoop) {
@@ -83,15 +84,22 @@ export default function useSpringCarousel({
       return 0
     }
 
-    const carouselItem = carouselTrackWrapperRef.current
-      .firstChild as HTMLElement
-
     if (carouselSlideAxis === 'x') {
-      return carouselItem.getBoundingClientRect().width
+      return (
+        (carouselTrackWrapperRef.current.getBoundingClientRect()
+          .width +
+          gutter) /
+        itemsPerSlide
+      )
     }
 
-    return carouselItem.getBoundingClientRect().height
-  }, [carouselSlideAxis])
+    return (
+      (carouselTrackWrapperRef.current.getBoundingClientRect()
+        .height +
+        gutter) /
+      itemsPerSlide
+    )
+  }, [carouselSlideAxis, gutter, itemsPerSlide])
   const adjustCarouselWrapperPosition = useCallback(
     (ref: HTMLDivElement) => {
       const positionProperty =
@@ -595,9 +603,15 @@ export default function useSpringCarousel({
           {...bindDrag()}
           data-testid="use-spring-carousel-animated-wrapper"
           style={{
-            display: 'flex',
-            flexDirection:
-              carouselSlideAxis === 'x' ? 'row' : 'column',
+            display: 'grid',
+            gridGap: `${gutter}px`,
+            [carouselSlideAxis === 'x'
+              ? 'gridTemplateColumns'
+              : 'gridTemplateRows']: `repeat(${
+              internalItems.length
+            }, calc(calc(100% - ${
+              gutter * 2
+            }px) / ${itemsPerSlide}))`,
             top: 0,
             left: 0,
             width: '100%',
@@ -619,10 +633,10 @@ export default function useSpringCarousel({
             return (
               <div
                 key={`${id}-${index}`}
+                className="use-spring-carousel-item"
                 data-testid="use-spring-carousel-item-wrapper"
                 style={{
                   display: 'flex',
-                  flex: `1 0 calc(100% / ${itemsPerSlide})`,
                   position: 'relative',
                 }}
               >
