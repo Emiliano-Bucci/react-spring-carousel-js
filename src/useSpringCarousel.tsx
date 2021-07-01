@@ -83,9 +83,7 @@ export default function useSpringCarousel({
     if (!carouselTrackWrapperRef.current) {
       return 0
     }
-    const carouselItem = carouselTrackWrapperRef.current.querySelector(
-      '.use-spring-carousel-item',
-    )
+    const carouselItem = carouselTrackWrapperRef.current
 
     if (!carouselItem) {
       throw Error('No carousel items available!')
@@ -93,14 +91,14 @@ export default function useSpringCarousel({
 
     if (carouselSlideAxis === 'x') {
       return (
-        carouselItem.getBoundingClientRect().width +
-        (gutter / 2) * (itemsPerSlide - 1)
+        (carouselItem.getBoundingClientRect().width + gutter) /
+        itemsPerSlide
       )
     }
 
     return (
-      carouselItem.getBoundingClientRect().height +
-      (gutter / 2) * (itemsPerSlide - 1)
+      (carouselItem.getBoundingClientRect().height + gutter) /
+      itemsPerSlide
     )
   }, [carouselSlideAxis, gutter, itemsPerSlide])
   const adjustCarouselWrapperPosition = useCallback(
