@@ -58,6 +58,7 @@ export default function useSpringCarousel({
   initialStartingPosition = 'start',
   disableGestures = false,
   gutter = 0,
+  percentage = 0,
 }: UseSpringCarouselProps) {
   function getItems() {
     if (withLoop) {
@@ -75,6 +76,12 @@ export default function useSpringCarousel({
   const isAnimating = useRef(false)
   const windowIsHidden = useRef(false)
 
+  function getCarouselItem() {
+    return carouselTrackWrapperRef?.current?.querySelector(
+      '.use-spring-carousel-item',
+    )
+  }
+
   const [carouselStyles, setCarouselStyles] = useSpring(() => ({
     [carouselSlideAxis]: 0,
     config: springConfig,
@@ -83,9 +90,7 @@ export default function useSpringCarousel({
     if (!carouselTrackWrapperRef.current) {
       return 0
     }
-    const carouselItem = carouselTrackWrapperRef.current.querySelector(
-      '.use-spring-carousel-item',
-    )
+    const carouselItem = getCarouselItem()
 
     if (!carouselItem) {
       throw Error('No carousel items available!')
@@ -99,6 +104,17 @@ export default function useSpringCarousel({
   }, [carouselSlideAxis, gutter])
   const adjustCarouselWrapperPosition = useCallback(
     (ref: HTMLDivElement) => {
+      let val = 0
+
+      if (mainCarouselWrapperRef.current) {
+        val =
+          (mainCarouselWrapperRef.current.getBoundingClientRect()[
+            carouselSlideAxis === 'x' ? 'width' : 'height'
+          ] /
+            100) *
+          percentage
+      }
+
       const positionProperty =
         carouselSlideAxis === 'x' ? 'left' : 'top'
 
@@ -106,7 +122,7 @@ export default function useSpringCarousel({
         return getSlideValue() * items.length
       }
       function setPosition(v: number) {
-        ref.style[positionProperty] = `-${v}px`
+        ref.style[positionProperty] = `-${v - val}px`
       }
       function setStartPosition() {
         setPosition(getDefaultPositionValue())
@@ -150,6 +166,7 @@ export default function useSpringCarousel({
       initialStartingPosition,
       items.length,
       itemsPerSlide,
+      percentage,
     ],
   )
   const handleResize = useCallback(() => {
@@ -583,6 +600,15 @@ export default function useSpringCarousel({
     }),
   }
 
+  function getItemWidthValue() {
+    return `repeat(${internalItems.length}, calc(calc(100% - ${
+      gutter * (itemsPerSlide - 1)
+    }px) / ${itemsPerSlide}))`
+  }
+  function getPercentageValue() {
+    return `calc(100% - ${percentage * 2}%)`
+  }
+
   const carouselFragment = (
     <UseSpringCarouselContext.Provider value={contextProps}>
       <div
@@ -604,15 +630,17 @@ export default function useSpringCarousel({
             gridGap: `${gutter}px`,
             [carouselSlideAxis === 'x'
               ? 'gridTemplateColumns'
-              : 'gridTemplateRows']: `repeat(${
-              internalItems.length
-            }, calc(calc(100% - ${
-              gutter * (itemsPerSlide - 1)
-            }px) / ${itemsPerSlide}))`,
+              : 'gridTemplateRows']: getItemWidthValue(),
             top: 0,
             left: 0,
-            width: '100%',
-            height: '100%',
+            width:
+              carouselSlideAxis === 'x'
+                ? getPercentageValue()
+                : '100%',
+            height:
+              carouselSlideAxis === 'y'
+                ? getPercentageValue()
+                : '100%',
             position: 'relative',
             ...carouselStyles,
           }}
