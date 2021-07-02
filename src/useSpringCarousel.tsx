@@ -104,17 +104,6 @@ export default function useSpringCarousel({
   }, [carouselSlideAxis, gutter])
   const adjustCarouselWrapperPosition = useCallback(
     (ref: HTMLDivElement) => {
-      let val = 0
-
-      if (mainCarouselWrapperRef.current) {
-        val =
-          (mainCarouselWrapperRef.current.getBoundingClientRect()[
-            carouselSlideAxis === 'x' ? 'width' : 'height'
-          ] /
-            100) *
-          percentage
-      }
-
       const positionProperty =
         carouselSlideAxis === 'x' ? 'left' : 'top'
 
@@ -122,7 +111,7 @@ export default function useSpringCarousel({
         return getSlideValue() * items.length
       }
       function setPosition(v: number) {
-        ref.style[positionProperty] = `-${v - val}px`
+        ref.style[positionProperty] = `-${v - percentage}px`
       }
       function setStartPosition() {
         setPosition(getDefaultPositionValue())
@@ -213,7 +202,6 @@ export default function useSpringCarousel({
     thumbsWrapperRef,
     prepareThumbsData,
   })
-
   const bindDrag = useDrag(
     props => {
       const isDragging = props.dragging
@@ -268,7 +256,6 @@ export default function useSpringCarousel({
       enabled: !disableGestures,
     },
   )
-
   // Perform some check on first mount
   useMount(() => {
     if (!Number.isInteger(itemsPerSlide)) {
@@ -301,7 +288,6 @@ export default function useSpringCarousel({
       )
     }
   })
-
   useMount(() => {
     function handleVisibilityChange() {
       if (document.hidden) {
@@ -325,7 +311,6 @@ export default function useSpringCarousel({
       }
     }
   })
-
   useEffect(() => {
     if (shouldResizeOnWindowResize) {
       window.addEventListener('resize', handleResize)
@@ -334,7 +319,6 @@ export default function useSpringCarousel({
       }
     }
   }, [handleResize, shouldResizeOnWindowResize])
-
   useEffect(() => {
     if (carouselTrackWrapperRef.current) {
       if (carouselSlideAxis === 'x') {
@@ -345,7 +329,6 @@ export default function useSpringCarousel({
       }
     }
   }, [carouselSlideAxis])
-
   useMount(() => {
     if (initialActiveItem > 0 && initialActiveItem <= items.length) {
       slideToItem({
@@ -362,7 +345,6 @@ export default function useSpringCarousel({
   function getSlideActionType() {
     return slideActionType.current
   }
-
   function setActiveItem(newItem: number) {
     activeItem.current = newItem
   }
@@ -578,7 +560,6 @@ export default function useSpringCarousel({
       to: itemIndex,
     })
   }
-
   const contextProps: UseSpringCarouselContextProps = {
     useListenToCustomEvent,
     getIsFullscreen,
@@ -599,14 +580,13 @@ export default function useSpringCarousel({
       index: getCurrentActiveItem(),
     }),
   }
-
   function getItemWidthValue() {
     return `repeat(${internalItems.length}, calc(calc(100% - ${
       gutter * (itemsPerSlide - 1)
     }px) / ${itemsPerSlide}))`
   }
   function getPercentageValue() {
-    return `calc(100% - ${percentage * 2}%)`
+    return `calc(100% - ${percentage * 2}px)`
   }
 
   const carouselFragment = (
@@ -673,7 +653,6 @@ export default function useSpringCarousel({
       </div>
     </UseSpringCarouselContext.Provider>
   )
-
   const thumbsFragment = (
     <UseSpringCarouselContext.Provider value={contextProps}>
       {_thumbsFragment}
