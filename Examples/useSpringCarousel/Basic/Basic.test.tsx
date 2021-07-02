@@ -55,7 +55,7 @@ describe('Basic example', () => {
       display: 'grid',
       top: 0,
       left: 0,
-      width: '100%',
+      width: 'calc(100% - 0px)',
       height: '100%',
       position: 'relative',
     })
