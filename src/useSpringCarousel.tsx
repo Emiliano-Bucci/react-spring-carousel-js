@@ -87,7 +87,8 @@ export default function useSpringCarousel({
   }
 
   const [carouselStyles, setCarouselStyles] = useSpring(() => ({
-    [carouselSlideAxis]: 0,
+    y: 0,
+    x: 0,
     config: springConfig,
   }))
   const getSlideValue = useCallback(() => {
@@ -165,6 +166,11 @@ export default function useSpringCarousel({
     ],
   )
   const handleResize = useCallback(() => {
+    setCarouselStyles.start({
+      immediate: true,
+      x: 0,
+      y: 0,
+    })
     setCarouselStyles.start({
       immediate: true,
       [carouselSlideAxis]: -(
