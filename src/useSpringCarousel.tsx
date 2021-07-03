@@ -115,6 +115,8 @@ export default function useSpringCarousel({
         return getSlideValue() * items.length
       }
       function setPosition(v: number) {
+        ref.style.top = '0px'
+        ref.style.left = '0px'
         ref.style[positionProperty] = `-${v - adjacentItemsPx}px`
       }
       function setStartPosition() {
