@@ -78,7 +78,7 @@ export default function useSpringCarousel({
 
   function getCarouselItem() {
     if (carouselTrackWrapperRef.current) {
-      return carouselTrackWrapperRef.current?.querySelector(
+      return carouselTrackWrapperRef.current.querySelector(
         '.use-spring-carousel-item',
       )
     }
