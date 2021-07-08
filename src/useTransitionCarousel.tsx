@@ -200,7 +200,6 @@ export default function useTransitionCarousel({
         flex: '1 0 100%',
         width: '100%',
         height: '100%',
-        position: 'absolute',
       }}
     >
       {items[item].renderItem}
