@@ -60,11 +60,11 @@ export default function useSpringCarousel({
   gutter = 0,
   adjacentItemsPx = 0,
 }: UseSpringCarouselProps) {
+  const lastItemReached = useRef(false)
   function getItems() {
     if (withLoop) {
       return [...items, ...items, ...items]
     }
-
     return items
   }
   const slideActionType = useRef<SlideActionType>('next')
@@ -109,51 +109,58 @@ export default function useSpringCarousel({
   }, [carouselSlideAxis, gutter])
   const adjustCarouselWrapperPosition = useCallback(
     (ref: HTMLDivElement) => {
-      const positionProperty =
-        carouselSlideAxis === 'x' ? 'left' : 'top'
+      if (
+        itemsPerSlide !== 'fluid' &&
+        typeof itemsPerSlide === 'number'
+      ) {
+        const positionProperty =
+          carouselSlideAxis === 'x' ? 'left' : 'top'
 
-      function getDefaultPositionValue() {
-        return getSlideValue() * items.length
-      }
-      function setPosition(v: number) {
-        ref.style.top = '0px'
-        ref.style.left = '0px'
-        ref.style[positionProperty] = `-${v - adjacentItemsPx}px`
-      }
-      function setStartPosition() {
-        setPosition(getDefaultPositionValue())
-      }
-      function setCenterPosition() {
-        setPosition(
-          getDefaultPositionValue() -
-            getSlideValue() * Math.round((itemsPerSlide - 1) / 2),
-        )
-      }
-      function setEndPosition() {
-        setPosition(
-          getDefaultPositionValue() -
-            getSlideValue() * Math.round(itemsPerSlide - 1),
-        )
-      }
-
-      if (itemsPerSlide > 1) {
-        switch (initialStartingPosition) {
-          default:
-          case 'start': {
-            setStartPosition()
-            break
-          }
-          case 'center': {
-            setCenterPosition()
-            break
-          }
-          case 'end': {
-            setEndPosition()
-            break
-          }
+        function getDefaultPositionValue() {
+          return getSlideValue() * items.length
         }
-      } else {
-        setStartPosition()
+        function setPosition(v: number) {
+          ref.style.top = '0px'
+          ref.style.left = '0px'
+          ref.style[positionProperty] = `-${v - adjacentItemsPx}px`
+        }
+        function setStartPosition() {
+          setPosition(getDefaultPositionValue())
+        }
+        function setCenterPosition() {
+          setPosition(
+            getDefaultPositionValue() -
+              getSlideValue() *
+                Math.round(((itemsPerSlide as number) - 1) / 2),
+          )
+        }
+        function setEndPosition() {
+          setPosition(
+            getDefaultPositionValue() -
+              getSlideValue() *
+                Math.round((itemsPerSlide as number) - 1),
+          )
+        }
+
+        if (itemsPerSlide > 1) {
+          switch (initialStartingPosition) {
+            default:
+            case 'start': {
+              setStartPosition()
+              break
+            }
+            case 'center': {
+              setCenterPosition()
+              break
+            }
+            case 'end': {
+              setEndPosition()
+              break
+            }
+          }
+        } else {
+          setStartPosition()
+        }
       }
     },
     [
@@ -270,7 +277,10 @@ export default function useSpringCarousel({
   )
   // Perform some check on first mount
   useMount(() => {
-    if (!Number.isInteger(itemsPerSlide)) {
+    if (
+      itemsPerSlide !== 'fluid' &&
+      !Number.isInteger(itemsPerSlide)
+    ) {
       throw new Error(`itemsPerSlide should be an integer.`)
     }
 
@@ -351,6 +361,36 @@ export default function useSpringCarousel({
     }
   })
 
+  useEffect(() => {
+    if (
+      itemsPerSlide === 'fluid' &&
+      carouselTrackWrapperRef.current
+    ) {
+      const items = carouselTrackWrapperRef.current.querySelectorAll(
+        '.use-spring-carousel-item',
+      )
+      const lastItem = items[items.length - 1]
+      const observer = new IntersectionObserver(
+        entries => {
+          const lastItemEntry = entries[0]
+          if (lastItemEntry.isIntersecting) {
+            lastItemReached.current = true
+          } else {
+            lastItemReached.current = false
+          }
+        },
+        {
+          threshold: 1,
+        },
+      )
+      observer.observe(lastItem)
+
+      return () => {
+        observer.unobserve(lastItem)
+      }
+    }
+  }, [itemsPerSlide])
+
   function setSlideActionType(type: SlideActionType) {
     slideActionType.current = type
   }
@@ -377,40 +417,32 @@ export default function useSpringCarousel({
   }
   function getPrevItem() {
     const currentActiveItem = getCurrentActiveItem()
-
     if (currentActiveItem === 0) {
       return items.length - 1
     }
-
     return currentActiveItem - 1
   }
   function getNextItem() {
     const currentActiveItem = getCurrentActiveItem()
-
     if (currentActiveItem === items.length - 1) {
       return 0
     }
-
     return currentActiveItem + 1
   }
   function getIsNextItem(id: string) {
     const itemIndex = findItemIndex(id)
     const activeItem = getCurrentActiveItem()
-
     if (withLoop && activeItem === items.length - 1) {
       return itemIndex === 0
     }
-
     return itemIndex === activeItem + 1
   }
   function getIsPrevItem(id: string) {
     const itemIndex = findItemIndex(id)
     const activeItem = getCurrentActiveItem()
-
     if (withLoop && activeItem === 0) {
       return itemIndex === items.length - 1
     }
-
     return itemIndex === activeItem - 1
   }
   function findItemIndex(id: string) {
@@ -518,7 +550,8 @@ export default function useSpringCarousel({
     if (
       (!withLoop &&
         getCurrentActiveItem() === internalItems.length - 1) ||
-      windowIsHidden.current
+      windowIsHidden.current ||
+      lastItemReached.current
     ) {
       return
     }
@@ -594,11 +627,30 @@ export default function useSpringCarousel({
   }
   function getItemWidthValue() {
     return `repeat(${internalItems.length}, calc(calc(100% - ${
-      gutter * (itemsPerSlide - 1)
+      gutter * ((itemsPerSlide as number) - 1)
     }px) / ${itemsPerSlide}))`
   }
   function getPercentageValue() {
     return `calc(100% - ${adjacentItemsPx * 2}px)`
+  }
+  function getStyles() {
+    if (itemsPerSlide === 'fluid') {
+      return {
+        gridAutoFlow: carouselSlideAxis === 'x' ? 'column' : 'row',
+        width: '100%',
+        height: '100%',
+      }
+    }
+
+    return {
+      width:
+        carouselSlideAxis === 'x' ? getPercentageValue() : '100%',
+      height:
+        carouselSlideAxis === 'y' ? getPercentageValue() : '100%',
+      [carouselSlideAxis === 'x'
+        ? 'gridTemplateColumns'
+        : 'gridTemplateRows']: getItemWidthValue(),
+    }
   }
 
   const carouselFragment = (
@@ -620,26 +672,15 @@ export default function useSpringCarousel({
           style={{
             display: 'grid',
             gridGap: `${gutter}px`,
-            [carouselSlideAxis === 'x'
-              ? 'gridTemplateColumns'
-              : 'gridTemplateRows']: getItemWidthValue(),
             top: 0,
             left: 0,
-            width:
-              carouselSlideAxis === 'x'
-                ? getPercentageValue()
-                : '100%',
-            height:
-              carouselSlideAxis === 'y'
-                ? getPercentageValue()
-                : '100%',
             position: 'relative',
+            ...getStyles(),
             ...carouselStyles,
           }}
           ref={ref => {
             if (ref) {
               carouselTrackWrapperRef.current = ref
-
               if (withLoop) {
                 adjustCarouselWrapperPosition(ref)
               }
@@ -655,6 +696,7 @@ export default function useSpringCarousel({
                 style={{
                   display: 'flex',
                   position: 'relative',
+                  width: 'auto',
                 }}
               >
                 {renderItem}
