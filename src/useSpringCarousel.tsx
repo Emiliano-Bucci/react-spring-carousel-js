@@ -360,7 +360,6 @@ export default function useSpringCarousel({
       setActiveItem(initialActiveItem)
     }
   })
-
   useEffect(() => {
     if (
       itemsPerSlide === 'fluid' &&
