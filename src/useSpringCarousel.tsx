@@ -11,7 +11,7 @@ import {
   animated,
   AnimationResult,
 } from 'react-spring'
-import { useDrag } from 'react-use-gesture'
+import { useDrag } from '@use-gesture/react'
 import {
   useCustomEventsModule,
   useFullscreenModule,

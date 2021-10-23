@@ -1,6 +1,6 @@
 import { createContext, useRef, useState, useContext } from 'react'
 import { useTransition, animated, config } from 'react-spring'
-import { useDrag } from 'react-use-gesture'
+import { useDrag } from '@use-gesture/react'
 import {
   useCustomEventsModule,
   useThumbsModule,
