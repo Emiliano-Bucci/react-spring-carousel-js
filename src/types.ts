@@ -89,12 +89,7 @@ export type UseTransitionCarouselContextProps = BaseContextSharedProps & {
   activeItem: number
 }
 
-import {
-  EventTypes,
-  FullGestureState,
-  GestureKey,
-  StateKey,
-} from 'react-use-gesture/dist/types'
+import { FullGestureState } from '@use-gesture/react'
 
 export type SlideActionType = 'prev' | 'next'
 
@@ -109,12 +104,8 @@ type OnSlideChange = {
   slideActionType: SlideActionType
 }
 
-type OnDrag = Omit<
-  FullGestureState<StateKey<GestureKey>>,
-  'event'
-> & {
+type OnDrag = Omit<FullGestureState<'drag'>, 'event'> & {
   eventName: 'onDrag'
-  event: EventTypes['drag']
 }
 
 type OnFullscreenChange = {
