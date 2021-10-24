@@ -703,7 +703,7 @@ UseSpringCarouselProps) {
                 style={{
                   display: 'flex',
                   position: 'relative',
-                  width: 'auto',
+                  flex: `1 0 calc(100% / ${itemsPerSlide})`,
                 }}
               >
                 {renderItem}
