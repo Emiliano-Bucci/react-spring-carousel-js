@@ -59,6 +59,7 @@ export default function useSpringCarousel({
   disableGestures = false,
   gutter = 0,
   adjacentItemsPx = 0,
+  touchAction = 'none',
 }: UseSpringCarouselProps) {
   const lastItemReached = useRef(false)
   function getItems() {
@@ -643,6 +644,9 @@ export default function useSpringCarousel({
     }
     return {}
   }
+  function getAnimatedWrapperStyles() {
+    return {}
+  }
 
   const carouselFragment = (
     <UseSpringCarouselContext.Provider value={contextProps}>
@@ -669,7 +673,8 @@ export default function useSpringCarousel({
             position: 'relative',
             width: '100%',
             ...carouselStyles,
-            touchAction: 'none',
+            touchAction,
+            ...getAnimatedWrapperStyles(),
           }}
           ref={ref => {
             if (ref) {
