@@ -35,7 +35,7 @@ export type UseSpringCarouselProps = BaseCarouselSharedProps & {
   initialActiveItem?: number
   initialStartingPosition?: 'start' | 'center' | 'end'
   gutter?: number
-  // adjacentItemsPx?: number
+  adjacentItemsPx?: number
 }
 
 export type PrepareThumbsData = (

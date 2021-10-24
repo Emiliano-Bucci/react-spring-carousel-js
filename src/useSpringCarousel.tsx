@@ -58,8 +58,8 @@ export default function useSpringCarousel({
   initialStartingPosition = 'start',
   disableGestures = false,
   gutter = 0,
-}: // adjacentItemsPx = 0,
-UseSpringCarouselProps) {
+  adjacentItemsPx = 0,
+}: UseSpringCarouselProps) {
   const lastItemReached = useRef(false)
   function getItems() {
     if (withLoop) {
@@ -122,8 +122,7 @@ UseSpringCarouselProps) {
         function setPosition(v: number) {
           ref.style.top = '0px'
           ref.style.left = '0px'
-          // ref.style[positionProperty] = `-${v - adjacentItemsPx}px`
-          ref.style[positionProperty] = `-${v}px`
+          ref.style[positionProperty] = `-${v - adjacentItemsPx}px`
         }
         function setStartPosition() {
           setPosition(getDefaultPositionValue())
@@ -165,6 +164,7 @@ UseSpringCarouselProps) {
       }
     },
     [
+      adjacentItemsPx,
       carouselSlideAxis,
       getSlideValue,
       initialStartingPosition,
