@@ -645,7 +645,11 @@ export default function useSpringCarousel({
     return {}
   }
   function getAnimatedWrapperStyles() {
-    return {}
+    const percentValue = `calc(100% - ${adjacentItemsPx * 2}px)`
+    return {
+      width: carouselSlideAxis === 'x' ? percentValue : '100%',
+      height: carouselSlideAxis === 'y' ? percentValue : '100%',
+    }
   }
 
   const carouselFragment = (
