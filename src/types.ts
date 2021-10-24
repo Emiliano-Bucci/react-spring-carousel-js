@@ -31,11 +31,12 @@ export type UseSpringCarouselProps = BaseCarouselSharedProps & {
   shouldResizeOnWindowResize?: boolean
   carouselSlideAxis?: 'x' | 'y'
   thumbsWrapperRef?: React.MutableRefObject<HTMLDivElement | null>
-  itemsPerSlide?: number | 'fluid'
+  // itemsPerSlide?: number | 'fluid'
+  itemsPerSlide?: number
   initialActiveItem?: number
   initialStartingPosition?: 'start' | 'center' | 'end'
-  gutter?: number
-  adjacentItemsPx?: number
+  // gutter?: number
+  // adjacentItemsPx?: number
 }
 
 export type PrepareThumbsData = (

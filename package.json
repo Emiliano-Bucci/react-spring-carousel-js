@@ -39,7 +39,7 @@
   ],
   "dependencies": {
     "@use-gesture/react": "^10.1.1",
-    "react-spring": "^9.2.3",
+    "react-spring": "^9.3.0",
     "rxjs": "^6.6.7",
     "screenfull": "^5.1.0"
   },
