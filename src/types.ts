@@ -31,11 +31,10 @@ export type UseSpringCarouselProps = BaseCarouselSharedProps & {
   shouldResizeOnWindowResize?: boolean
   carouselSlideAxis?: 'x' | 'y'
   thumbsWrapperRef?: React.MutableRefObject<HTMLDivElement | null>
-  // itemsPerSlide?: number | 'fluid'
-  itemsPerSlide?: number
+  itemsPerSlide?: number | 'fluid'
   initialActiveItem?: number
   initialStartingPosition?: 'start' | 'center' | 'end'
-  // gutter?: number
+  gutter?: number
   // adjacentItemsPx?: number
 }
 

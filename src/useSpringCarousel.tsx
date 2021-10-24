@@ -57,8 +57,8 @@ export default function useSpringCarousel({
   initialActiveItem = 0,
   initialStartingPosition = 'start',
   disableGestures = false,
-}: // gutter = 0,
-// adjacentItemsPx = 0,
+  gutter = 0,
+}: // adjacentItemsPx = 0,
 UseSpringCarouselProps) {
   const lastItemReached = useRef(false)
   function getItems() {
@@ -102,17 +102,15 @@ UseSpringCarouselProps) {
     }
 
     if (carouselSlideAxis === 'x') {
-      // return carouselItem.getBoundingClientRect().width + gutter
-      return carouselItem.getBoundingClientRect().width
+      return carouselItem.getBoundingClientRect().width + gutter
     }
 
-    // return carouselItem.getBoundingClientRect().height + gutter
-    return carouselItem.getBoundingClientRect().height
-  }, [carouselSlideAxis])
+    return carouselItem.getBoundingClientRect().height + gutter
+  }, [carouselSlideAxis, gutter])
   const adjustCarouselWrapperPosition = useCallback(
     (ref: HTMLDivElement) => {
       if (
-        // itemsPerSlide !== 'fluid' &&
+        itemsPerSlide !== 'fluid' &&
         typeof itemsPerSlide === 'number'
       ) {
         const positionProperty =
@@ -285,7 +283,7 @@ UseSpringCarouselProps) {
   // Perform some check on first mount
   useMount(() => {
     if (
-      // itemsPerSlide !== 'fluid' &&
+      itemsPerSlide !== 'fluid' &&
       !Number.isInteger(itemsPerSlide)
     ) {
       throw new Error(`itemsPerSlide should be an integer.`)
@@ -370,7 +368,7 @@ UseSpringCarouselProps) {
   })
   useEffect(() => {
     if (
-      // itemsPerSlide === 'fluid' &&
+      itemsPerSlide === 'fluid' &&
       carouselTrackWrapperRef.current
     ) {
       const items = carouselTrackWrapperRef.current.querySelectorAll(
@@ -631,33 +629,20 @@ UseSpringCarouselProps) {
       index: getCurrentActiveItem(),
     }),
   }
-  // function getItemWidthValue() {
-  //   return `repeat(${internalItems.length}, calc(calc(100% - ${
-  //     gutter * ((itemsPerSlide as number) - 1)
-  //   }px) / ${itemsPerSlide}))`
-  // }
-  // function getPercentageValue() {
-  //   return `calc(100% - ${adjacentItemsPx * 2}px)`
-  // }
-  // function getStyles() {
-  //   if (itemsPerSlide === 'fluid') {
-  //     return {
-  //       gridAutoFlow: carouselSlideAxis === 'x' ? 'column' : 'row',
-  //       width: '100%',
-  //       height: '100%',
-  //     }
-  //   }
 
-  //   return {
-  //     width:
-  //       carouselSlideAxis === 'x' ? getPercentageValue() : '100%',
-  //     height:
-  //       carouselSlideAxis === 'y' ? getPercentageValue() : '100%',
-  //     [carouselSlideAxis === 'x'
-  //       ? 'gridTemplateColumns'
-  //       : 'gridTemplateRows']: getItemWidthValue(),
-  //   }
-  // }
+  function getItemStyles() {
+    if (typeof itemsPerSlide === 'number') {
+      return {
+        ...(carouselSlideAxis === 'x'
+          ? { marginRight: `${gutter}px` }
+          : { marginBottom: `${gutter}px` }),
+        flex: `1 0 calc(100% / ${itemsPerSlide} - ${
+          (gutter * (itemsPerSlide - 1)) / itemsPerSlide
+        }px)`,
+      }
+    }
+    return {}
+  }
 
   const carouselFragment = (
     <UseSpringCarouselContext.Provider value={contextProps}>
@@ -677,11 +662,11 @@ UseSpringCarouselProps) {
           data-testid="use-spring-carousel-animated-wrapper"
           style={{
             display: 'flex',
-            // gridGap: `${gutter}px`,
+            flexDirection:
+              carouselSlideAxis === 'x' ? 'row' : 'column',
             top: 0,
             left: 0,
             position: 'relative',
-            // ...getStyles(),
             width: '100%',
             ...carouselStyles,
             touchAction: 'none',
@@ -704,7 +689,7 @@ UseSpringCarouselProps) {
                 style={{
                   display: 'flex',
                   position: 'relative',
-                  flex: `1 0 calc(100% / ${itemsPerSlide})`,
+                  ...getItemStyles(),
                 }}
               >
                 {renderItem}
