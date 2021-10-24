@@ -682,6 +682,7 @@ UseSpringCarouselProps) {
             left: 0,
             position: 'relative',
             // ...getStyles(),
+            width: '100%',
             ...carouselStyles,
             touchAction: 'none',
           }}
