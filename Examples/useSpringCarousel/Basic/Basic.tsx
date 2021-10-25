@@ -6,6 +6,8 @@ import { css } from '@emotion/react'
 
 export function Basic() {
   const { carouselFragment } = useSpringCarousel({
+    carouselSlideAxis: 'y',
+    withLoop: true,
     items: mockedItems.map(({ id, label, ...rest }) => ({
       id,
       renderItem: (
