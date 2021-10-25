@@ -58,7 +58,7 @@ export default function useSpringCarousel({
   initialStartingPosition = 'start',
   disableGestures = false,
   gutter = 0,
-  adjacentItemsPx = 0,
+  startEndGutter = 0,
   touchAction = 'none',
 }: UseSpringCarouselProps) {
   const lastItemReached = useRef(false)
@@ -87,10 +87,17 @@ export default function useSpringCarousel({
     return null
   }
 
-  const [carouselStyles, setCarouselStyles] = useSpring(() => ({
+  const [, setCarouselStyles] = useSpring(() => ({
     y: 0,
     x: 0,
     config: springConfig,
+    onChange: props => {
+      if (mainCarouselWrapperRef.current) {
+        mainCarouselWrapperRef.current.scrollLeft = Math.abs(
+          props.value[carouselSlideAxis],
+        )
+      }
+    },
   }))
   const getSlideValue = useCallback(() => {
     if (!carouselTrackWrapperRef.current) {
@@ -123,7 +130,7 @@ export default function useSpringCarousel({
         function setPosition(v: number) {
           ref.style.top = '0px'
           ref.style.left = '0px'
-          ref.style[positionProperty] = `-${v - adjacentItemsPx}px`
+          ref.style[positionProperty] = `-${v - startEndGutter}px`
         }
         function setStartPosition() {
           setPosition(getDefaultPositionValue())
@@ -165,7 +172,7 @@ export default function useSpringCarousel({
       }
     },
     [
-      adjacentItemsPx,
+      startEndGutter,
       carouselSlideAxis,
       getSlideValue,
       initialStartingPosition,
@@ -283,6 +290,10 @@ export default function useSpringCarousel({
   )
   // Perform some check on first mount
   useMount(() => {
+    console.log(
+      mainCarouselWrapperRef.current?.scrollWidth,
+      mainCarouselWrapperRef.current,
+    )
     if (
       itemsPerSlide !== 'fluid' &&
       !Number.isInteger(itemsPerSlide)
@@ -372,27 +383,23 @@ export default function useSpringCarousel({
       itemsPerSlide === 'fluid' &&
       carouselTrackWrapperRef.current
     ) {
-      const items = carouselTrackWrapperRef.current.querySelectorAll(
-        '.use-spring-carousel-item',
+      const lastItem = carouselTrackWrapperRef.current.querySelector(
+        '.use-spring-carousel-item:last-child',
       )
-      const lastItem = items[items.length - 1]
-      const observer = new IntersectionObserver(
-        entries => {
+      if (lastItem) {
+        const observer = new IntersectionObserver(entries => {
           const lastItemEntry = entries[0]
           if (lastItemEntry.isIntersecting) {
             lastItemReached.current = true
           } else {
             lastItemReached.current = false
           }
-        },
-        {
-          threshold: 1,
-        },
-      )
-      observer.observe(lastItem)
+        })
+        observer.observe(lastItem)
 
-      return () => {
-        observer.unobserve(lastItem)
+        return () => {
+          observer.unobserve(lastItem)
+        }
       }
     }
   }, [itemsPerSlide])
@@ -457,6 +464,7 @@ export default function useSpringCarousel({
   function slideToItem({
     from,
     to,
+    customTo,
     immediate = false,
     onRest = () => {},
   }: SlideToItemFnProps) {
@@ -480,12 +488,26 @@ export default function useSpringCarousel({
       }
       return {}
     }
+    function getToValue() {
+      if (!withLoop && lastItemReached.current) {
+        return {
+          [carouselSlideAxis]: mainCarouselWrapperRef.current!
+            .scrollWidth,
+        }
+      }
+      if (customTo) {
+        return {
+          [carouselSlideAxis]: customTo,
+        }
+      }
+      return {
+        [carouselSlideAxis]: -(getSlideValue() * to),
+      }
+    }
 
     setCarouselStyles.start({
       ...getFromValue(),
-      to: {
-        [carouselSlideAxis]: -(getSlideValue() * to),
-      },
+      to: getToValue(),
       immediate,
       onRest: (val: AnimationResult) => {
         if (val.finished) {
@@ -555,13 +577,13 @@ export default function useSpringCarousel({
     if (
       (!withLoop &&
         getCurrentActiveItem() === internalItems.length - 1) ||
-      windowIsHidden.current ||
-      lastItemReached.current
+      windowIsHidden.current
     ) {
       return
     }
 
     setSlideActionType('next')
+
     if (getIsLastItem()) {
       slideToItem({
         from:
@@ -645,7 +667,7 @@ export default function useSpringCarousel({
     return {}
   }
   function getAnimatedWrapperStyles() {
-    const percentValue = `calc(100% - ${adjacentItemsPx * 2}px)`
+    const percentValue = `calc(100% - ${startEndGutter * 2}px)`
     return {
       width: carouselSlideAxis === 'x' ? percentValue : '100%',
       height: carouselSlideAxis === 'y' ? percentValue : '100%',
@@ -657,12 +679,26 @@ export default function useSpringCarousel({
       <div
         ref={mainCarouselWrapperRef}
         data-testid="use-spring-carousel-wrapper"
+        onScroll={e => {
+          const width = e.currentTarget.offsetWidth
+          const scrlWidth = e.currentTarget.scrollWidth
+          const sclLeft = e.currentTarget.scrollLeft
+          console.log({
+            width,
+          })
+          if (scrlWidth - sclLeft === width) {
+            console.log('here!')
+          }
+        }}
         style={{
           display: 'flex',
           position: 'relative',
           width: '100%',
           height: '100%',
           overflow: 'hidden',
+          ...(carouselSlideAxis === 'x'
+            ? { overflowX: 'auto' }
+            : { overflowY: 'auto' }),
         }}
       >
         <animated.div
@@ -670,14 +706,12 @@ export default function useSpringCarousel({
           data-testid="use-spring-carousel-animated-wrapper"
           style={{
             display: 'flex',
-            flexDirection:
-              carouselSlideAxis === 'x' ? 'row' : 'column',
             top: 0,
             left: 0,
             position: 'relative',
-            width: '100%',
-            ...carouselStyles,
             touchAction,
+            flexDirection:
+              carouselSlideAxis === 'x' ? 'row' : 'column',
             ...getAnimatedWrapperStyles(),
           }}
           ref={ref => {

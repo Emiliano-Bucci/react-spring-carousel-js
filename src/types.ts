@@ -27,7 +27,19 @@ type BaseCarouselSharedProps = {
   thumbsSlideAxis?: 'x' | 'y'
 }
 
-export type UseSpringCarouselProps = BaseCarouselSharedProps & {
+type UseSpringCarouselLoopProps = {
+  withLoop?: true
+  startEndGutter?: number
+}
+type UseSpringCarouselNoLoopProps = {
+  withLoop?: false
+  startEndGutter?: never
+}
+
+export type UseSpringCarouselProps = Omit<
+  BaseCarouselSharedProps,
+  'withLoop'
+> & {
   shouldResizeOnWindowResize?: boolean
   carouselSlideAxis?: 'x' | 'y'
   thumbsWrapperRef?: React.MutableRefObject<HTMLDivElement | null>
@@ -35,9 +47,8 @@ export type UseSpringCarouselProps = BaseCarouselSharedProps & {
   initialActiveItem?: number
   initialStartingPosition?: 'start' | 'center' | 'end'
   gutter?: number
-  adjacentItemsPx?: number
   touchAction?: 'none' | 'pan'
-}
+} & (UseSpringCarouselLoopProps | UseSpringCarouselNoLoopProps)
 
 export type PrepareThumbsData = (
   items: ReactSpringThumbItem[],
@@ -48,6 +59,7 @@ export type SlideToItemFnProps = {
   to: number
   newIndex?: number
   immediate?: boolean
+  customTo?: number
   onRest?(): void
 }
 
