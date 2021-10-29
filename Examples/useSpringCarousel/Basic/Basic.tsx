@@ -5,7 +5,11 @@ import { SliderWrapper } from '../../components/SliderWrapper/SliderWrapper'
 import { css } from '@emotion/react'
 
 export function Basic() {
-  const { carouselFragment } = useSpringCarousel({
+  const {
+    carouselFragment,
+    slideToNextItem,
+    slideToPrevItem,
+  } = useSpringCarousel({
     // startEndGutter: 20,
     withLoop: false,
     itemsPerSlide: 'fluid',
@@ -25,5 +29,16 @@ export function Basic() {
     })),
   })
 
-  return <SliderWrapper>{carouselFragment}</SliderWrapper>
+  return (
+    <div
+      css={css`
+        display: flex;
+        overflow: hidden;
+      `}
+    >
+      <button onClick={slideToPrevItem}>prev</button>
+      <SliderWrapper>{carouselFragment}</SliderWrapper>
+      <button onClick={slideToNextItem}>next</button>
+    </div>
+  )
 }

@@ -7,7 +7,7 @@ export const SliderWrapper: React.FC = ({ children }) => {
         border-radius: 12px;
         overflow: hidden;
         background-color: #fff;
-        padding: 36px;
+        border: 36px solid black;
         flex: 1;
         margin: 24px;
         box-shadow: 0 6.7px 5.3px rgba(0, 0, 0, 0.0012),
