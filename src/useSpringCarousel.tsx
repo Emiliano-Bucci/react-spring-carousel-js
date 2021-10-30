@@ -71,6 +71,18 @@ export default function useSpringCarousel({
     }
     return null
   }
+  const getFluidWrapperScrollValue = useCallback(() => {
+    return Math.round(
+      Number(
+        carouselTrackWrapperRef.current?.[
+          carouselSlideAxis === 'x' ? 'scrollWidth' : 'scrollHeight'
+        ],
+      ) -
+        carouselTrackWrapperRef.current!.getBoundingClientRect()[
+          carouselSlideAxis === 'x' ? 'width' : 'height'
+        ],
+    )
+  }, [carouselSlideAxis])
 
   const [carouselStyles, setCarouselStyles] = useSpring(() => ({
     y: 0,
@@ -159,8 +171,8 @@ export default function useSpringCarousel({
     if (window.innerWidth === currentWindowWidth.current) {
       return
     }
-    currentWindowWidth.current = window.innerWidth
 
+    currentWindowWidth.current = window.innerWidth
     setCarouselStyles.start({
       immediate: true,
       x: 0,
@@ -171,6 +183,19 @@ export default function useSpringCarousel({
       [carouselSlideAxis]: -(getSlideValue() * getCurrentActiveItem()),
     })
 
+    if (itemsPerSlide === 'fluid') {
+      fluidTotalWrapperScrollValue.current = getFluidWrapperScrollValue()
+      console.log(
+        fluidTotalWrapperScrollValue.current,
+        carouselTrackWrapperRef.current!.offsetWidth,
+      )
+      if (slideFluidEndReached.current) {
+        setCarouselStyles.start({
+          immediate: true,
+          [carouselSlideAxis]: -fluidTotalWrapperScrollValue.current,
+        })
+      }
+    }
     if (withLoop) {
       adjustCarouselWrapperPosition(carouselTrackWrapperRef.current!)
     }
@@ -180,6 +205,8 @@ export default function useSpringCarousel({
     getSlideValue,
     setCarouselStyles,
     withLoop,
+    itemsPerSlide,
+    getFluidWrapperScrollValue,
   ])
 
   // Custom modules
@@ -213,11 +240,14 @@ export default function useSpringCarousel({
 
       function resetAnimation() {
         if (itemsPerSlide === 'fluid') {
-          if (movement > 0) {
+          if (getIsFirstItem()) {
             setCarouselStyles.start({
               [carouselSlideAxis]: 0,
             })
           } else if (slideFluidEndReached.current) {
+            setCarouselStyles.start({
+              [carouselSlideAxis]: -fluidTotalWrapperScrollValue.current,
+            })
           } else {
             setCarouselStyles.start({
               [carouselSlideAxis]: -(getCurrentActiveItem() * getSlideValue()),
@@ -244,17 +274,13 @@ export default function useSpringCarousel({
         const prevItemTreshold = movement > draggingSlideTreshold
         const nextItemTreshold = movement < -draggingSlideTreshold
 
-        // if (slideFluidEndReached.current) {
-        //   console.log('1312')
-        //   if (nextItemTreshold) {
-        //     setCarouselStyles.start({
-        //       [carouselSlideAxis]: -fluidTotalWrapperScrollValue.current,
-        //     })
-        //   }
-        //   return
-        // }
-
-        if (nextItemTreshold) {
+        if (slideFluidEndReached.current && movement < 0) {
+          if (nextItemTreshold) {
+            setCarouselStyles.start({
+              [carouselSlideAxis]: -fluidTotalWrapperScrollValue.current,
+            })
+          }
+        } else if (nextItemTreshold) {
           props.cancel()
           if (!withLoop && getIsLastItem()) {
             resetAnimation()
@@ -312,10 +338,7 @@ export default function useSpringCarousel({
     }
   })
   useMount(() => {
-    fluidTotalWrapperScrollValue.current = Math.round(
-      Number(carouselTrackWrapperRef.current?.scrollWidth) -
-        carouselTrackWrapperRef.current!.getBoundingClientRect().width,
-    )
+    fluidTotalWrapperScrollValue.current = getFluidWrapperScrollValue()
     function handleVisibilityChange() {
       if (document.hidden) {
         windowIsHidden.current = true
