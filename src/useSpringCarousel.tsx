@@ -233,11 +233,6 @@ export default function useSpringCarousel({
     props => {
       const isDragging = props.dragging
       const movement = props.movement[carouselSlideAxis === 'x' ? 0 : 1]
-
-      if (props.first) {
-        currentSlidedValue = getCurrentSlidedValue()
-      }
-
       function resetAnimation() {
         if (itemsPerSlide === 'fluid') {
           if (getIsFirstItem()) {
@@ -260,6 +255,9 @@ export default function useSpringCarousel({
         }
       }
 
+      if (props.first) {
+        currentSlidedValue = getCurrentSlidedValue()
+      }
       if (isDragging) {
         setIsDragging(true)
         emitObservable({
@@ -296,7 +294,6 @@ export default function useSpringCarousel({
           }
         }
       }
-
       if (props.last && !props.pressed) {
         resetAnimation()
       }
@@ -529,7 +526,7 @@ export default function useSpringCarousel({
       } else {
         slideToItem({
           to: getPrevItem(),
-          customTo: currentSlideVal + getSlideValue(),
+          customTo: carouselStyles[carouselSlideAxis].get() + getSlideValue(),
         })
       }
     } else if ((!withLoop && getCurrentActiveItem() === 0) || windowIsHidden.current) {
@@ -555,8 +552,7 @@ export default function useSpringCarousel({
   function slideToNextItem() {
     if (itemsPerSlide === 'fluid' && !withLoop) {
       const willGoAfterLastFluidItem =
-        getSlideValue() + Math.abs(carouselStyles[carouselSlideAxis].get()) >=
-        fluidTotalWrapperScrollValue.current
+        getNextItem() * getSlideValue() >= fluidTotalWrapperScrollValue.current
 
       if (slideFluidEndReached.current) {
         return
@@ -564,12 +560,12 @@ export default function useSpringCarousel({
         slideFluidEndReached.current = true
         slideToItem({
           customTo: -fluidTotalWrapperScrollValue.current,
-          to: getNextItem(),
+          to: items.length - 1,
         })
       } else {
         slideToItem({
           to: getNextItem(),
-          customTo: -(getNextItem() * getSlideValue()),
+          customTo: carouselStyles[carouselSlideAxis].get() - getSlideValue(),
         })
       }
       return
