@@ -61,8 +61,9 @@ export default function useSpringCarousel({
   const isAnimating = useRef(false)
   const windowIsHidden = useRef(false)
   const currentWindowWidth = useRef(0)
-  const missVal = useRef(0)
+  const fluidTotalWrapperScrollValue = useRef(0)
   const slideFluidEndReached = useRef(false)
+  let currentSlidedValue = 0
 
   function getCarouselItem() {
     if (carouselTrackWrapperRef.current) {
@@ -75,6 +76,9 @@ export default function useSpringCarousel({
     y: 0,
     x: 0,
     config: springConfig,
+    onRest: ({ value }) => {
+      currentSlidedValue = value[carouselSlideAxis]
+    },
   }))
   const getSlideValue = useCallback(() => {
     if (!carouselTrackWrapperRef.current) {
@@ -193,31 +197,62 @@ export default function useSpringCarousel({
     thumbsWrapperRef,
     prepareThumbsData,
   })
+
+  function getCurrentSlidedValue() {
+    return carouselStyles[carouselSlideAxis].get()
+  }
+
   const bindDrag = useDrag(
     props => {
       const isDragging = props.dragging
       const movement = props.movement[carouselSlideAxis === 'x' ? 0 : 1]
 
-      const currentSlidedValue = carouselStyles[carouselSlideAxis].get()
+      if (props.first) {
+        currentSlidedValue = getCurrentSlidedValue()
+      }
 
       function resetAnimation() {
-        setCarouselStyles.start({
-          [carouselSlideAxis]: currentSlidedValue,
-        })
+        if (itemsPerSlide === 'fluid') {
+          if (movement > 0) {
+            setCarouselStyles.start({
+              [carouselSlideAxis]: 0,
+            })
+          } else if (slideFluidEndReached.current) {
+          } else {
+            setCarouselStyles.start({
+              [carouselSlideAxis]: -(getCurrentActiveItem() * getSlideValue()),
+            })
+          }
+        } else {
+          setCarouselStyles.start({
+            [carouselSlideAxis]: -(getCurrentActiveItem() * getSlideValue()),
+          })
+        }
       }
 
       if (isDragging) {
-        setCarouselStyles.start({
-          [carouselSlideAxis]: currentSlidedValue + movement,
-        })
         setIsDragging(true)
         emitObservable({
           eventName: 'onDrag',
           ...props,
         })
 
+        setCarouselStyles.start({
+          [carouselSlideAxis]: currentSlidedValue + movement,
+        })
+
         const prevItemTreshold = movement > draggingSlideTreshold
         const nextItemTreshold = movement < -draggingSlideTreshold
+
+        // if (slideFluidEndReached.current) {
+        //   console.log('1312')
+        //   if (nextItemTreshold) {
+        //     setCarouselStyles.start({
+        //       [carouselSlideAxis]: -fluidTotalWrapperScrollValue.current,
+        //     })
+        //   }
+        //   return
+        // }
 
         if (nextItemTreshold) {
           props.cancel()
@@ -277,7 +312,10 @@ export default function useSpringCarousel({
     }
   })
   useMount(() => {
-    missVal.current = Number(carouselTrackWrapperRef.current?.scrollWidth)
+    fluidTotalWrapperScrollValue.current = Math.round(
+      Number(carouselTrackWrapperRef.current?.scrollWidth) -
+        carouselTrackWrapperRef.current!.getBoundingClientRect().width,
+    )
     function handleVisibilityChange() {
       if (document.hidden) {
         windowIsHidden.current = true
@@ -292,6 +330,15 @@ export default function useSpringCarousel({
       return () => {
         document.removeEventListener('visibilitychange', handleVisibilityChange)
       }
+    }
+  })
+  useMount(() => {
+    if (initialActiveItem > 0 && initialActiveItem <= items.length) {
+      slideToItem({
+        to: initialActiveItem,
+        immediate: true,
+      })
+      setActiveItem(initialActiveItem)
     }
   })
   useEffect(() => {
@@ -312,15 +359,6 @@ export default function useSpringCarousel({
       }
     }
   }, [carouselSlideAxis])
-  useMount(() => {
-    if (initialActiveItem > 0 && initialActiveItem <= items.length) {
-      slideToItem({
-        to: initialActiveItem,
-        immediate: true,
-      })
-      setActiveItem(initialActiveItem)
-    }
-  })
 
   function setSlideActionType(type: SlideActionType) {
     slideActionType.current = type
@@ -444,7 +482,6 @@ export default function useSpringCarousel({
     if (element.style.transform === 'none') {
       return 0
     }
-
     const values = element.style.transform.split(/\w+\(|\);?/)
     return Number(
       values[1].split(/,\s?/g)[carouselSlideAxis === 'x' ? 0 : 1].replace('px', ''),
@@ -458,92 +495,81 @@ export default function useSpringCarousel({
   }
   function slideToPrevItem() {
     if (itemsPerSlide === 'fluid' && !withLoop) {
-      const currentSlideVal = getWrapperFromValue(carouselTrackWrapperRef.current!)
       slideFluidEndReached.current = false
+      const currentSlideVal = getWrapperFromValue(carouselTrackWrapperRef.current!)
       const nextPrevValue = currentSlideVal + getSlideValue()
 
       if (nextPrevValue > 0) {
         slideToItem({
           to: 0,
         })
-      }
-
-      if (getIsFirstItem()) {
-        return
       } else {
         slideToItem({
           to: getPrevItem(),
           customTo: currentSlideVal + getSlideValue(),
         })
       }
+    } else if ((!withLoop && getCurrentActiveItem() === 0) || windowIsHidden.current) {
       return
-    }
-
-    if ((!withLoop && getCurrentActiveItem() === 0) || windowIsHidden.current) {
-      return
-    }
-
-    setSlideActionType('prev')
-
-    if (getIsFirstItem()) {
-      slideToItem({
-        from: -(
-          Math.abs(getWrapperFromValue(carouselTrackWrapperRef.current!)) +
-          getSlideValue() * items.length
-        ),
-        to: items.length - 1,
-      })
     } else {
-      slideToItem({
-        to: getPrevItem(),
-      })
+      setSlideActionType('prev')
+
+      if (getIsFirstItem()) {
+        slideToItem({
+          from: -(
+            Math.abs(getWrapperFromValue(carouselTrackWrapperRef.current!)) +
+            getSlideValue() * items.length
+          ),
+          to: items.length - 1,
+        })
+      } else {
+        slideToItem({
+          to: getPrevItem(),
+        })
+      }
     }
   }
   function slideToNextItem() {
     if (itemsPerSlide === 'fluid' && !withLoop) {
-      const currentSlideVal = getWrapperFromValue(carouselTrackWrapperRef.current!)
-      const scrollValue = Math.round(
-        missVal.current - carouselTrackWrapperRef.current!.getBoundingClientRect().width,
-      )
+      const willGoAfterLastFluidItem =
+        getSlideValue() + Math.abs(carouselStyles[carouselSlideAxis].get()) >=
+        fluidTotalWrapperScrollValue.current
 
       if (slideFluidEndReached.current) {
         return
-      }
-      if (getSlideValue() * getNextItem() >= scrollValue) {
+      } else if (willGoAfterLastFluidItem) {
         slideFluidEndReached.current = true
         slideToItem({
-          customTo: -scrollValue,
+          customTo: -fluidTotalWrapperScrollValue.current,
           to: getNextItem(),
         })
       } else {
         slideToItem({
           to: getNextItem(),
-          customTo: currentSlideVal - getSlideValue(),
+          customTo: -(getNextItem() * getSlideValue()),
         })
       }
       return
-    }
-
-    if (
+    } else if (
       (!withLoop && getCurrentActiveItem() === internalItems.length - 1) ||
       windowIsHidden.current
     ) {
       return
-    }
-
-    setSlideActionType('next')
-
-    if (getIsLastItem()) {
-      slideToItem({
-        from:
-          getWrapperFromValue(carouselTrackWrapperRef.current!) +
-          getSlideValue() * items.length,
-        to: 0,
-      })
     } else {
-      slideToItem({
-        to: getNextItem(),
-      })
+      setSlideActionType('next')
+
+      if (getIsLastItem()) {
+        slideToItem({
+          from:
+            getWrapperFromValue(carouselTrackWrapperRef.current!) +
+            getSlideValue() * items.length,
+          to: 0,
+        })
+      } else {
+        slideToItem({
+          to: getNextItem(),
+        })
+      }
     }
   }
   function _slideToItem(item: string | number) {

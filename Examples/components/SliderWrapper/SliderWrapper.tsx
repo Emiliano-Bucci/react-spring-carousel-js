@@ -11,8 +11,7 @@ export const SliderWrapper: React.FC = ({ children }) => {
         flex: 1;
         margin: 24px;
         box-shadow: 0 6.7px 5.3px rgba(0, 0, 0, 0.0012),
-          0 12.3px 17.9px rgba(0, 0, 0, 0.062),
-          0 10px 20px rgba(0, 0, 0, 0.06);
+          0 12.3px 17.9px rgba(0, 0, 0, 0.062), 0 10px 20px rgba(0, 0, 0, 0.06);
       `}
     >
       <Global
@@ -30,9 +29,8 @@ export const SliderWrapper: React.FC = ({ children }) => {
             display: flex;
             flex: 1;
             letter-spacing: 1px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
-              Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
-              'Helvetica Neue', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+              Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
           }
 
           #root {
