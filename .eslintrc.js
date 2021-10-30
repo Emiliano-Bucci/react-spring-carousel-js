@@ -2,19 +2,16 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   extends: [
     'prettier',
+    'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
     'plugin:prettier/recommended',
     'plugin:testing-library/react',
-    'plugin:testing-library/recommended',
   ],
   plugins: ['react-hooks', 'testing-library', '@typescript-eslint'],
   parserOptions: {
-    // Allows for the parsing of modern ECMAScript features
     ecmaVersion: 2018,
-    // Allows for the use of imports
     sourceType: 'module',
     ecmaFeatures: {
-      // Allows for the parsing of JSX
       jsx: true,
     },
   },
@@ -32,14 +29,24 @@ module.exports = {
         argsIgnorePattern: '^_',
       },
     ],
+    'prettier/prettier': [
+      'warn',
+      {
+        singleQuote: true,
+        semi: false,
+        arrowParens: 'avoid',
+        printWidth: 90,
+      },
+    ],
     // Errors
     '@typescript-eslint/no-explicit-any': 2,
     '@typescript-eslint/no-var-requires': 2,
     'react-hooks/rules-of-hooks': 2,
     'react-hooks/exhaustive-deps': 2,
-    'testing-library/await-async-query': 2,
-    'testing-library/no-await-sync-query': 2,
-    'testing-library/no-debug': 1,
+    'testing-library/await-async-query': 'error',
+    'testing-library/no-await-sync-query': 'error',
+    'testing-library/no-debugging-utils': 'warn',
+    'testing-library/no-dom-import': 'off',
     // Allowed
     'react/jsx-uses-react': 0,
     'react/react-in-jsx-scope': 0,
@@ -57,7 +64,6 @@ module.exports = {
   },
   settings: {
     react: {
-      // Tells eslint-plugin-react to automatically detect the version of React to use
       version: 'detect',
     },
   },

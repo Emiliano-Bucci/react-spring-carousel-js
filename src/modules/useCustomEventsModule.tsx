@@ -1,15 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { Subject } from 'rxjs'
-import {
-  EventsObservableProps,
-  ObservableCallbackFn,
-  EmitObservableFn,
-} from '../types'
+import { EventsObservableProps, ObservableCallbackFn, EmitObservableFn } from '../types'
 
 export function useCustomEventsModule() {
-  const eventsObserverRef = useRef(
-    new Subject<EventsObservableProps>(),
-  )
+  const eventsObserverRef = useRef(new Subject<EventsObservableProps>())
 
   function useListenToCustomEvent(fn: ObservableCallbackFn) {
     useEffect(() => {

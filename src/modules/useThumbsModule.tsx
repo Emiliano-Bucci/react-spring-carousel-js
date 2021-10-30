@@ -72,9 +72,7 @@ export function useThumbsModule({
       offsetDirection: OffsetDirection
       offsetDimension: OffsetDimension
     }) {
-      return (
-        thumbNode[offsetDirection] + thumbNode[offsetDimension] / 2
-      )
+      return thumbNode[offsetDirection] + thumbNode[offsetDimension] / 2
     }
     function getThumbScrollDimension({
       thumbWrapper,
@@ -111,13 +109,9 @@ export function useThumbsModule({
       if (
         activeItem === items.length - 1 ||
         thumbOffsetPosition - thumbScrollDimension >
-          thumbWrapper[scrollDimensionProperty] -
-            thumbWrapper[offsetDimension]
+          thumbWrapper[scrollDimensionProperty] - thumbWrapper[offsetDimension]
       ) {
-        return (
-          thumbWrapper[scrollDimensionProperty] -
-          thumbWrapper[offsetDimension]
-        )
+        return thumbWrapper[scrollDimensionProperty] - thumbWrapper[offsetDimension]
       }
 
       if (activeItem === 0) {
@@ -177,9 +171,7 @@ export function useThumbsModule({
   }
 
   function handlePrepareThumbsDate() {
-    function getPreparedItems(
-      _items: ReactSpringCarouselItem[],
-    ): ReactSpringThumbItem[] {
+    function getPreparedItems(_items: ReactSpringCarouselItem[]): ReactSpringThumbItem[] {
       return _items.map(i => ({
         id: i.id,
         renderThumb: i.renderThumb,

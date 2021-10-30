@@ -1,22 +1,7 @@
-import {
-  useRef,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-} from 'react'
-import {
-  useSpring,
-  config,
-  animated,
-  AnimationResult,
-} from 'react-spring'
+import { useRef, createContext, useCallback, useContext, useEffect } from 'react'
+import { useSpring, config, animated, AnimationResult } from 'react-spring'
 import { useDrag } from '@use-gesture/react'
-import {
-  useCustomEventsModule,
-  useFullscreenModule,
-  useThumbsModule,
-} from './modules'
+import { useCustomEventsModule, useFullscreenModule, useThumbsModule } from './modules'
 import {
   UseSpringCarouselProps,
   UseSpringCarouselContextProps,
@@ -26,9 +11,9 @@ import {
 import { useMount } from './utils'
 import { getIsBrowser } from './utils'
 
-const UseSpringCarouselContext = createContext<
-  UseSpringCarouselContextProps | undefined
->(undefined)
+const UseSpringCarouselContext = createContext<UseSpringCarouselContextProps | undefined>(
+  undefined,
+)
 
 export function useSpringCarouselContext() {
   const context = useContext(UseSpringCarouselContext)
@@ -81,9 +66,7 @@ export default function useSpringCarousel({
 
   function getCarouselItem() {
     if (carouselTrackWrapperRef.current) {
-      return carouselTrackWrapperRef.current.querySelector(
-        '.use-spring-carousel-item',
-      )
+      return carouselTrackWrapperRef.current.querySelector('.use-spring-carousel-item')
     }
     return null
   }
@@ -111,12 +94,8 @@ export default function useSpringCarousel({
   }, [carouselSlideAxis, gutter])
   const adjustCarouselWrapperPosition = useCallback(
     (ref: HTMLDivElement) => {
-      if (
-        itemsPerSlide !== 'fluid' &&
-        typeof itemsPerSlide === 'number'
-      ) {
-        const positionProperty =
-          carouselSlideAxis === 'x' ? 'left' : 'top'
+      if (itemsPerSlide !== 'fluid' && typeof itemsPerSlide === 'number') {
+        const positionProperty = carouselSlideAxis === 'x' ? 'left' : 'top'
 
         function getDefaultPositionValue() {
           return getSlideValue() * items.length
@@ -132,15 +111,13 @@ export default function useSpringCarousel({
         function setCenterPosition() {
           setPosition(
             getDefaultPositionValue() -
-              getSlideValue() *
-                Math.round(((itemsPerSlide as number) - 1) / 2),
+              getSlideValue() * Math.round(((itemsPerSlide as number) - 1) / 2),
           )
         }
         function setEndPosition() {
           setPosition(
             getDefaultPositionValue() -
-              getSlideValue() *
-                Math.round((itemsPerSlide as number) - 1),
+              getSlideValue() * Math.round((itemsPerSlide as number) - 1),
           )
         }
 
@@ -187,9 +164,7 @@ export default function useSpringCarousel({
     })
     setCarouselStyles.start({
       immediate: true,
-      [carouselSlideAxis]: -(
-        getSlideValue() * getCurrentActiveItem()
-      ),
+      [carouselSlideAxis]: -(getSlideValue() * getCurrentActiveItem()),
     })
 
     if (withLoop) {
@@ -204,23 +179,13 @@ export default function useSpringCarousel({
   ])
 
   // Custom modules
-  const {
-    useListenToCustomEvent,
-    emitObservable,
-  } = useCustomEventsModule()
-  const {
-    enterFullscreen,
-    exitFullscreen,
-    getIsFullscreen,
-  } = useFullscreenModule({
+  const { useListenToCustomEvent, emitObservable } = useCustomEventsModule()
+  const { enterFullscreen, exitFullscreen, getIsFullscreen } = useFullscreenModule({
     mainCarouselWrapperRef,
     emitObservable,
     handleResize,
   })
-  const {
-    thumbsFragment: _thumbsFragment,
-    handleThumbsScroll,
-  } = useThumbsModule({
+  const { thumbsFragment: _thumbsFragment, handleThumbsScroll } = useThumbsModule({
     withThumbs,
     items,
     thumbsSlideAxis,
@@ -231,12 +196,9 @@ export default function useSpringCarousel({
   const bindDrag = useDrag(
     props => {
       const isDragging = props.dragging
-      const movement =
-        props.movement[carouselSlideAxis === 'x' ? 0 : 1]
+      const movement = props.movement[carouselSlideAxis === 'x' ? 0 : 1]
 
-      const currentSlidedValue = carouselStyles[
-        carouselSlideAxis
-      ].get()
+      const currentSlidedValue = carouselStyles[carouselSlideAxis].get()
 
       function resetAnimation() {
         setCarouselStyles.start({
@@ -284,10 +246,7 @@ export default function useSpringCarousel({
   )
   // Perform some check on first mount
   useMount(() => {
-    if (
-      itemsPerSlide !== 'fluid' &&
-      !Number.isInteger(itemsPerSlide)
-    ) {
+    if (itemsPerSlide !== 'fluid' && !Number.isInteger(itemsPerSlide)) {
       throw new Error(`itemsPerSlide should be an integer.`)
     }
 
@@ -318,9 +277,7 @@ export default function useSpringCarousel({
     }
   })
   useMount(() => {
-    missVal.current = Number(
-      carouselTrackWrapperRef.current?.scrollWidth,
-    )
+    missVal.current = Number(carouselTrackWrapperRef.current?.scrollWidth)
     function handleVisibilityChange() {
       if (document.hidden) {
         windowIsHidden.current = true
@@ -330,16 +287,10 @@ export default function useSpringCarousel({
     }
 
     if (getIsBrowser()) {
-      document.addEventListener(
-        'visibilitychange',
-        handleVisibilityChange,
-      )
+      document.addEventListener('visibilitychange', handleVisibilityChange)
 
       return () => {
-        document.removeEventListener(
-          'visibilitychange',
-          handleVisibilityChange,
-        )
+        document.removeEventListener('visibilitychange', handleVisibilityChange)
       }
     }
   })
@@ -496,9 +447,7 @@ export default function useSpringCarousel({
 
     const values = element.style.transform.split(/\w+\(|\);?/)
     return Number(
-      values[1]
-        .split(/,\s?/g)
-        [carouselSlideAxis === 'x' ? 0 : 1].replace('px', ''),
+      values[1].split(/,\s?/g)[carouselSlideAxis === 'x' ? 0 : 1].replace('px', ''),
     )
   }
   function getIsFirstItem() {
@@ -509,9 +458,7 @@ export default function useSpringCarousel({
   }
   function slideToPrevItem() {
     if (itemsPerSlide === 'fluid' && !withLoop) {
-      const currentSlideVal = getWrapperFromValue(
-        carouselTrackWrapperRef.current!,
-      )
+      const currentSlideVal = getWrapperFromValue(carouselTrackWrapperRef.current!)
       slideFluidEndReached.current = false
       const nextPrevValue = currentSlideVal + getSlideValue()
 
@@ -532,10 +479,7 @@ export default function useSpringCarousel({
       return
     }
 
-    if (
-      (!withLoop && getCurrentActiveItem() === 0) ||
-      windowIsHidden.current
-    ) {
+    if ((!withLoop && getCurrentActiveItem() === 0) || windowIsHidden.current) {
       return
     }
 
@@ -544,9 +488,7 @@ export default function useSpringCarousel({
     if (getIsFirstItem()) {
       slideToItem({
         from: -(
-          Math.abs(
-            getWrapperFromValue(carouselTrackWrapperRef.current!),
-          ) +
+          Math.abs(getWrapperFromValue(carouselTrackWrapperRef.current!)) +
           getSlideValue() * items.length
         ),
         to: items.length - 1,
@@ -559,13 +501,9 @@ export default function useSpringCarousel({
   }
   function slideToNextItem() {
     if (itemsPerSlide === 'fluid' && !withLoop) {
-      const currentSlideVal = getWrapperFromValue(
-        carouselTrackWrapperRef.current!,
-      )
+      const currentSlideVal = getWrapperFromValue(carouselTrackWrapperRef.current!)
       const scrollValue = Math.round(
-        missVal.current -
-          carouselTrackWrapperRef.current!.getBoundingClientRect()
-            .width,
+        missVal.current - carouselTrackWrapperRef.current!.getBoundingClientRect().width,
       )
 
       if (slideFluidEndReached.current) {
@@ -587,8 +525,7 @@ export default function useSpringCarousel({
     }
 
     if (
-      (!withLoop &&
-        getCurrentActiveItem() === internalItems.length - 1) ||
+      (!withLoop && getCurrentActiveItem() === internalItems.length - 1) ||
       windowIsHidden.current
     ) {
       return
@@ -629,9 +566,7 @@ export default function useSpringCarousel({
       return
     }
 
-    const currentItem = findItemIndex(
-      items[getCurrentActiveItem()].id,
-    )
+    const currentItem = findItemIndex(items[getCurrentActiveItem()].id)
     const newActiveItem = findItemIndex(items[itemIndex].id)
 
     if (newActiveItem > currentItem) {
@@ -708,8 +643,7 @@ export default function useSpringCarousel({
             left: 0,
             position: 'relative',
             touchAction,
-            flexDirection:
-              carouselSlideAxis === 'x' ? 'row' : 'column',
+            flexDirection: carouselSlideAxis === 'x' ? 'row' : 'column',
             ...getAnimatedWrapperStyles(),
             ...carouselStyles,
           }}

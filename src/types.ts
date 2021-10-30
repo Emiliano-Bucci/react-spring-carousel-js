@@ -1,8 +1,4 @@
-import {
-  SpringConfig,
-  TransitionFrom,
-  TransitionTo,
-} from 'react-spring'
+import { SpringConfig, TransitionFrom, TransitionTo } from 'react-spring'
 
 export type ReactSpringThumbItem = {
   id: string
@@ -36,10 +32,7 @@ type UseSpringCarouselNoLoopProps = {
   startEndGutter?: never
 }
 
-export type UseSpringCarouselProps = Omit<
-  BaseCarouselSharedProps,
-  'withLoop'
-> & {
+export type UseSpringCarouselProps = Omit<BaseCarouselSharedProps, 'withLoop'> & {
   shouldResizeOnWindowResize?: boolean
   carouselSlideAxis?: 'x' | 'y'
   thumbsWrapperRef?: React.MutableRefObject<HTMLDivElement | null>
@@ -50,9 +43,7 @@ export type UseSpringCarouselProps = Omit<
   touchAction?: 'none' | 'pan'
 } & (UseSpringCarouselLoopProps | UseSpringCarouselNoLoopProps)
 
-export type PrepareThumbsData = (
-  items: ReactSpringThumbItem[],
-) => ReactSpringThumbItem[]
+export type PrepareThumbsData = (items: ReactSpringThumbItem[]) => ReactSpringThumbItem[]
 
 export type SlideToItemFnProps = {
   from?: number
@@ -152,10 +143,6 @@ export type EventsObservableProps =
   | OnLeftSwipe
   | OnRightSwipe
 
-export type ObservableCallbackFn = (
-  data: EventsObservableProps,
-) => void
+export type ObservableCallbackFn = (data: EventsObservableProps) => void
 
-export type UseListenToCustomEvent = (
-  fn: ObservableCallbackFn,
-) => void
+export type UseListenToCustomEvent = (fn: ObservableCallbackFn) => void

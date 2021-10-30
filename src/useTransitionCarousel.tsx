@@ -1,11 +1,7 @@
 import { createContext, useRef, useState, useContext } from 'react'
 import { useTransition, animated, config } from 'react-spring'
 import { useDrag } from '@use-gesture/react'
-import {
-  useCustomEventsModule,
-  useThumbsModule,
-  useFullscreenModule,
-} from './modules'
+import { useCustomEventsModule, useThumbsModule, useFullscreenModule } from './modules'
 import {
   UseTransitionCarouselContextProps,
   UseTransitionCarouselProps,
@@ -63,22 +59,12 @@ export default function useTransitionCarousel({
   const isAnimating = useRef(false)
   const [activeItem, setActiveItem] = useState(0)
 
-  const {
-    emitObservable,
-    useListenToCustomEvent,
-  } = useCustomEventsModule()
-  const {
-    enterFullscreen,
-    exitFullscreen,
-    getIsFullscreen,
-  } = useFullscreenModule({
+  const { emitObservable, useListenToCustomEvent } = useCustomEventsModule()
+  const { enterFullscreen, exitFullscreen, getIsFullscreen } = useFullscreenModule({
     emitObservable,
     mainCarouselWrapperRef,
   })
-  const {
-    thumbsFragment: _thumbsFragment,
-    handleThumbsScroll,
-  } = useThumbsModule({
+  const { thumbsFragment: _thumbsFragment, handleThumbsScroll } = useThumbsModule({
     items,
     withThumbs,
     thumbsSlideAxis,

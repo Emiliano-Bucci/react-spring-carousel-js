@@ -58,9 +58,7 @@ export function useFullscreenModule({
 
   function enterFullscreen(elementRef?: HTMLElement) {
     if (screenfull.isEnabled) {
-      screenfull.request(
-        (elementRef || mainCarouselWrapperRef.current) as Element,
-      )
+      screenfull.request((elementRef || mainCarouselWrapperRef.current) as Element)
     }
   }
 
