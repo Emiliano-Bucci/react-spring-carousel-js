@@ -526,7 +526,7 @@ export default function useSpringCarousel({
       } else {
         slideToItem({
           to: getPrevItem(),
-          customTo: carouselStyles[carouselSlideAxis].get() + getSlideValue(),
+          customTo: getCurrentSlidedValue() + getSlideValue(),
         })
       }
     } else if ((!withLoop && getCurrentActiveItem() === 0) || windowIsHidden.current) {
@@ -552,7 +552,8 @@ export default function useSpringCarousel({
   function slideToNextItem() {
     if (itemsPerSlide === 'fluid' && !withLoop) {
       const willGoAfterLastFluidItem =
-        getNextItem() * getSlideValue() >= fluidTotalWrapperScrollValue.current
+        Math.abs(getCurrentSlidedValue() - getSlideValue()) >=
+        fluidTotalWrapperScrollValue.current
 
       if (slideFluidEndReached.current) {
         return
@@ -565,7 +566,7 @@ export default function useSpringCarousel({
       } else {
         slideToItem({
           to: getNextItem(),
-          customTo: carouselStyles[carouselSlideAxis].get() - getSlideValue(),
+          customTo: getCurrentSlidedValue() - getSlideValue(),
         })
       }
       return
