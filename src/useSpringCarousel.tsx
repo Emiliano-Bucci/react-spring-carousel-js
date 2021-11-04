@@ -29,7 +29,7 @@ export function useSpringCarouselContext() {
 export default function useSpringCarousel({
   items,
   withLoop = false,
-  draggingSlideTreshold = 100,
+  draggingSlideTreshold = 140,
   springConfig = config.default,
   shouldResizeOnWindowResize = true,
   withThumbs = false,
@@ -181,6 +181,14 @@ export default function useSpringCarousel({
           immediate: true,
           [carouselSlideAxis]: -fluidTotalWrapperScrollValue.current,
         })
+      } else {
+        const lastItem = document.querySelector(
+          '.use-spring-carousel-item:last-of-type',
+        )! as HTMLDivElement
+        console.log({
+          tot: fluidTotalWrapperScrollValue.current,
+          lastItem: lastItem.offsetLeft - lastItem.offsetWidth,
+        })
       }
     } else {
       setCarouselStyles.start({
@@ -233,9 +241,7 @@ export default function useSpringCarousel({
       function resetAnimation() {
         if (itemsPerSlide === 'fluid') {
           if (getIsFirstItem()) {
-            setCarouselStyles.start({
-              [carouselSlideAxis]: 0,
-            })
+            slideToPrevItem()
           } else if (slideFluidEndReached.current) {
             setCarouselStyles.start({
               [carouselSlideAxis]: -fluidTotalWrapperScrollValue.current,
@@ -271,6 +277,7 @@ export default function useSpringCarousel({
 
         if (slideFluidEndReached.current && movement < 0) {
           if (nextItemTreshold) {
+            props.cancel()
             setCarouselStyles.start({
               [carouselSlideAxis]: -fluidTotalWrapperScrollValue.current,
             })
@@ -292,6 +299,7 @@ export default function useSpringCarousel({
         }
       }
       if (props.last && !props.pressed) {
+        console.log('here')
         resetAnimation()
       }
     },
@@ -511,21 +519,24 @@ export default function useSpringCarousel({
   function slideToPrevItem() {
     if (itemsPerSlide === 'fluid' && !withLoop) {
       const currentSlideVal = getWrapperFromValue(carouselTrackWrapperRef.current!)
-      const nextPrevValue = currentSlideVal + getSlideValue()
+      const nextPrevValue = currentSlideVal + getSlideValue() + 100
       const restVal =
         Math.round(mainCarouselWrapperRef.current!.getBoundingClientRect().width) %
         getSlideValue()
 
-      if (slideFluidEndReached.current) {
+      if (nextPrevValue > 0) {
+        shouldUseRestInFluidSlideType.current = false
+        if (slideFluidEndReached.current) {
+          slideFluidEndReached.current = false
+        }
+        slideToItem({
+          to: 0,
+        })
+      } else if (slideFluidEndReached.current) {
         slideFluidEndReached.current = false
         slideToItem({
           to: getCurrentActiveItem(),
           customTo: -(fluidTotalWrapperScrollValue.current - getSlideValue()),
-        })
-      } else if (nextPrevValue > 0) {
-        shouldUseRestInFluidSlideType.current = false
-        slideToItem({
-          to: 0,
         })
       } else {
         if (shouldUseRestInFluidSlideType.current) {
@@ -565,7 +576,7 @@ export default function useSpringCarousel({
         Math.round(mainCarouselWrapperRef.current!.getBoundingClientRect().width) %
         getSlideValue()
       const willGoAfterLastFluidItem =
-        Math.abs(getCurrentSlidedValue() - getSlideValue()) >=
+        Math.abs(getCurrentSlidedValue() - getSlideValue()) + 100 >=
         fluidTotalWrapperScrollValue.current
 
       if (getIsFirstItem()) {
@@ -680,7 +691,11 @@ export default function useSpringCarousel({
         }px)`,
       }
     }
-    return {}
+    return {
+      ...(carouselSlideAxis === 'x'
+        ? { marginRight: `${gutter}px` }
+        : { marginBottom: `${gutter}px` }),
+    }
   }
   function getAnimatedWrapperStyles() {
     const percentValue = `calc(100% - ${startEndGutter * 2}px)`
