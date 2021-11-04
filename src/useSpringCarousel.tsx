@@ -63,6 +63,7 @@ export default function useSpringCarousel({
   const currentWindowWidth = useRef(0)
   const fluidTotalWrapperScrollValue = useRef(0)
   const slideFluidEndReached = useRef(false)
+  const should = useRef(false)
   let currentSlidedValue = 0
 
   function getCarouselItem() {
@@ -171,30 +172,26 @@ export default function useSpringCarousel({
     if (window.innerWidth === currentWindowWidth.current) {
       return
     }
-
     currentWindowWidth.current = window.innerWidth
-    setCarouselStyles.start({
-      immediate: true,
-      x: 0,
-      y: 0,
-    })
-    setCarouselStyles.start({
-      immediate: true,
-      [carouselSlideAxis]: -(getSlideValue() * getCurrentActiveItem()),
-    })
 
     if (itemsPerSlide === 'fluid') {
       fluidTotalWrapperScrollValue.current = getFluidWrapperScrollValue()
-      console.log(
-        fluidTotalWrapperScrollValue.current,
-        carouselTrackWrapperRef.current!.offsetWidth,
-      )
       if (slideFluidEndReached.current) {
         setCarouselStyles.start({
           immediate: true,
           [carouselSlideAxis]: -fluidTotalWrapperScrollValue.current,
         })
       }
+    } else {
+      setCarouselStyles.start({
+        immediate: true,
+        x: 0,
+        y: 0,
+      })
+      setCarouselStyles.start({
+        immediate: true,
+        [carouselSlideAxis]: -(getSlideValue() * getCurrentActiveItem()),
+      })
     }
     if (withLoop) {
       adjustCarouselWrapperPosition(carouselTrackWrapperRef.current!)
@@ -343,10 +340,8 @@ export default function useSpringCarousel({
         windowIsHidden.current = false
       }
     }
-
     if (getIsBrowser()) {
       document.addEventListener('visibilitychange', handleVisibilityChange)
-
       return () => {
         document.removeEventListener('visibilitychange', handleVisibilityChange)
       }
@@ -515,19 +510,34 @@ export default function useSpringCarousel({
   }
   function slideToPrevItem() {
     if (itemsPerSlide === 'fluid' && !withLoop) {
-      slideFluidEndReached.current = false
       const currentSlideVal = getWrapperFromValue(carouselTrackWrapperRef.current!)
       const nextPrevValue = currentSlideVal + getSlideValue()
+      const restVal =
+        Math.round(mainCarouselWrapperRef.current!.getBoundingClientRect().width) %
+        getSlideValue()
 
-      if (nextPrevValue > 0) {
+      if (slideFluidEndReached.current) {
+        slideFluidEndReached.current = false
+        slideToItem({
+          to: getCurrentActiveItem(),
+          customTo: -(fluidTotalWrapperScrollValue.current - getSlideValue()),
+        })
+      } else if (nextPrevValue > 0) {
+        should.current = false
         slideToItem({
           to: 0,
         })
       } else {
-        slideToItem({
-          to: getPrevItem(),
-          customTo: getCurrentSlidedValue() + getSlideValue(),
-        })
+        if (should.current) {
+          slideToItem({
+            to: getPrevItem(),
+            customTo: -(getPrevItem() * getSlideValue() - restVal),
+          })
+        } else {
+          slideToItem({
+            to: getPrevItem(),
+          })
+        }
       }
     } else if ((!withLoop && getCurrentActiveItem() === 0) || windowIsHidden.current) {
       return
@@ -551,23 +561,37 @@ export default function useSpringCarousel({
   }
   function slideToNextItem() {
     if (itemsPerSlide === 'fluid' && !withLoop) {
+      const restVal =
+        Math.round(mainCarouselWrapperRef.current!.getBoundingClientRect().width) %
+        getSlideValue()
       const willGoAfterLastFluidItem =
         Math.abs(getCurrentSlidedValue() - getSlideValue()) >=
         fluidTotalWrapperScrollValue.current
+
+      if (getIsFirstItem()) {
+        should.current = false
+      }
 
       if (slideFluidEndReached.current) {
         return
       } else if (willGoAfterLastFluidItem) {
         slideFluidEndReached.current = true
+        should.current = true
         slideToItem({
           customTo: -fluidTotalWrapperScrollValue.current,
-          to: items.length - 1,
+          to: getCurrentActiveItem(),
         })
       } else {
-        slideToItem({
-          to: getNextItem(),
-          customTo: getCurrentSlidedValue() - getSlideValue(),
-        })
+        if (should.current) {
+          slideToItem({
+            to: getNextItem(),
+            customTo: -(getNextItem() * getSlideValue() - restVal),
+          })
+        } else {
+          slideToItem({
+            to: getNextItem(),
+          })
+        }
       }
       return
     } else if (

@@ -1,10 +1,10 @@
-import { useSpringCarousel } from '../../../src'
+import { useSpringCarousel } from 'src'
 import { mockedItems } from '../mocked-data'
-import { SliderItem } from '../../components/SliderItem/SliderItem'
-import { SliderWrapper } from '../../components/SliderWrapper/SliderWrapper'
+import { SliderItem } from 'examples/components/SliderItem/SliderItem'
+import { SliderWrapper } from 'examples/components/SliderWrapper/SliderWrapper'
 import { css } from '@emotion/react'
 
-export function Basic() {
+export function Development() {
   const { carouselFragment, slideToNextItem, slideToPrevItem } = useSpringCarousel({
     // startEndGutter: 20,
     withLoop: false,
