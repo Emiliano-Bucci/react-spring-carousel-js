@@ -12,7 +12,7 @@ const globals = {
   'react-dom': 'ReactDOM',
   'react/jsx-runtime': 'jsxRuntime',
   'react-spring': 'reactSpring',
-  'react-use-gesture': 'reactUseGesture',
+  '@use-gesture/react': 'reactUseGesture',
   rxjs: 'rxjs',
   screenfull: 'screenfull',
 }
@@ -53,7 +53,7 @@ export default {
     external(),
     resolve(),
     commonjs(),
-    terser(),
+    // terser(),
     size(),
   ],
 }

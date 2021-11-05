@@ -43,4 +43,46 @@ export const mockedItems = [
       background-color: #c0392b;
     `,
   },
+  {
+    id: 'item-1b',
+    label: 'Item 1b',
+    css: css`
+      background-color: #2c3e50;
+    `,
+  },
+  {
+    id: 'item-2b',
+    label: 'Item 2b',
+    css: css`
+      background-color: #8e44ad;
+    `,
+  },
+  {
+    id: 'item-3b',
+    label: 'Item 3b',
+    css: css`
+      background-color: #16a085;
+    `,
+  },
+  {
+    id: 'item-4b',
+    label: 'Item 4b',
+    css: css`
+      background-color: #e67e22;
+    `,
+  },
+  {
+    id: 'item-5b',
+    label: 'Item 5b',
+    css: css`
+      background-color: #95a5a6;
+    `,
+  },
+  {
+    id: 'item-6b',
+    label: 'Item 6b',
+    css: css`
+      background-color: #c0392b;
+    `,
+  },
 ]
