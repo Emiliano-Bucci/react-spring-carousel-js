@@ -15,7 +15,7 @@ export function Development() {
           {...rest}
           css={css`
             ${rest.css};
-            width: 200px;
+            width: 300px;
           `}
         >
           {label}

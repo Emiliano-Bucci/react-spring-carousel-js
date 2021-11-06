@@ -38,7 +38,6 @@ export function useThumbsModule({
   useMount(() => {
     if (withThumbs) {
       const missingThumbs = items.some(item => !item.renderThumb)
-
       if (missingThumbs) {
         throw new Error(
           'The renderThumb property is missing in one or more items. You need to add the renderThumb property to every item of the carousel when the prop withThumbs={true} or eventually set withThumbs={false}.',
@@ -113,7 +112,6 @@ export function useThumbsModule({
       ) {
         return thumbWrapper[scrollDimensionProperty] - thumbWrapper[offsetDimension]
       }
-
       if (activeItem === 0) {
         return 0
       }
@@ -169,7 +167,6 @@ export function useThumbsModule({
       })
     }
   }
-
   function handlePrepareThumbsDate() {
     function getPreparedItems(_items: ReactSpringCarouselItem[]): ReactSpringThumbItem[] {
       return _items.map(i => ({
@@ -184,7 +181,6 @@ export function useThumbsModule({
 
     return getPreparedItems(items)
   }
-
   function getScrollDirectionSpringValue() {
     if (thumbsSlideAxis === 'x') {
       return {
@@ -218,7 +214,6 @@ export function useThumbsModule({
     >
       {handlePrepareThumbsDate().map(({ id, renderThumb }) => {
         const thumbId = `thumb-${id}`
-
         return (
           <div key={thumbId} id={thumbId}>
             {renderThumb}
