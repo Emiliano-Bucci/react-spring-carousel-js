@@ -64,7 +64,7 @@ export default function useSpringCarousel({
   const fluidTotalWrapperScrollValue = useRef(0)
   const slideFluidEndReached = useRef(false)
   const currentSlidedValue = useRef(0)
-  const currentTempSlidedValue = useRef(0)
+  const currentStepSlideValue = useRef(0)
 
   function getCarouselItem() {
     return carouselTrackWrapperRef.current?.querySelector('.use-spring-carousel-item')
@@ -87,7 +87,7 @@ export default function useSpringCarousel({
     config: springConfig,
     onRest: ({ value }) => {
       currentSlidedValue.current = value[carouselSlideAxis]
-      currentTempSlidedValue.current = value[carouselSlideAxis]
+      currentStepSlideValue.current = value[carouselSlideAxis]
     },
   }))
   const getSlideValue = useCallback(() => {
@@ -239,7 +239,7 @@ export default function useSpringCarousel({
             })
           } else {
             setCarouselStyles.start({
-              [carouselSlideAxis]: currentTempSlidedValue.current,
+              [carouselSlideAxis]: currentStepSlideValue.current,
             })
           }
         } else {
@@ -519,13 +519,6 @@ export default function useSpringCarousel({
       const currentSlideVal = getWrapperFromValue(carouselTrackWrapperRef.current!)
       const nextPrevValue = currentSlideVal + getSlideValue() + 100
 
-      const values = Array(getCurrentActiveItem())
-        .fill(0)
-        .map((_, index) => {
-          return currentTempSlidedValue.current + getSlideValue() * index
-        })
-        .reverse()
-
       if (getIsFirstItem()) {
         slideToItem({
           to: 0,
@@ -537,10 +530,10 @@ export default function useSpringCarousel({
         slideToItem({
           to: 0,
         })
-        currentTempSlidedValue.current = 0
+        currentStepSlideValue.current = 0
       } else {
-        const nextVal = values[getPrevItem() - 1]
-        currentTempSlidedValue.current = nextVal
+        const nextVal = currentStepSlideValue.current + getSlideValue()
+        currentStepSlideValue.current = nextVal
         slideToItem({
           to: getPrevItem(),
           customTo: nextVal,
@@ -593,22 +586,22 @@ export default function useSpringCarousel({
       if (willGoAfterLastFluidItem) {
         const nextValue = -fluidTotalWrapperScrollValue.current
         slideFluidEndReached.current = true
-        currentTempSlidedValue.current = nextValue
+        currentStepSlideValue.current = nextValue
         slideToItem({
           customTo: nextValue,
           to: getNextItem(),
         })
       } else {
-        const isPure = Math.abs(currentTempSlidedValue.current % getSlideValue()) === 0
+        const isPure = Math.abs(currentStepSlideValue.current % getSlideValue()) === 0
         if (!isPure) {
-          const nextValue = currentTempSlidedValue.current - getSlideValue()
-          currentTempSlidedValue.current = nextValue
+          const nextValue = currentStepSlideValue.current - getSlideValue()
+          currentStepSlideValue.current = nextValue
           slideToItem({
             to: getNextItem(),
             customTo: nextValue,
           })
         } else {
-          currentTempSlidedValue.current = getDefaultNextValue()
+          currentStepSlideValue.current = getDefaultNextValue()
           slideToItem({
             to: getNextItem(),
           })
