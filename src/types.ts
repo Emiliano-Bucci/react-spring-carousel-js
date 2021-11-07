@@ -8,18 +8,31 @@ export type ReactSpringThumbItem = {
 export type ReactSpringCarouselItem = {
   id: string
   renderItem: React.ReactNode
-  renderThumb?: React.ReactNode
+  renderThumb: React.ReactNode
 }
 
-type BaseCarouselSharedProps = {
+type ItemWithThumb = {
+  withThumbs: true
+  items: ReactSpringCarouselItem[]
+}
+type ItemWithNoThumb = {
+  withThumbs?: false
+  items: {
+    id: string
+    renderItem: React.ReactNode
+    renderThumb?: never
+  }[]
+}
+
+export type UseSpringCarouselItems = ItemWithThumb | ItemWithNoThumb
+
+export type BaseCarouselSharedProps = {
   withLoop?: boolean
-  withThumbs?: boolean
   disableGestures?: boolean
   enableThumbsWrapperScroll?: boolean
   draggingSlideTreshold?: number
   prepareThumbsData?: PrepareThumbsData
   springConfig?: SpringConfig
-  items: ReactSpringCarouselItem[]
   thumbsSlideAxis?: 'x' | 'y'
 }
 
@@ -50,7 +63,8 @@ export type UseSpringCarouselProps = Omit<BaseCarouselSharedProps, 'withLoop'> &
   gutter?: number
   touchAction?: 'none' | 'pan'
 } & (UseSpringCarouselLoopProps | UseSpringCarouselNoLoopProps) &
-  (UseSpringCarouselFluidType | UseSpringCarouselNumericSlideType)
+  (UseSpringCarouselFluidType | UseSpringCarouselNumericSlideType) &
+  UseSpringCarouselItems
 
 export type PrepareThumbsData = (items: ReactSpringThumbItem[]) => ReactSpringThumbItem[]
 

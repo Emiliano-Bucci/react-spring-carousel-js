@@ -2,9 +2,9 @@ import { useRef } from 'react'
 import { useSpring, SpringConfig, animated } from 'react-spring'
 import {
   UseSpringCarouselProps,
-  ReactSpringCarouselItem,
   ReactSpringThumbItem,
   PrepareThumbsData,
+  UseSpringCarouselItems,
 } from '../types'
 import { useMount } from '../utils'
 
@@ -13,7 +13,7 @@ type OffsetDirection = 'offsetLeft' | 'offsetTop'
 type ScrollDirection = 'scrollLeft' | 'scrollTop'
 
 type Props = {
-  items: ReactSpringCarouselItem[]
+  items: UseSpringCarouselItems['items']
   withThumbs: boolean
   thumbsSlideAxis: UseSpringCarouselProps['thumbsSlideAxis']
   thumbsWrapperRef?: UseSpringCarouselProps['thumbsWrapperRef']
@@ -168,7 +168,9 @@ export function useThumbsModule({
     }
   }
   function handlePrepareThumbsDate() {
-    function getPreparedItems(_items: ReactSpringCarouselItem[]): ReactSpringThumbItem[] {
+    function getPreparedItems(
+      _items: UseSpringCarouselItems['items'],
+    ): ReactSpringThumbItem[] {
       return _items.map(i => ({
         id: i.id,
         renderThumb: i.renderThumb,
@@ -178,7 +180,6 @@ export function useThumbsModule({
     if (prepareThumbsData) {
       return prepareThumbsData(getPreparedItems(items))
     }
-
     return getPreparedItems(items)
   }
   function getScrollDirectionSpringValue() {
