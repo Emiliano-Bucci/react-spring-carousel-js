@@ -34,10 +34,12 @@ type UseSpringCarouselNoLoopProps = {
 type UseSpringCarouselFluidType = {
   itemsPerSlide?: 'fluid'
   slideAmount?: number
+  initialStartingPosition?: never
 }
 type UseSpringCarouselNumericSlideType = {
   itemsPerSlide?: number
   slideAmount?: never
+  initialStartingPosition?: 'start' | 'center' | 'end'
 }
 
 export type UseSpringCarouselProps = Omit<BaseCarouselSharedProps, 'withLoop'> & {
@@ -45,7 +47,6 @@ export type UseSpringCarouselProps = Omit<BaseCarouselSharedProps, 'withLoop'> &
   carouselSlideAxis?: 'x' | 'y'
   thumbsWrapperRef?: React.MutableRefObject<HTMLDivElement | null>
   initialActiveItem?: number
-  initialStartingPosition?: 'start' | 'center' | 'end'
   gutter?: number
   touchAction?: 'none' | 'pan'
 } & (UseSpringCarouselLoopProps | UseSpringCarouselNoLoopProps) &
