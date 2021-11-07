@@ -45,6 +45,7 @@ export default function useSpringCarousel({
   gutter = 0,
   startEndGutter = 0,
   touchAction = 'none',
+  slideAmount,
 }: UseSpringCarouselProps) {
   function getItems() {
     if (withLoop) {
@@ -99,11 +100,19 @@ export default function useSpringCarousel({
     if (!carouselItem) {
       throw Error('No carousel items available!')
     }
-    if (carouselSlideAxis === 'x') {
-      return carouselItem.getBoundingClientRect().width + gutter
+    const itemVal =
+      carouselItem.getBoundingClientRect()[
+        carouselSlideAxis === 'x' ? 'width' : 'height'
+      ] + gutter
+
+    if (itemsPerSlide === 'fluid' && typeof slideAmount === 'number') {
+      if (slideAmount < itemVal) {
+        throw new Error('slideAmount must be greater than the width of a single item.')
+      }
+      return slideAmount
     }
-    return carouselItem.getBoundingClientRect().height + gutter
-  }, [carouselSlideAxis, gutter])
+    return itemVal
+  }, [carouselSlideAxis, gutter, itemsPerSlide, slideAmount])
   const adjustCarouselWrapperPosition = useCallback(
     (ref: HTMLDivElement) => {
       if (itemsPerSlide !== 'fluid' && typeof itemsPerSlide === 'number') {
@@ -310,27 +319,22 @@ export default function useSpringCarousel({
     if (itemsPerSlide !== 'fluid' && !Number.isInteger(itemsPerSlide)) {
       throw new Error(`itemsPerSlide should be an integer.`)
     }
-
     if (itemsPerSlide > items.length) {
       throw new Error(
         `The itemsPerSlide prop can't be greater than the total length of the items you provide.`,
       )
     }
-
     if (itemsPerSlide < 1) {
       throw new Error(`The itemsPerSlide prop can't be less than 1.`)
     }
-
     if (!shouldResizeOnWindowResize) {
       console.warn(
         'You set shouldResizeOnWindowResize={false}; be aware that the carousel could behave in a strange way if you also use the fullscreen functionality or if you change the mobile orientation.',
       )
     }
-
     if (initialActiveItem < 0) {
       console.warn('The initialActiveItem cannot be less than 0.')
     }
-
     if (initialActiveItem > items.length) {
       console.warn(
         'The initialActiveItem cannot be greater than the total length of the items you provide.',
@@ -572,6 +576,8 @@ export default function useSpringCarousel({
         return -(getNextItem() * getSlideValue())
       }
 
+      console.log(getDefaultNextValue())
+
       if (
         mainCarouselWrapperRef.current!.getBoundingClientRect().width >=
         items.length * getSlideValue()
@@ -604,6 +610,7 @@ export default function useSpringCarousel({
           currentStepSlideValue.current = getDefaultNextValue()
           slideToItem({
             to: getNextItem(),
+            customTo: getDefaultNextValue(),
           })
         }
       }

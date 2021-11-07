@@ -31,17 +31,25 @@ type UseSpringCarouselNoLoopProps = {
   withLoop?: false
   startEndGutter?: never
 }
+type UseSpringCarouselFluidType = {
+  itemsPerSlide?: 'fluid'
+  slideAmount?: number
+}
+type UseSpringCarouselNumericSlideType = {
+  itemsPerSlide?: number
+  slideAmount?: never
+}
 
 export type UseSpringCarouselProps = Omit<BaseCarouselSharedProps, 'withLoop'> & {
   shouldResizeOnWindowResize?: boolean
   carouselSlideAxis?: 'x' | 'y'
   thumbsWrapperRef?: React.MutableRefObject<HTMLDivElement | null>
-  itemsPerSlide?: number | 'fluid'
   initialActiveItem?: number
   initialStartingPosition?: 'start' | 'center' | 'end'
   gutter?: number
   touchAction?: 'none' | 'pan'
-} & (UseSpringCarouselLoopProps | UseSpringCarouselNoLoopProps)
+} & (UseSpringCarouselLoopProps | UseSpringCarouselNoLoopProps) &
+  (UseSpringCarouselFluidType | UseSpringCarouselNumericSlideType)
 
 export type PrepareThumbsData = (items: ReactSpringThumbItem[]) => ReactSpringThumbItem[]
 
