@@ -52,17 +52,18 @@ type UseSpringCarouselFluidType = {
   itemsPerSlide?: 'fluid'
   slideAmount?: number
   initialStartingPosition?: never
+  initialActiveItem?: never
 }
 type UseSpringCarouselNumericSlideType = {
   itemsPerSlide?: number
   slideAmount?: never
   initialStartingPosition?: 'start' | 'center' | 'end'
+  initialActiveItem?: number
 }
 
 export type UseSpringCarouselProps = Omit<BaseCarouselSharedProps, 'withLoop'> & {
   shouldResizeOnWindowResize?: boolean
   carouselSlideAxis?: 'x' | 'y'
-  initialActiveItem?: number
   gutter?: number
   touchAction?: 'none' | 'pan'
 } & (UseSpringCarouselLoopProps | UseSpringCarouselNoLoopProps) &
