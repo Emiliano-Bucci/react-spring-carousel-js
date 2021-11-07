@@ -14,9 +14,13 @@ export type ReactSpringCarouselItem = {
 type ItemWithThumb = {
   withThumbs: true
   items: ReactSpringCarouselItem[]
+  enableThumbsWrapperScroll?: boolean
+  prepareThumbsData?: PrepareThumbsData
 }
 type ItemWithNoThumb = {
   withThumbs?: false
+  enableThumbsWrapperScroll?: never
+  prepareThumbsData?: never
   items: {
     id: string
     renderItem: React.ReactNode
@@ -29,9 +33,7 @@ export type UseSpringCarouselItems = ItemWithThumb | ItemWithNoThumb
 export type BaseCarouselSharedProps = {
   withLoop?: boolean
   disableGestures?: boolean
-  enableThumbsWrapperScroll?: boolean
   draggingSlideTreshold?: number
-  prepareThumbsData?: PrepareThumbsData
   springConfig?: SpringConfig
   thumbsSlideAxis?: 'x' | 'y'
 }
@@ -84,11 +86,12 @@ export type SpringAnimationProps = {
   leave: TransitionTo<ReactSpringCarouselItem>
 }
 
-export type UseTransitionCarouselProps = BaseCarouselSharedProps & {
-  toPrevItemSpringProps?: SpringAnimationProps
-  toNextItemSpringProps?: SpringAnimationProps
-  springAnimationProps?: SpringAnimationProps
-}
+export type UseTransitionCarouselProps = BaseCarouselSharedProps &
+  UseSpringCarouselItems & {
+    toPrevItemSpringProps?: SpringAnimationProps
+    toNextItemSpringProps?: SpringAnimationProps
+    springAnimationProps?: SpringAnimationProps
+  }
 
 type BaseContextSharedProps = {
   getIsFullscreen(): boolean

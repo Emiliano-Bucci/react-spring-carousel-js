@@ -39,7 +39,6 @@ export function useFullscreenModule({
 
     if (screenfull.isEnabled) {
       screenfull.on('change', handleFullscreenChange)
-
       return () => {
         if (screenfull.isEnabled) {
           screenfull.off('change', handleFullscreenChange)

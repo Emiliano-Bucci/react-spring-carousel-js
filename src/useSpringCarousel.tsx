@@ -17,12 +17,10 @@ const UseSpringCarouselContext = createContext<UseSpringCarouselContextProps | u
 
 export function useSpringCarouselContext() {
   const context = useContext(UseSpringCarouselContext)
-
   if (!context) {
     throw new Error(`useSpringCarouselContext isn't being used within the useSringCarousel context; 
     use the context only inside a component that is rendered within the Carousel.`)
   }
-
   return context
 }
 
@@ -529,7 +527,6 @@ export default function useSpringCarousel({
         })
         return
       }
-
       if (nextPrevValue >= 0) {
         slideToItem({
           to: 0,
@@ -543,7 +540,6 @@ export default function useSpringCarousel({
           customTo: nextVal,
         })
       }
-
       if (slideFluidEndReached.current) {
         slideFluidEndReached.current = false
       }
