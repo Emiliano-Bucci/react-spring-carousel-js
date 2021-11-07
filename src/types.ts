@@ -16,11 +16,13 @@ type ItemWithThumb = {
   items: ReactSpringCarouselItem[]
   enableThumbsWrapperScroll?: boolean
   prepareThumbsData?: PrepareThumbsData
+  thumbsWrapperRef?: React.MutableRefObject<HTMLDivElement | null>
 }
 type ItemWithNoThumb = {
   withThumbs?: false
   enableThumbsWrapperScroll?: never
   prepareThumbsData?: never
+  thumbsWrapperRef?: never
   items: {
     id: string
     renderItem: React.ReactNode
@@ -60,7 +62,6 @@ type UseSpringCarouselNumericSlideType = {
 export type UseSpringCarouselProps = Omit<BaseCarouselSharedProps, 'withLoop'> & {
   shouldResizeOnWindowResize?: boolean
   carouselSlideAxis?: 'x' | 'y'
-  thumbsWrapperRef?: React.MutableRefObject<HTMLDivElement | null>
   initialActiveItem?: number
   gutter?: number
   touchAction?: 'none' | 'pan'
