@@ -4,27 +4,24 @@ import { useDrag } from '@use-gesture/react'
 import { useCustomEventsModule, useFullscreenModule, useThumbsModule } from './modules'
 import {
   UseSpringCarouselProps,
-  UseSpringCarouselContextProps,
   SlideToItemFnProps,
   SlideActionType,
+  UseSpringDafaultTypeReturnProps,
+  UseSpringFluidTypeReturnProps,
 } from './types'
 import { useMount } from './utils'
 import { getIsBrowser } from './utils'
 
-const UseSpringCarouselContext = createContext<UseSpringCarouselContextProps | undefined>(
-  undefined,
-)
+type ReturnHook<T> = T extends 'fluid'
+  ? UseSpringFluidTypeReturnProps
+  : UseSpringDafaultTypeReturnProps
 
-export function useSpringCarouselContext() {
-  const context = useContext(UseSpringCarouselContext)
-  if (!context) {
-    throw new Error(`useSpringCarouselContext isn't being used within the useSringCarousel context; 
-    use the context only inside a component that is rendered within the Carousel.`)
-  }
-  return context
-}
+const UseSpringCarouselContext = createContext<
+  (UseSpringFluidTypeReturnProps | UseSpringDafaultTypeReturnProps) | undefined
+>(undefined)
 
-export default function useSpringCarousel({
+export default function useSpringCarousel<T>({
+  itemsPerSlide = 1,
   items,
   withLoop = false,
   draggingSlideTreshold = 140,
@@ -33,10 +30,9 @@ export default function useSpringCarousel({
   withThumbs = false,
   enableThumbsWrapperScroll = true,
   carouselSlideAxis = 'x',
-  thumbsSlideAxis = 'x',
   thumbsWrapperRef,
+  thumbsSlideAxis = 'x',
   prepareThumbsData,
-  itemsPerSlide = 1,
   initialActiveItem = 0,
   initialStartingPosition = 'start',
   disableGestures = false,
@@ -44,14 +40,17 @@ export default function useSpringCarousel({
   startEndGutter = 0,
   touchAction = 'none',
   slideAmount,
-}: UseSpringCarouselProps) {
+}: UseSpringCarouselProps): ReturnHook<T> & {
+  carouselFragment: JSX.Element
+  thumbsFragment: JSX.Element
+} {
   function getItems() {
     if (withLoop) {
       return [...items, ...items, ...items]
     }
     return items
   }
-  const slideActionType = useRef<SlideActionType>('next')
+  const slideActionType = useRef<SlideActionType>('initial')
   const internalItems = getItems()
   const activeItem = useRef(initialActiveItem)
   const mainCarouselWrapperRef = useRef<HTMLDivElement | null>(null)
@@ -120,20 +119,20 @@ export default function useSpringCarousel({
   }, [carouselSlideAxis, gutter, itemsPerSlide, slideAmount])
   const adjustCarouselWrapperPosition = useCallback(
     (ref: HTMLDivElement) => {
-      if (itemsPerSlide !== 'fluid' && typeof itemsPerSlide === 'number') {
-        const positionProperty = carouselSlideAxis === 'x' ? 'left' : 'top'
+      const positionProperty = carouselSlideAxis === 'x' ? 'left' : 'top'
+      function getDefaultPositionValue() {
+        return getSlideValue() * items.length
+      }
+      function setPosition(v: number) {
+        ref.style.top = '0px'
+        ref.style.left = '0px'
+        ref.style[positionProperty] = `-${v - startEndGutter}px`
+      }
+      function setStartPosition() {
+        setPosition(getDefaultPositionValue())
+      }
 
-        function getDefaultPositionValue() {
-          return getSlideValue() * items.length
-        }
-        function setPosition(v: number) {
-          ref.style.top = '0px'
-          ref.style.left = '0px'
-          ref.style[positionProperty] = `-${v - startEndGutter}px`
-        }
-        function setStartPosition() {
-          setPosition(getDefaultPositionValue())
-        }
+      if (itemsPerSlide !== 'fluid' && typeof itemsPerSlide === 'number') {
         function setCenterPosition() {
           setPosition(
             getDefaultPositionValue() -
@@ -166,6 +165,8 @@ export default function useSpringCarousel({
         } else {
           setStartPosition()
         }
+      } else {
+        setStartPosition()
       }
     },
     [
@@ -177,7 +178,6 @@ export default function useSpringCarousel({
       itemsPerSlide,
     ],
   )
-
   const handleResize = useCallback(() => {
     if (window.innerWidth === currentWindowWidth.current) {
       return
@@ -501,6 +501,10 @@ export default function useSpringCarousel({
       }
     }
 
+    setCurrentStepSlidedValue(getToValue()[carouselSlideAxis])
+    console.log({
+      to: getToValue(),
+    })
     setCarouselStyles.start({
       ...getFromValue(),
       to: getToValue(),
@@ -548,13 +552,11 @@ export default function useSpringCarousel({
         return
       }
       if (nextPrevValue >= 0) {
-        setCurrentStepSlidedValue(0)
         slideToItem({
           to: 0,
         })
       } else {
         const nextValue = currentStepSlideValue.current + getSlideValue()
-        setCurrentStepSlidedValue(nextValue)
         slideToItem({
           to: getPrevItem(),
           customTo: nextValue,
@@ -575,6 +577,7 @@ export default function useSpringCarousel({
             getSlideValue() * items.length
           ),
           to: items.length - 1,
+          immediate: true,
         })
       } else {
         slideToItem({
@@ -603,7 +606,6 @@ export default function useSpringCarousel({
         })
       } else {
         const nextValue = currentStepSlideValue.current - getSlideValue()
-        setCurrentStepSlidedValue(nextValue)
 
         slideToItem({
           to: getNextItem(),
@@ -664,7 +666,8 @@ export default function useSpringCarousel({
       to: itemIndex,
     })
   }
-  const contextProps: UseSpringCarouselContextProps = {
+
+  const contextProps = {
     useListenToCustomEvent,
     getIsFullscreen,
     enterFullscreen,
@@ -675,14 +678,18 @@ export default function useSpringCarousel({
     getIsPrevItem,
     slideToPrevItem,
     slideToNextItem,
-    slideToItem: _slideToItem,
-    getIsActiveItem: id => {
-      return findItemIndex(id) === getCurrentActiveItem()
-    },
-    getCurrentActiveItem: () => ({
-      id: items[getCurrentActiveItem()].id,
-      index: getCurrentActiveItem(),
-    }),
+    ...(typeof itemsPerSlide === 'number'
+      ? {
+          slideToItem: _slideToItem,
+          getIsActiveItem: (id: string) => {
+            return findItemIndex(id) === getCurrentActiveItem()
+          },
+          getCurrentActiveItem: () => ({
+            id: items[getCurrentActiveItem()].id,
+            index: getCurrentActiveItem(),
+          }),
+        }
+      : {}),
   }
   function getItemStyles() {
     if (typeof itemsPerSlide === 'number') {
@@ -708,7 +715,14 @@ export default function useSpringCarousel({
       height: carouselSlideAxis === 'y' ? percentValue : '100%',
     }
   }
-
+  function handleCarouselFragmentRef(ref: HTMLDivElement | null) {
+    if (ref) {
+      carouselTrackWrapperRef.current = ref
+      if (withLoop) {
+        adjustCarouselWrapperPosition(ref)
+      }
+    }
+  }
   const carouselFragment = (
     <UseSpringCarouselContext.Provider value={contextProps}>
       <div
@@ -725,6 +739,7 @@ export default function useSpringCarousel({
         <animated.div
           {...bindDrag()}
           data-testid="use-spring-carousel-animated-wrapper"
+          ref={handleCarouselFragmentRef}
           style={{
             display: 'flex',
             top: 0,
@@ -734,14 +749,6 @@ export default function useSpringCarousel({
             flexDirection: carouselSlideAxis === 'x' ? 'row' : 'column',
             ...getAnimatedWrapperStyles(),
             ...carouselStyles,
-          }}
-          ref={ref => {
-            if (ref) {
-              carouselTrackWrapperRef.current = ref
-              if (withLoop) {
-                adjustCarouselWrapperPosition(ref)
-              }
-            }
           }}
         >
           {internalItems.map(({ id, renderItem }, index) => {
@@ -771,8 +778,18 @@ export default function useSpringCarousel({
   )
 
   return {
+    ...(contextProps as ReturnHook<T>),
     carouselFragment,
     thumbsFragment,
-    ...contextProps,
   }
+}
+
+export function useSpringCarouselContext<T>() {
+  const context = useContext(UseSpringCarouselContext)
+  if (!context) {
+    throw new Error(
+      'useSpringCarouselContext must be used only inside a component that is rendered inside the Carousel.',
+    )
+  }
+  return context as ReturnHook<T>
 }

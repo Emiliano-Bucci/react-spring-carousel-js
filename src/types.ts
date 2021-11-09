@@ -1,4 +1,5 @@
 import { SpringConfig, TransitionFrom, TransitionTo } from 'react-spring'
+import { FullGestureState } from '@use-gesture/react'
 
 export type ReactSpringThumbItem = {
   id: string
@@ -48,7 +49,7 @@ type UseSpringCarouselNoLoopProps = {
   withLoop?: false
   startEndGutter?: never
 }
-type UseSpringCarouselFluidType = {
+export type UseSpringCarouselFluidType = {
   itemsPerSlide?: 'fluid'
   slideAmount?: number
   initialStartingPosition?: never
@@ -95,7 +96,39 @@ export type UseTransitionCarouselProps = BaseCarouselSharedProps &
     springAnimationProps?: SpringAnimationProps
   }
 
-type BaseContextSharedProps = {
+export type UseSpringFluidTypeReturnProps = {
+  useListenToCustomEvent: UseListenToCustomEvent
+  getIsFullscreen(): boolean
+  getIsPrevItem(id: string): boolean
+  getIsNextItem(id: string): boolean
+  enterFullscreen(elementRef?: HTMLElement): void
+  exitFullscreen(): void
+  slideToNextItem(): void
+  slideToPrevItem(): void
+  getIsAnimating(): boolean
+  getIsDragging(): boolean
+}
+export type UseSpringDafaultTypeReturnProps = {
+  useListenToCustomEvent: UseListenToCustomEvent
+  getIsFullscreen(): boolean
+  getIsPrevItem(id: string): boolean
+  getIsNextItem(id: string): boolean
+  enterFullscreen(elementRef?: HTMLElement): void
+  exitFullscreen(): void
+  slideToNextItem(): void
+  slideToPrevItem(): void
+  getIsAnimating(): boolean
+  slideToItem(item: string | number): void
+  getIsActiveItem(id: string): boolean
+  getIsDragging(): boolean
+  getCurrentActiveItem(): {
+    id: string
+    index: number
+  }
+}
+
+export type UseTransitionCarouselContextProps = {
+  useListenToCustomEvent: UseListenToCustomEvent
   getIsFullscreen(): boolean
   getIsPrevItem(id: string): boolean
   getIsNextItem(id: string): boolean
@@ -110,20 +143,10 @@ type BaseContextSharedProps = {
     id: string
     index: number
   }
-  useListenToCustomEvent: UseListenToCustomEvent
-}
-
-export type UseSpringCarouselContextProps = BaseContextSharedProps & {
-  getIsDragging(): boolean
-}
-
-export type UseTransitionCarouselContextProps = BaseContextSharedProps & {
   activeItem: number
 }
 
-import { FullGestureState } from '@use-gesture/react'
-
-export type SlideActionType = 'prev' | 'next'
+export type SlideActionType = 'initial' | 'prev' | 'next'
 
 type OnSlideStartChange = {
   eventName: 'onSlideStartChange'
