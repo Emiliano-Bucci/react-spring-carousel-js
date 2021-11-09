@@ -502,9 +502,6 @@ export default function useSpringCarousel<T>({
     }
 
     setCurrentStepSlidedValue(getToValue()[carouselSlideAxis])
-    console.log({
-      to: getToValue(),
-    })
     setCarouselStyles.start({
       ...getFromValue(),
       to: getToValue(),
@@ -572,12 +569,10 @@ export default function useSpringCarousel<T>({
 
       if (getIsFirstItem()) {
         slideToItem({
-          from: -(
-            Math.abs(getWrapperFromValue(carouselTrackWrapperRef.current!)) +
-            getSlideValue() * items.length
-          ),
+          from:
+            getWrapperFromValue(carouselTrackWrapperRef.current!) -
+            getSlideValue() * items.length,
           to: items.length - 1,
-          immediate: true,
         })
       } else {
         slideToItem({

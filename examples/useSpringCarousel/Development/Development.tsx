@@ -8,16 +8,16 @@ export function Development() {
   const { carouselFragment, slideToNextItem, slideToPrevItem, slideToItem } =
     useSpringCarousel({
       withLoop: true,
-      itemsPerSlide: 'fluid',
+      // itemsPerSlide: 'fluid',
       items: mockedItems.map(({ id, label, ...rest }) => ({
         id,
         renderItem: (
           <SliderItem
             {...rest}
-            css={css`
-              ${rest.css};
-              width: 300px;
-            `}
+            // css={css`
+            //   ${rest.css};
+            //   width: 300px;
+            // `}
           >
             {label}
           </SliderItem>
