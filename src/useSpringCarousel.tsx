@@ -197,6 +197,14 @@ export default function useSpringCarousel<T>({
     currentWindowWidth.current = window.innerWidth
 
     if (itemsPerSlide === 'fluid') {
+      if (getIfItemsNotFillTheCarousel()) {
+        setCurrentStepSlidedValue(0)
+        setCarouselStyles.start({
+          immediate: true,
+          [carouselSlideAxis]: 0,
+        })
+        return
+      }
       fluidTotalWrapperScrollValue.current = getFluidWrapperScrollValue()
       const diff = currentWindowWidth.current - initialWindowWidth.current
 
@@ -240,6 +248,7 @@ export default function useSpringCarousel<T>({
   }, [
     itemsPerSlide,
     withLoop,
+    getIfItemsNotFillTheCarousel,
     getFluidWrapperScrollValue,
     getIsFirstItem,
     setCurrentStepSlidedValue,
@@ -266,9 +275,9 @@ export default function useSpringCarousel<T>({
   function getCurrentSlidedValue() {
     return carouselStyles[carouselSlideAxis].get()
   }
-  function getIfItemsNotFillTheCarousel() {
+  const getIfItemsNotFillTheCarousel = useCallback(() => {
     return getCarouselItemWidth() * items.length < getMainCarouselWrapperWidth()
-  }
+  }, [getCarouselItemWidth, getMainCarouselWrapperWidth, items.length])
   const bindDrag = useDrag(
     props => {
       const isDragging = props.dragging
@@ -567,7 +576,7 @@ export default function useSpringCarousel<T>({
       if (getIfItemsNotFillTheCarousel()) {
         return
       }
-      const nextPrevValue = currentStepSlideValue.current + getCarouselItemWidth() + 100
+      const nextPrevValue = currentStepSlideValue.current + getCarouselItemWidth() - 200
 
       if (nextPrevValue >= 0) {
         if (withLoop) {
