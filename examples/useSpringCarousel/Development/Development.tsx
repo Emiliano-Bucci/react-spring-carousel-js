@@ -5,10 +5,12 @@ import { SliderWrapper } from 'examples/components/SliderWrapper/SliderWrapper'
 import { css } from '@emotion/react'
 
 export function Development() {
-  const { carouselFragment, slideToNextItem, slideToPrevItem, slideToItem } =
-    useSpringCarousel({
+  const { carouselFragment, slideToNextItem, slideToPrevItem } =
+    useSpringCarousel<'fluid'>({
       withLoop: true,
-      // itemsPerSlide: 'fluid',
+      itemsPerSlide: 'fluid',
+      // freeScroll: true,
+      slideAmount: 340,
       items: mockedItems.map(({ id, label, ...rest }) => ({
         id,
         renderItem: (
@@ -24,8 +26,6 @@ export function Development() {
         ),
       })),
     })
-
-  console.log(slideToItem)
 
   return (
     <div
