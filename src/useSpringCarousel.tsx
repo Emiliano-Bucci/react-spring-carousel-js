@@ -79,6 +79,20 @@ export default function useSpringCarousel<T>({
       carouselSlideAxis === 'x' ? 'width' : 'height'
     ]
   }, [carouselSlideAxis])
+  const getCarouselItemWidth = useCallback(() => {
+    const carouselItem = getCarouselItem()
+    if (!carouselItem) {
+      throw Error('No carousel items available!')
+    }
+    return (
+      carouselItem.getBoundingClientRect()[
+        carouselSlideAxis === 'x' ? 'width' : 'height'
+      ] + gutter
+    )
+  }, [carouselSlideAxis, gutter])
+  const getIfItemsNotFillTheCarousel = useCallback(() => {
+    return getCarouselItemWidth() * items.length < getMainCarouselWrapperWidth()
+  }, [getCarouselItemWidth, getMainCarouselWrapperWidth, items.length])
   const getFluidWrapperScrollValue = useCallback(() => {
     return Math.round(
       Number(
@@ -103,17 +117,7 @@ export default function useSpringCarousel<T>({
   const getIsFirstItem = useCallback(() => {
     return getCurrentActiveItem() === 0
   }, [])
-  const getCarouselItemWidth = useCallback(() => {
-    const carouselItem = getCarouselItem()
-    if (!carouselItem) {
-      throw Error('No carousel items available!')
-    }
-    return (
-      carouselItem.getBoundingClientRect()[
-        carouselSlideAxis === 'x' ? 'width' : 'height'
-      ] + gutter
-    )
-  }, [carouselSlideAxis, gutter])
+
   const getSlideValue = useCallback(() => {
     if (!carouselTrackWrapperRef.current) {
       return 0
@@ -275,9 +279,7 @@ export default function useSpringCarousel<T>({
   function getCurrentSlidedValue() {
     return carouselStyles[carouselSlideAxis].get()
   }
-  const getIfItemsNotFillTheCarousel = useCallback(() => {
-    return getCarouselItemWidth() * items.length < getMainCarouselWrapperWidth()
-  }, [getCarouselItemWidth, getMainCarouselWrapperWidth, items.length])
+
   const bindDrag = useDrag(
     props => {
       const isDragging = props.dragging
