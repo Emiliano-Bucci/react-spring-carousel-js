@@ -572,9 +572,11 @@ export default function useSpringCarousel<T>({
       if (slideFluidEndReached.current) {
         slideFluidEndReached.current = false
       }
-    } else if ((!withLoop && getCurrentActiveItem() === 0) || windowIsHidden.current) {
-      return
     } else {
+      if ((!withLoop && getCurrentActiveItem() === 0) || windowIsHidden.current) {
+        return
+      }
+
       setSlideActionType('prev')
 
       if (getIsFirstItem()) {
@@ -631,12 +633,14 @@ export default function useSpringCarousel<T>({
           customTo: nextValue,
         })
       }
-    } else if (
-      (!withLoop && getCurrentActiveItem() === internalItems.length - 1) ||
-      windowIsHidden.current
-    ) {
-      return
     } else {
+      if (
+        (!withLoop && getCurrentActiveItem() === internalItems.length - 1) ||
+        windowIsHidden.current
+      ) {
+        return
+      }
+
       setSlideActionType('next')
 
       if (getIsLastItem()) {
@@ -779,7 +783,9 @@ export default function useSpringCarousel<T>({
                 style={{
                   display: 'flex',
                   position: 'relative',
-                  minWidth: '150px',
+                  ...(carouselSlideAxis === 'x'
+                    ? { minWidth: '150px' }
+                    : { minHeight: '150px' }),
                   ...getItemStyles(),
                 }}
               >
