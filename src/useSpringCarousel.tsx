@@ -196,7 +196,7 @@ export default function useSpringCarousel<T>({
     ],
   )
   const handleResize = useCallback(() => {
-    if (window.innerWidth === currentWindowWidth.current) {
+    if (window.innerWidth === currentWindowWidth.current || freeScroll) {
       return
     }
     currentWindowWidth.current = window.innerWidth
@@ -252,6 +252,7 @@ export default function useSpringCarousel<T>({
     getIfItemsNotFillTheCarousel,
     getFluidWrapperScrollValue,
     getIsFirstItem,
+    freeScroll,
     setCarouselStyles,
     carouselSlideAxis,
     getCurrentSlidedValue,
