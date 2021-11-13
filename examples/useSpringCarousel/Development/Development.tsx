@@ -10,7 +10,6 @@ export function Development() {
       withLoop: true,
       itemsPerSlide: 'fluid',
       // freeScroll: true,
-      slideAmount: 400,
       items: mockedItems.map(({ id, label, ...rest }) => ({
         id,
         renderItem: (
@@ -19,6 +18,7 @@ export function Development() {
             css={css`
               ${rest.css};
               width: 300px;
+              /* background-color: red; */
             `}
           >
             {label}

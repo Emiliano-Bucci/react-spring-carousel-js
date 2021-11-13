@@ -61,7 +61,6 @@ export default function useSpringCarousel<T>({
   const currentWindowWidth = useRef(0)
   const fluidTotalWrapperScrollValue = useRef(0)
   const slideFluidEndReached = useRef(false)
-  const currentSlidedValue = useRef(0)
   const currentStepSlideValue = useRef(0)
   const initialWindowWidth = useRef(0)
 
@@ -110,7 +109,6 @@ export default function useSpringCarousel<T>({
     x: 0,
     config: springConfig,
     onRest: ({ value }) => {
-      currentSlidedValue.current = value[carouselSlideAxis]
       setCurrentStepSlidedValue(value[carouselSlideAxis])
     },
   }))
@@ -298,7 +296,7 @@ export default function useSpringCarousel<T>({
             })
           } else {
             setCarouselStyles.start({
-              [carouselSlideAxis]: currentStepSlideValue.current,
+              [carouselSlideAxis]: getCurrentSlidedValue(),
             })
           }
         } else {
@@ -308,9 +306,6 @@ export default function useSpringCarousel<T>({
         }
       }
 
-      if (props.first) {
-        currentSlidedValue.current = getCurrentSlidedValue()
-      }
       if (isDragging) {
         setIsDragging(true)
         emitObservable({
@@ -319,7 +314,7 @@ export default function useSpringCarousel<T>({
         })
 
         setCarouselStyles.start({
-          [carouselSlideAxis]: currentSlidedValue.current + movement,
+          [carouselSlideAxis]: getCurrentSlidedValue() + movement,
         })
 
         const prevItemTreshold = movement > draggingSlideTreshold
@@ -520,7 +515,7 @@ export default function useSpringCarousel<T>({
       if (from) {
         return {
           from: {
-            [carouselSlideAxis]: Math.round(from),
+            [carouselSlideAxis]: from,
           },
         }
       }
@@ -529,11 +524,11 @@ export default function useSpringCarousel<T>({
     function getToValue() {
       if (customTo) {
         return {
-          [carouselSlideAxis]: Math.round(customTo),
+          [carouselSlideAxis]: customTo,
         }
       }
       return {
-        [carouselSlideAxis]: -Math.round(getSlideValue() * to),
+        [carouselSlideAxis]: -(getSlideValue() * to),
       }
     }
 
@@ -565,17 +560,19 @@ export default function useSpringCarousel<T>({
     return getCurrentActiveItem() === items.length - 1
   }
   function slideToPrevItem() {
+    setSlideActionType('prev')
+
     if (itemsPerSlide === 'fluid') {
       if (getIfItemsNotFillTheCarousel()) {
         return
       }
-      const nextPrevValue = currentStepSlideValue.current + getCarouselItemWidth() - 200
+      const nextPrevValue = getCurrentSlidedValue() + getCarouselItemWidth() - 200
 
       if (nextPrevValue >= 0) {
         if (withLoop) {
           slideToItem({
-            from: getCurrentSlidedValue() - getCarouselItemWidth() * items.length,
             to: items.length - 1,
+            from: getCurrentSlidedValue() - getCarouselItemWidth() * items.length,
             customTo:
               getCurrentSlidedValue() -
               getCarouselItemWidth() * items.length +
@@ -587,7 +584,7 @@ export default function useSpringCarousel<T>({
           })
         }
       } else {
-        const nextValue = currentStepSlideValue.current + getSlideValue()
+        const nextValue = getCurrentSlidedValue() + getSlideValue()
         slideToItem({
           to: getPrevItem(),
           customTo: nextValue,
@@ -600,8 +597,6 @@ export default function useSpringCarousel<T>({
       if ((!withLoop && getCurrentActiveItem() === 0) || windowIsHidden.current) {
         return
       }
-
-      setSlideActionType('prev')
 
       if (getIsFirstItem()) {
         slideToItem({
@@ -616,6 +611,8 @@ export default function useSpringCarousel<T>({
     }
   }
   function slideToNextItem() {
+    setSlideActionType('next')
+
     if (itemsPerSlide === 'fluid') {
       if (getIfItemsNotFillTheCarousel()) {
         return
@@ -641,14 +638,13 @@ export default function useSpringCarousel<T>({
       } else if (willGoAfterLastFluidItem) {
         const nextValue = -fluidTotalWrapperScrollValue.current
         slideFluidEndReached.current = true
-        currentStepSlideValue.current = nextValue
 
         slideToItem({
           to: getNextItem(),
           customTo: nextValue,
         })
       } else {
-        const nextValue = currentStepSlideValue.current - getSlideValue()
+        const nextValue = getCurrentSlidedValue() - getSlideValue()
         slideToItem({
           to: getNextItem(),
           customTo: nextValue,
@@ -661,8 +657,6 @@ export default function useSpringCarousel<T>({
       ) {
         return
       }
-
-      setSlideActionType('next')
 
       if (getIsLastItem()) {
         slideToItem({
