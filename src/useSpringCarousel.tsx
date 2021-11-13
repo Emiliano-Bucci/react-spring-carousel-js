@@ -357,7 +357,7 @@ export default function useSpringCarousel<T>({
       }
     },
     {
-      enabled: !disableGestures,
+      enabled: !freeScroll && !disableGestures,
     },
   )
 
