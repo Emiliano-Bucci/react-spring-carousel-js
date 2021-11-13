@@ -274,6 +274,15 @@ export default function useSpringCarousel<T>({
     prepareThumbsData,
   })
 
+  function getWrapperScrollDirection() {
+    if (!mainCarouselWrapperRef.current) {
+      throw new Error('Missing mainCarouselWrapperRef.current')
+    }
+    return mainCarouselWrapperRef.current[
+      carouselSlideAxis === 'x' ? 'scrollLeft' : 'scrollTop'
+    ]
+  }
+
   const bindDrag = useDrag(
     props => {
       const isDragging = props.dragging
@@ -309,9 +318,28 @@ export default function useSpringCarousel<T>({
           ...props,
         })
 
-        setCarouselStyles.start({
-          [carouselSlideAxis]: getCurrentSlidedValue() + movement,
-        })
+        if (freeScroll) {
+          const direction = props.direction[carouselSlideAxis === 'x' ? 0 : 1]
+          if (getWrapperScrollDirection() === 0 && direction > 0) {
+            props.cancel()
+          } else {
+            setCarouselStyles.start({
+              from: {
+                [carouselSlideAxis]: getWrapperScrollDirection(),
+              },
+              to: {
+                [carouselSlideAxis]:
+                  direction > 0
+                    ? getWrapperScrollDirection() - Math.abs(movement)
+                    : getWrapperScrollDirection() + Math.abs(movement),
+              },
+            })
+          }
+        } else {
+          setCarouselStyles.start({
+            [carouselSlideAxis]: getCurrentSlidedValue() + movement,
+          })
+        }
 
         const prevItemTreshold = movement > draggingSlideTreshold
         const nextItemTreshold = movement < -draggingSlideTreshold
@@ -352,12 +380,12 @@ export default function useSpringCarousel<T>({
           }
         }
       }
-      if (props.last && !props.pressed) {
+      if (props.last && !props.pressed && !freeScroll) {
         resetAnimation()
       }
     },
     {
-      enabled: !freeScroll && !disableGestures,
+      enabled: !disableGestures,
     },
   )
 
@@ -566,8 +594,8 @@ export default function useSpringCarousel<T>({
       if (freeScroll) {
         const nextValue = mainCarouselWrapperRef.current!.scrollLeft - getSlideValue()
         slideToItem({
-          to: getPrevItem(),
-          customTo: nextValue,
+          to: nextValue < 0 ? 0 : getPrevItem(),
+          customTo: nextValue < 0 ? 0 : nextValue,
           from: mainCarouselWrapperRef.current!.scrollLeft,
         })
       } else if (nextPrevValue >= 0) {
