@@ -40,6 +40,7 @@ export default function useSpringCarousel<T>({
   startEndGutter = 0,
   touchAction = 'none',
   slideAmount,
+  freeScroll = false,
 }: UseSpringCarouselProps): ReturnHook<T> & {
   carouselFragment: JSX.Element
   thumbsFragment: JSX.Element
@@ -67,6 +68,13 @@ export default function useSpringCarousel<T>({
     y: 0,
     x: 0,
     config: springConfig,
+    onChange: ({ value }) => {
+      if (mainCarouselWrapperRef.current) {
+        mainCarouselWrapperRef.current[
+          carouselSlideAxis === 'x' ? 'scrollLeft' : 'scrollTop'
+        ] = Math.abs(value[carouselSlideAxis])
+      }
+    },
   }))
   function getCarouselItem() {
     return carouselTrackWrapperRef.current?.querySelector('.use-spring-carousel-item')
@@ -500,7 +508,7 @@ export default function useSpringCarousel<T>({
     }
 
     function getFromValue() {
-      if (from) {
+      if (typeof from === 'number') {
         return {
           from: {
             [carouselSlideAxis]: from,
@@ -555,7 +563,14 @@ export default function useSpringCarousel<T>({
       }
       const nextPrevValue = getCurrentSlidedValue() + getCarouselItemWidth() - 200
 
-      if (nextPrevValue >= 0) {
+      if (freeScroll) {
+        const nextValue = mainCarouselWrapperRef.current!.scrollLeft - getSlideValue()
+        slideToItem({
+          to: getPrevItem(),
+          customTo: nextValue,
+          from: mainCarouselWrapperRef.current!.scrollLeft,
+        })
+      } else if (nextPrevValue >= 0) {
         if (withLoop) {
           slideToItem({
             to: items.length - 1,
@@ -608,7 +623,14 @@ export default function useSpringCarousel<T>({
         Math.abs(getCurrentSlidedValue() - getSlideValue()) + 100 >=
         fluidTotalWrapperScrollValue.current
 
-      if (
+      if (freeScroll) {
+        const nextValue = mainCarouselWrapperRef.current!.scrollLeft + getSlideValue()
+        slideToItem({
+          to: getNextItem(),
+          customTo: nextValue,
+          from: mainCarouselWrapperRef.current!.scrollLeft,
+        })
+      } else if (
         withLoop &&
         Math.abs(getCurrentSlidedValue() - getSlideValue()) >=
           items.length * getCarouselItemWidth()
@@ -746,17 +768,42 @@ export default function useSpringCarousel<T>({
       }
     }
   }
+  function getOverflowStyles() {
+    if (freeScroll) {
+      if (carouselSlideAxis === 'x') {
+        return {
+          overflowX: 'auto',
+        }
+      }
+      return {
+        overflowY: 'auto',
+      }
+    }
+    return {}
+  }
+  function getWheelEvent() {
+    if (freeScroll) {
+      return {
+        onWheel() {
+          carouselStyles.x.stop()
+        },
+      }
+    }
+    return {}
+  }
   const carouselFragment = (
     <UseSpringCarouselContext.Provider value={contextProps}>
       <div
         ref={mainCarouselWrapperRef}
         data-testid="use-spring-carousel-wrapper"
+        {...getWheelEvent()}
         style={{
           display: 'flex',
           position: 'relative',
           width: '100%',
           height: '100%',
           overflow: 'hidden',
+          ...getOverflowStyles(),
         }}
       >
         <animated.div
@@ -771,7 +818,7 @@ export default function useSpringCarousel<T>({
             touchAction,
             flexDirection: carouselSlideAxis === 'x' ? 'row' : 'column',
             ...getAnimatedWrapperStyles(),
-            ...carouselStyles,
+            ...(freeScroll ? {} : carouselStyles),
           }}
         >
           {internalItems.map(({ id, renderItem }, index) => {

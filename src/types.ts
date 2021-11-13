@@ -44,10 +44,12 @@ export type BaseCarouselSharedProps = {
 type UseSpringCarouselLoopProps = {
   withLoop: true
   startEndGutter?: number
+  freeScroll?: never
 }
 type UseSpringCarouselNoLoopProps = {
   withLoop?: false
   startEndGutter?: never
+  freeScroll?: boolean
 }
 export type UseSpringCarouselFluidType = {
   itemsPerSlide: 'fluid'

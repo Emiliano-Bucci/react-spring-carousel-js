@@ -7,9 +7,8 @@ import { css } from '@emotion/react'
 export function Development() {
   const { carouselFragment, slideToNextItem, slideToPrevItem } =
     useSpringCarousel<'fluid'>({
-      withLoop: true,
       itemsPerSlide: 'fluid',
-      // freeScroll: true,
+      freeScroll: true,
       items: mockedItems.map(({ id, label, ...rest }) => ({
         id,
         renderItem: (
