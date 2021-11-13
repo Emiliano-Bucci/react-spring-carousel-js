@@ -61,15 +61,16 @@ export default function useSpringCarousel<T>({
   const currentWindowWidth = useRef(0)
   const fluidTotalWrapperScrollValue = useRef(0)
   const slideFluidEndReached = useRef(false)
-  const currentStepSlideValue = useRef(0)
   const initialWindowWidth = useRef(0)
 
+  const [carouselStyles, setCarouselStyles] = useSpring(() => ({
+    y: 0,
+    x: 0,
+    config: springConfig,
+  }))
   function getCarouselItem() {
     return carouselTrackWrapperRef.current?.querySelector('.use-spring-carousel-item')
   }
-  const setCurrentStepSlidedValue = useCallback((val: number) => {
-    currentStepSlideValue.current = val
-  }, [])
   const getMainCarouselWrapperWidth = useCallback(() => {
     if (!mainCarouselWrapperRef.current) {
       throw new Error('mainCarouselWrapperRef is not available')
@@ -89,6 +90,9 @@ export default function useSpringCarousel<T>({
       ] + gutter
     )
   }, [carouselSlideAxis, gutter])
+  const getCurrentSlidedValue = useCallback(() => {
+    return carouselStyles[carouselSlideAxis].get()
+  }, [carouselSlideAxis, carouselStyles])
   const getIfItemsNotFillTheCarousel = useCallback(() => {
     return getCarouselItemWidth() * items.length < getMainCarouselWrapperWidth()
   }, [getCarouselItemWidth, getMainCarouselWrapperWidth, items.length])
@@ -104,18 +108,9 @@ export default function useSpringCarousel<T>({
         ],
     )
   }, [carouselSlideAxis])
-  const [carouselStyles, setCarouselStyles] = useSpring(() => ({
-    y: 0,
-    x: 0,
-    config: springConfig,
-    onRest: ({ value }) => {
-      setCurrentStepSlidedValue(value[carouselSlideAxis])
-    },
-  }))
   const getIsFirstItem = useCallback(() => {
     return getCurrentActiveItem() === 0
   }, [])
-
   const getSlideValue = useCallback(() => {
     if (!carouselTrackWrapperRef.current) {
       return 0
@@ -200,7 +195,6 @@ export default function useSpringCarousel<T>({
 
     if (itemsPerSlide === 'fluid') {
       if (getIfItemsNotFillTheCarousel()) {
-        setCurrentStepSlidedValue(0)
         setCarouselStyles.start({
           immediate: true,
           [carouselSlideAxis]: 0,
@@ -211,21 +205,18 @@ export default function useSpringCarousel<T>({
       const diff = currentWindowWidth.current - initialWindowWidth.current
 
       if (getIsFirstItem()) {
-        setCurrentStepSlidedValue(0)
         setCarouselStyles.start({
           immediate: true,
           [carouselSlideAxis]: 0,
         })
       } else if (slideFluidEndReached.current) {
         const nextValue = -fluidTotalWrapperScrollValue.current
-        setCurrentStepSlidedValue(nextValue)
         setCarouselStyles.start({
           immediate: true,
           [carouselSlideAxis]: nextValue,
         })
       } else {
-        const nextValue = currentStepSlideValue.current + diff
-        setCurrentStepSlidedValue(nextValue)
+        const nextValue = getCurrentSlidedValue() + diff
         setCarouselStyles.start({
           immediate: true,
           [carouselSlideAxis]: nextValue,
@@ -253,9 +244,9 @@ export default function useSpringCarousel<T>({
     getIfItemsNotFillTheCarousel,
     getFluidWrapperScrollValue,
     getIsFirstItem,
-    setCurrentStepSlidedValue,
     setCarouselStyles,
     carouselSlideAxis,
+    getCurrentSlidedValue,
     getSlideValue,
     adjustCarouselWrapperPosition,
   ])
@@ -274,9 +265,6 @@ export default function useSpringCarousel<T>({
     thumbsWrapperRef,
     prepareThumbsData,
   })
-  function getCurrentSlidedValue() {
-    return carouselStyles[carouselSlideAxis].get()
-  }
 
   const bindDrag = useDrag(
     props => {
@@ -532,7 +520,6 @@ export default function useSpringCarousel<T>({
       }
     }
 
-    setCurrentStepSlidedValue(getToValue()[carouselSlideAxis])
     setCarouselStyles.start({
       ...getFromValue(),
       to: getToValue(),
@@ -618,7 +605,7 @@ export default function useSpringCarousel<T>({
         return
       }
       const willGoAfterLastFluidItem =
-        Math.abs(currentStepSlideValue.current - getSlideValue()) + 100 >=
+        Math.abs(getCurrentSlidedValue() - getSlideValue()) + 100 >=
         fluidTotalWrapperScrollValue.current
 
       if (
