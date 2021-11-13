@@ -520,7 +520,7 @@ export default function useSpringCarousel<T>({
       if (from) {
         return {
           from: {
-            [carouselSlideAxis]: from,
+            [carouselSlideAxis]: Math.round(from),
           },
         }
       }
@@ -529,11 +529,11 @@ export default function useSpringCarousel<T>({
     function getToValue() {
       if (customTo) {
         return {
-          [carouselSlideAxis]: customTo,
+          [carouselSlideAxis]: Math.round(customTo),
         }
       }
       return {
-        [carouselSlideAxis]: -(getSlideValue() * to),
+        [carouselSlideAxis]: -Math.round(getSlideValue() * to),
       }
     }
 
@@ -561,15 +561,6 @@ export default function useSpringCarousel<T>({
       handleThumbsScroll(to)
     }
   }
-  function getWrapperFromValue(element: HTMLDivElement) {
-    if (element.style.transform === 'none') {
-      return 0
-    }
-    const values = element.style.transform.split(/\w+\(|\);?/)
-    return Number(
-      values[1].split(/,\s?/g)[carouselSlideAxis === 'x' ? 0 : 1].replace('px', ''),
-    )
-  }
   function getIsLastItem() {
     return getCurrentActiveItem() === items.length - 1
   }
@@ -583,12 +574,10 @@ export default function useSpringCarousel<T>({
       if (nextPrevValue >= 0) {
         if (withLoop) {
           slideToItem({
-            from:
-              getWrapperFromValue(carouselTrackWrapperRef.current!) -
-              getCarouselItemWidth() * items.length,
+            from: getCurrentSlidedValue() - getCarouselItemWidth() * items.length,
             to: items.length - 1,
             customTo:
-              getWrapperFromValue(carouselTrackWrapperRef.current!) -
+              getCurrentSlidedValue() -
               getCarouselItemWidth() * items.length +
               getSlideValue(),
           })
@@ -616,9 +605,7 @@ export default function useSpringCarousel<T>({
 
       if (getIsFirstItem()) {
         slideToItem({
-          from:
-            getWrapperFromValue(carouselTrackWrapperRef.current!) -
-            getSlideValue() * items.length,
+          from: getCurrentSlidedValue() - getSlideValue() * items.length,
           to: items.length - 1,
         })
       } else {
@@ -639,18 +626,15 @@ export default function useSpringCarousel<T>({
 
       if (
         withLoop &&
-        Math.abs(currentStepSlideValue.current - getSlideValue()) >=
+        Math.abs(getCurrentSlidedValue() - getSlideValue()) >=
           items.length * getCarouselItemWidth()
       ) {
+        const currentWidth = getCarouselItemWidth() * items.length
+
         slideToItem({
           to: 0,
-          from:
-            getWrapperFromValue(carouselTrackWrapperRef.current!) +
-            getCarouselItemWidth() * items.length,
-          customTo:
-            getWrapperFromValue(carouselTrackWrapperRef.current!) +
-            getCarouselItemWidth() * items.length -
-            getSlideValue(),
+          from: getCurrentSlidedValue() + currentWidth,
+          customTo: getCurrentSlidedValue() + currentWidth - getSlideValue(),
         })
       } else if (slideFluidEndReached.current) {
         return
@@ -665,7 +649,6 @@ export default function useSpringCarousel<T>({
         })
       } else {
         const nextValue = currentStepSlideValue.current - getSlideValue()
-
         slideToItem({
           to: getNextItem(),
           customTo: nextValue,
@@ -683,9 +666,7 @@ export default function useSpringCarousel<T>({
 
       if (getIsLastItem()) {
         slideToItem({
-          from:
-            getWrapperFromValue(carouselTrackWrapperRef.current!) +
-            getSlideValue() * items.length,
+          from: getCurrentSlidedValue() + getSlideValue() * items.length,
           to: 0,
         })
       } else {

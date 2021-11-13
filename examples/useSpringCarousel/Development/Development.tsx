@@ -10,16 +10,16 @@ export function Development() {
       withLoop: true,
       itemsPerSlide: 'fluid',
       // freeScroll: true,
-      slideAmount: 340,
+      slideAmount: 400,
       items: mockedItems.map(({ id, label, ...rest }) => ({
         id,
         renderItem: (
           <SliderItem
             {...rest}
-            // css={css`
-            //   ${rest.css};
-            //   width: 300px;
-            // `}
+            css={css`
+              ${rest.css};
+              width: 300px;
+            `}
           >
             {label}
           </SliderItem>
