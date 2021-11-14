@@ -79,7 +79,7 @@ export type PrepareThumbsData = (items: ReactSpringThumbItem[]) => ReactSpringTh
 
 export type SlideToItemFnProps = {
   from?: number
-  to: number
+  to?: number
   newIndex?: number
   immediate?: boolean
   customTo?: number
