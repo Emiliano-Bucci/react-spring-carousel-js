@@ -30,7 +30,6 @@ export default function useSpringCarousel<T>({
   withThumbs = false,
   enableThumbsWrapperScroll = true,
   carouselSlideAxis = 'x',
-  thumbsWrapperRef,
   thumbsSlideAxis = 'x',
   prepareThumbsData,
   initialActiveItem = 0,
@@ -212,13 +211,6 @@ export default function useSpringCarousel<T>({
       fluidTotalWrapperScrollValue.current = getFluidWrapperScrollValue()
       const diff = currentWindowWidth.current - initialWindowWidth.current
 
-      // if (getIsFirstItem()) {
-      //   setCarouselStyles.start({
-      //     immediate: true,
-      //     [carouselSlideAxis]: 0,
-      //   })
-      // } else
-
       if (slideFluidEndReached.current) {
         const nextValue = -fluidTotalWrapperScrollValue.current
         setCarouselStyles.start({
@@ -272,8 +264,10 @@ export default function useSpringCarousel<T>({
     items,
     thumbsSlideAxis,
     springConfig,
-    thumbsWrapperRef,
     prepareThumbsData,
+    itemsPerSlide,
+    getFluidWrapperScrollValue,
+    getSlideValue,
   })
 
   function getWrapperScrollDirection() {
@@ -577,13 +571,8 @@ export default function useSpringCarousel<T>({
         }
       },
     })
-    if (
-      enableThumbsWrapperScroll &&
-      withThumbs &&
-      !immediate &&
-      itemsPerSlide !== 'fluid'
-    ) {
-      handleThumbsScroll(to)
+    if (enableThumbsWrapperScroll && withThumbs && !immediate) {
+      handleThumbsScroll(to, getSlideActionType())
     }
   }
   function getIsLastItem() {
@@ -807,7 +796,7 @@ export default function useSpringCarousel<T>({
     if (freeScroll) {
       return {
         onWheel() {
-          carouselStyles.x.stop()
+          carouselStyles[carouselSlideAxis].stop()
         },
       }
     }

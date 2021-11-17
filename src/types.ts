@@ -17,13 +17,11 @@ type ItemWithThumb = {
   items: ReactSpringCarouselItem[]
   enableThumbsWrapperScroll?: boolean
   prepareThumbsData?: PrepareThumbsData
-  thumbsWrapperRef?: React.MutableRefObject<HTMLDivElement | null>
 }
 type ItemWithNoThumb = {
   withThumbs?: false
   enableThumbsWrapperScroll?: never
   prepareThumbsData?: never
-  thumbsWrapperRef?: never
   items: {
     id: string
     renderItem: React.ReactNode
