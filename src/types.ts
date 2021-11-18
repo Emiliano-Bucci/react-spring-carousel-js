@@ -1,5 +1,6 @@
 import { SpringConfig, TransitionFrom, TransitionTo } from 'react-spring'
 import { FullGestureState } from '@use-gesture/react'
+import { HTMLAttributes } from 'react'
 
 export type ReactSpringThumbItem = {
   id: string
@@ -37,6 +38,7 @@ export type BaseCarouselSharedProps = {
   draggingSlideTreshold?: number
   springConfig?: SpringConfig
   thumbsSlideAxis?: 'x' | 'y'
+  CustomThumbsWrapperComponent?: React.FC<HTMLAttributes<HTMLElement>>
 }
 
 type UseSpringCarouselLoopProps = {

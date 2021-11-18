@@ -1,5 +1,6 @@
-import { useRef } from 'react'
+import { forwardRef, HTMLAttributes, useRef } from 'react'
 import { useSpring, SpringConfig, animated } from 'react-spring'
+import { useMount } from 'src/utils'
 import {
   UseSpringCarouselProps,
   ReactSpringThumbItem,
@@ -19,9 +20,24 @@ type Props = {
   springConfig: SpringConfig
   prepareThumbsData?: PrepareThumbsData
   itemsPerSlide?: UseSpringCarouselProps['itemsPerSlide']
+  CustomThumbsWrapperComponent?: UseSpringCarouselProps['CustomThumbsWrapperComponent']
   getFluidWrapperScrollValue?(): number
   getSlideValue?(): number
 }
+
+type WrapperProps = {
+  children: React.ReactNode
+} & HTMLAttributes<HTMLDivElement>
+
+const InternalWrapper = forwardRef<HTMLDivElement, WrapperProps>(
+  ({ children, ...rest }, ref) => {
+    return (
+      <animated.div {...rest} ref={ref}>
+        {children}
+      </animated.div>
+    )
+  },
+)
 
 export function useThumbsModule({
   items,
@@ -32,6 +48,7 @@ export function useThumbsModule({
   itemsPerSlide,
   getFluidWrapperScrollValue = () => 0,
   getSlideValue = () => 0,
+  CustomThumbsWrapperComponent,
 }: Props) {
   const internalThumbsWrapperRef = useRef<HTMLDivElement | null>(null)
   const [thumbListStyles, setThumbListStyles] = useSpring(() => ({
@@ -46,6 +63,14 @@ export function useThumbsModule({
       }
     },
   }))
+
+  useMount(() => {
+    if (withThumbs && !internalThumbsWrapperRef.current) {
+      throw new Error(
+        "The thumbs wrapper is not defined. If you've passed a Functional component, be sure to wrap your component in forwardRef.",
+      )
+    }
+  })
 
   function getCurrentThumbScrollValue() {
     return internalThumbsWrapperRef.current![
@@ -231,9 +256,14 @@ export function useThumbsModule({
     return getPreparedItems(items)
   }
 
+  const Wrapper = CustomThumbsWrapperComponent
+    ? animated(CustomThumbsWrapperComponent)
+    : InternalWrapper
+
   const thumbsFragment = withThumbs ? (
-    <animated.div
+    <Wrapper
       ref={internalThumbsWrapperRef}
+      className="use-spring-carousel-thumbs-wrapper"
       onWheel={() => {
         thumbListStyles[thumbsSlideAxis].stop()
       }}
@@ -258,7 +288,7 @@ export function useThumbsModule({
           </div>
         )
       })}
-    </animated.div>
+    </Wrapper>
   ) : null
 
   return {

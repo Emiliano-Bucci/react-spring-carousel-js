@@ -40,6 +40,7 @@ export default function useSpringCarousel<T>({
   touchAction = 'none',
   slideAmount,
   freeScroll = false,
+  CustomThumbsWrapperComponent,
 }: UseSpringCarouselProps): ReturnHook<T> & {
   carouselFragment: JSX.Element
   thumbsFragment: JSX.Element
@@ -268,6 +269,7 @@ export default function useSpringCarousel<T>({
     itemsPerSlide,
     getFluidWrapperScrollValue,
     getSlideValue,
+    CustomThumbsWrapperComponent,
   })
 
   function getWrapperScrollDirection() {
