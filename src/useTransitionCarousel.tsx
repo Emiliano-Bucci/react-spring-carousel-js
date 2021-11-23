@@ -35,6 +35,7 @@ export default function useTransitionCarousel({
   toPrevItemSpringProps,
   toNextItemSpringProps,
   disableGestures = false,
+  CustomThumbsWrapperComponent,
   springAnimationProps = {
     initial: {
       opacity: 1,
@@ -70,6 +71,7 @@ export default function useTransitionCarousel({
     thumbsSlideAxis,
     springConfig,
     prepareThumbsData,
+    CustomThumbsWrapperComponent,
   })
 
   const bindSwipe = useDrag(
