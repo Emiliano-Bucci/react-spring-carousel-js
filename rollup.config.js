@@ -6,6 +6,7 @@ import { terser } from 'rollup-plugin-terser'
 import commonjs from '@rollup/plugin-commonjs'
 import pkg from './package.json'
 import size from 'rollup-plugin-filesize'
+import excludeDependenciesFromBundle from 'rollup-plugin-exclude-dependencies-from-bundle'
 
 const globals = {
   react: 'React',
@@ -41,6 +42,9 @@ export default {
     ...Object.keys(pkg.peerDependencies || {}),
   ],
   plugins: [
+    excludeDependenciesFromBundle({
+      peerDependencies: true,
+    }),
     rollupTS({
       tsconfigOverride: {
         exclude: ['Examples', 'node_modules'],
