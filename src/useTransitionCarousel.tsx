@@ -175,8 +175,11 @@ export default function useTransitionCarousel({
         setIsAnimating(false)
         emitObservable({
           eventName: 'onSlideChange',
-          currentItem: activeItem,
           slideActionType: getSlideActionType(),
+          currentItem: {
+            index: activeItem,
+            id: items[activeItem].id,
+          },
         })
       }
     },
@@ -231,8 +234,11 @@ export default function useTransitionCarousel({
 
     emitObservable({
       eventName: 'onSlideStartChange',
-      nextItem: newActiveItem,
       slideActionType: getSlideActionType(),
+      nextItem: {
+        index: newActiveItem,
+        id: items[itemIndex].id,
+      },
     })
 
     if (newActiveItem > currentItem) {
@@ -255,15 +261,21 @@ export default function useTransitionCarousel({
       if (isLastItem) {
         emitObservable({
           eventName: 'onSlideStartChange',
-          nextItem: 0,
           slideActionType: getSlideActionType(),
+          nextItem: {
+            index: 0,
+            id: items[0].id,
+          },
         })
         setActiveItem(0)
       } else {
         emitObservable({
           eventName: 'onSlideStartChange',
-          nextItem: activeItem + 1,
           slideActionType: getSlideActionType(),
+          nextItem: {
+            index: activeItem + 1,
+            id: items[activeItem + 1].id,
+          },
         })
         setActiveItem(activeItem + 1)
       }
@@ -271,8 +283,11 @@ export default function useTransitionCarousel({
       if (!isLastItem) {
         emitObservable({
           eventName: 'onSlideStartChange',
-          nextItem: activeItem + 1,
           slideActionType: getSlideActionType(),
+          nextItem: {
+            index: activeItem + 1,
+            id: items[activeItem + 1].id,
+          },
         })
         setSlideActionType('next')
         setActiveItem(activeItem + 1)
@@ -287,15 +302,21 @@ export default function useTransitionCarousel({
       if (isFirstItem) {
         emitObservable({
           eventName: 'onSlideStartChange',
-          nextItem: items.length - 1,
           slideActionType: getSlideActionType(),
+          nextItem: {
+            index: activeItem - 1,
+            id: items[activeItem - 1].id,
+          },
         })
         setActiveItem(items.length - 1)
       } else {
         emitObservable({
           eventName: 'onSlideStartChange',
-          nextItem: activeItem - 1,
           slideActionType: getSlideActionType(),
+          nextItem: {
+            index: activeItem - 1,
+            id: items[activeItem - 1].id,
+          },
         })
         setActiveItem(activeItem - 1)
       }
@@ -304,8 +325,11 @@ export default function useTransitionCarousel({
         setSlideActionType('prev')
         emitObservable({
           eventName: 'onSlideStartChange',
-          nextItem: activeItem - 1,
           slideActionType: getSlideActionType(),
+          nextItem: {
+            index: activeItem - 1,
+            id: items[activeItem - 1].id,
+          },
         })
         setActiveItem(activeItem - 1)
       }

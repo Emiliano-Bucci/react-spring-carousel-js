@@ -528,8 +528,11 @@ export default function useSpringCarousel<T>({
       setIsAnimating(true)
       emitObservable({
         eventName: 'onSlideStartChange',
-        nextItem: to,
         slideActionType: getSlideActionType(),
+        nextItem: {
+          index: to,
+          id: items[to].id,
+        },
       })
     }
 
@@ -566,8 +569,11 @@ export default function useSpringCarousel<T>({
           if (!immediate) {
             emitObservable({
               eventName: 'onSlideChange',
-              currentItem: getCurrentActiveItem(),
               slideActionType: getSlideActionType(),
+              currentItem: {
+                index: getCurrentActiveItem(),
+                id: items[getCurrentActiveItem()].id,
+              },
             })
           }
         }
@@ -816,7 +822,6 @@ export default function useSpringCarousel<T>({
           position: 'relative',
           width: '100%',
           height: '100%',
-          overflow: 'hidden',
           ...getOverflowStyles(),
         }}
       >

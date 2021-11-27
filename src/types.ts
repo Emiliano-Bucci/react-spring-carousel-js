@@ -154,13 +154,19 @@ export type SlideActionType = 'initial' | 'prev' | 'next'
 
 type OnSlideStartChange = {
   eventName: 'onSlideStartChange'
-  nextItem: number
   slideActionType: SlideActionType
+  nextItem: {
+    index: number
+    id: string
+  }
 }
 type OnSlideChange = {
   eventName: 'onSlideChange'
-  currentItem: number
   slideActionType: SlideActionType
+  currentItem: {
+    index: number
+    id: string
+  }
 }
 
 type OnDrag = Omit<FullGestureState<'drag'>, 'event'> & {
