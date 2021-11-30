@@ -37,7 +37,7 @@ export default function useSpringCarousel<T>({
   disableGestures = false,
   gutter = 0,
   startEndGutter = 0,
-  touchAction = 'none',
+  touchAction,
   slideAmount,
   freeScroll = false,
   CustomThumbsWrapperComponent,
@@ -198,6 +198,7 @@ export default function useSpringCarousel<T>({
       withLoop,
     ],
   )
+
   const handleResize = useCallback(() => {
     if (window.innerWidth === currentWindowWidth.current || freeScroll) {
       return
@@ -441,10 +442,13 @@ export default function useSpringCarousel<T>({
     }
   })
   useEffect(() => {
+    function resize() {
+      setTimeout(handleResize)
+    }
     if (shouldResizeOnWindowResize) {
-      window.addEventListener('resize', handleResize)
+      window.addEventListener('resize', resize)
       return () => {
-        window.removeEventListener('resize', handleResize)
+        window.removeEventListener('resize', resize)
       }
     }
   }, [handleResize, shouldResizeOnWindowResize])
@@ -808,10 +812,20 @@ export default function useSpringCarousel<T>({
     }
     return {}
   }
+  function getTouchAction() {
+    if (!touchAction) {
+      if (carouselSlideAxis === 'x') {
+        return 'pan-y'
+      }
+      return 'pan-x'
+    }
+    return touchAction
+  }
   const carouselFragment = (
     <UseSpringCarouselContext.Provider value={contextProps}>
       <div
         ref={mainCarouselWrapperRef}
+        className="use-spring-carousel-main-wrapper"
         data-testid="use-spring-carousel-wrapper"
         {...getWheelEvent()}
         // @ts-ignore
@@ -825,14 +839,13 @@ export default function useSpringCarousel<T>({
       >
         <animated.div
           {...bindDrag()}
+          className="use-spring-carousel-track-wrapper"
           data-testid="use-spring-carousel-animated-wrapper"
           ref={handleCarouselFragmentRef}
           style={{
             display: 'flex',
-            top: 0,
-            left: 0,
             position: 'relative',
-            touchAction,
+            touchAction: getTouchAction(),
             flexDirection: carouselSlideAxis === 'x' ? 'row' : 'column',
             ...getAnimatedWrapperStyles(),
             ...(freeScroll ? {} : carouselStyles),

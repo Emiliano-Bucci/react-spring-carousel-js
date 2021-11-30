@@ -70,7 +70,7 @@ export type UseSpringCarouselProps = Omit<BaseCarouselSharedProps, 'withLoop'> &
   shouldResizeOnWindowResize?: boolean
   carouselSlideAxis?: 'x' | 'y'
   gutter?: number
-  touchAction?: 'none' | 'pan'
+  touchAction?: 'none' | 'pan-x' | 'pan-y'
 } & (UseSpringCarouselLoopProps | UseSpringCarouselNoLoopProps) &
   (UseSpringCarouselFluidType | UseSpringCarouselNumericSlideType) &
   UseSpringCarouselItems
