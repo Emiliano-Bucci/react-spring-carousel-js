@@ -142,7 +142,9 @@ export default function useSpringCarousel<T>({
       function setPosition(v: number) {
         ref.style.top = '0px'
         ref.style.left = '0px'
-        ref.style[positionProperty] = `-${v - startEndGutter}px`
+        if (withLoop) {
+          ref.style[positionProperty] = `-${v - startEndGutter}px`
+        }
       }
       function setStartPosition() {
         setPosition(getDefaultPositionValue())
@@ -193,6 +195,7 @@ export default function useSpringCarousel<T>({
       startEndGutter,
       getSlideValue,
       initialStartingPosition,
+      withLoop,
     ],
   )
   const handleResize = useCallback(() => {
@@ -238,12 +241,9 @@ export default function useSpringCarousel<T>({
         [carouselSlideAxis]: -(getSlideValue() * getCurrentActiveItem()),
       })
     }
-    if (withLoop) {
-      adjustCarouselWrapperPosition(carouselTrackWrapperRef.current!)
-    }
+    adjustCarouselWrapperPosition(carouselTrackWrapperRef.current!)
   }, [
     itemsPerSlide,
-    withLoop,
     getIfItemsNotFillTheCarousel,
     getFluidWrapperScrollValue,
     freeScroll,
@@ -782,9 +782,7 @@ export default function useSpringCarousel<T>({
   function handleCarouselFragmentRef(ref: HTMLDivElement | null) {
     if (ref) {
       carouselTrackWrapperRef.current = ref
-      if (withLoop) {
-        adjustCarouselWrapperPosition(ref)
-      }
+      adjustCarouselWrapperPosition(ref)
     }
   }
   function getOverflowStyles() {

@@ -8,7 +8,6 @@ export function Development() {
   const { carouselFragment, slideToNextItem, slideToPrevItem } = useSpringCarousel({
     initialActiveItem: 2,
     itemsPerSlide: 3,
-    withLoop: true,
     initialStartingPosition: 'center',
     items: mockedItems.map(({ id, label, ...rest }) => ({
       id,
