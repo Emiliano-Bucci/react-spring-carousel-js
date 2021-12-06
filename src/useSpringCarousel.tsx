@@ -471,7 +471,7 @@ export default function useSpringCarousel<T>({
     }
   }, [carouselSlideAxis])
   useEffect(() => {
-    adjustCarouselWrapperPosition(carouselTrackWrapperRef.current!)
+    setTimeout(() => adjustCarouselWrapperPosition(carouselTrackWrapperRef.current!), 150)
   }, [adjustCarouselWrapperPosition, carouselSlideAxis, itemsPerSlide])
 
   function setSlideActionType(type: SlideActionType) {
