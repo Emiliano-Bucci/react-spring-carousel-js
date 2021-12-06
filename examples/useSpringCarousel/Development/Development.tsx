@@ -9,8 +9,6 @@ export function Development() {
   const [itemsPerSlide, setItemPerSlide] = useState(3)
   const { carouselFragment, slideToNextItem, slideToPrevItem } = useSpringCarousel({
     itemsPerSlide,
-    withLoop: true,
-    initialStartingPosition: 'center',
     items: mockedItems.map(({ id, label, ...rest }) => ({
       id,
       renderItem: (
@@ -18,11 +16,8 @@ export function Development() {
           {...rest}
           css={css`
             ${rest.css};
-            display: flex;
-            justify-content: center;
-            max-width: 300px;
+            width: 200px;
             height: auto;
-            margin: 0 auto;
           `}
         >
           {label}

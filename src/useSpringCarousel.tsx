@@ -288,12 +288,13 @@ export default function useSpringCarousel<T>({
       const movement = props.movement[carouselSlideAxis === 'x' ? 0 : 1]
       function resetAnimation() {
         if (itemsPerSlide === 'fluid') {
-          if (getIfItemsNotFillTheCarousel()) {
+          if (
+            getIfItemsNotFillTheCarousel() ||
+            (getIsFirstItem() && getSlideActionType() === 'prev')
+          ) {
             setCarouselStyles.start({
               [carouselSlideAxis]: 0,
             })
-          } else if (getIsFirstItem()) {
-            slideToPrevItem()
           } else if (slideFluidEndReached.current) {
             setCarouselStyles.start({
               [carouselSlideAxis]: -fluidTotalWrapperScrollValue.current,
@@ -316,9 +317,14 @@ export default function useSpringCarousel<T>({
           eventName: 'onDrag',
           ...props,
         })
+        const direction = props.direction[carouselSlideAxis === 'x' ? 0 : 1]
+        if (direction > 0) {
+          setSlideActionType('prev')
+        } else {
+          setSlideActionType('next')
+        }
 
         if (freeScroll) {
-          const direction = props.direction[carouselSlideAxis === 'x' ? 0 : 1]
           if (getWrapperScrollDirection() === 0 && direction > 0) {
             props.cancel()
           } else {
@@ -379,12 +385,14 @@ export default function useSpringCarousel<T>({
           }
         }
       }
+
       if (props.last && !props.pressed && !freeScroll) {
         resetAnimation()
       }
     },
     {
       enabled: !disableGestures,
+      preventScrollAxis: 'x',
     },
   )
 
@@ -534,8 +542,8 @@ export default function useSpringCarousel<T>({
         eventName: 'onSlideStartChange',
         slideActionType: getSlideActionType(),
         nextItem: {
-          index: to,
-          id: items[to].id,
+          index: itemsPerSlide === 'fluid' ? -1 : to,
+          id: itemsPerSlide === 'fluid' ? '' : items[to].id,
         },
       })
     }
@@ -575,8 +583,8 @@ export default function useSpringCarousel<T>({
               eventName: 'onSlideChange',
               slideActionType: getSlideActionType(),
               currentItem: {
-                index: getCurrentActiveItem(),
-                id: items[getCurrentActiveItem()].id,
+                index: itemsPerSlide === 'fluid' ? -1 : getCurrentActiveItem(),
+                id: itemsPerSlide === 'fluid' ? '' : items[getCurrentActiveItem()].id,
               },
             })
           }
