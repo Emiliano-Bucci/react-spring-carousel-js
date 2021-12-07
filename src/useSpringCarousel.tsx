@@ -286,6 +286,9 @@ export default function useSpringCarousel<T>({
     props => {
       const isDragging = props.dragging
       const movement = props.movement[carouselSlideAxis === 'x' ? 0 : 1]
+      function cancelDrag() {
+        props.cancel()
+      }
       function resetAnimation() {
         if (itemsPerSlide === 'fluid') {
           if (
@@ -326,7 +329,7 @@ export default function useSpringCarousel<T>({
 
         if (freeScroll) {
           if (getWrapperScrollDirection() === 0 && direction > 0) {
-            props.cancel()
+            cancelDrag()
           } else {
             setCarouselStyles.start({
               from: {
@@ -351,33 +354,38 @@ export default function useSpringCarousel<T>({
 
         if (
           mainCarouselWrapperRef.current!.getBoundingClientRect().width >=
-          items.length * getSlideValue()
+            items.length * getSlideValue() &&
+          itemsPerSlide === 'fluid'
         ) {
           slideFluidEndReached.current = true
         }
 
-        if ((prevItemTreshold || nextItemTreshold) && getIfItemsNotFillTheCarousel()) {
-          props.cancel()
+        if (
+          (prevItemTreshold || nextItemTreshold) &&
+          getIfItemsNotFillTheCarousel() &&
+          itemsPerSlide === 'fluid'
+        ) {
+          cancelDrag()
           resetAnimation()
           return
         }
 
         if (slideFluidEndReached.current && movement < 0) {
           if (nextItemTreshold) {
-            props.cancel()
+            cancelDrag()
             setCarouselStyles.start({
               [carouselSlideAxis]: -fluidTotalWrapperScrollValue.current,
             })
           }
         } else if (nextItemTreshold) {
-          props.cancel()
+          cancelDrag()
           if (!withLoop && getIsLastItem()) {
             resetAnimation()
           } else {
             slideToNextItem()
           }
         } else if (prevItemTreshold) {
-          props.cancel()
+          cancelDrag()
           if (!withLoop && getIsFirstItem()) {
             resetAnimation()
           } else {

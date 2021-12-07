@@ -8,21 +8,11 @@ import { useEffect, useState } from 'react'
 export function Development() {
   const [itemsPerSlide, setItemPerSlide] = useState(3)
   const { carouselFragment, slideToNextItem, slideToPrevItem } = useSpringCarousel({
-    itemsPerSlide,
+    itemsPerSlide: 3,
+    withLoop: true,
     items: mockedItems.map(({ id, label, ...rest }) => ({
       id,
-      renderItem: (
-        <SliderItem
-          {...rest}
-          css={css`
-            ${rest.css};
-            width: 200px;
-            height: auto;
-          `}
-        >
-          {label}
-        </SliderItem>
-      ),
+      renderItem: <SliderItem {...rest}>{label}</SliderItem>,
     })),
   })
 
